@@ -107,7 +107,7 @@ void display ()
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);
 
-	std::cout << glGetError () << std::endl;
+	//std::cout << glGetError () << std::endl;
 }
 
 
@@ -125,8 +125,10 @@ int main (int argc, char **argv) {
 	Forma::inicializarFormas ();
 
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
-	nave = new Movil (glm::vec3 (2.5f, 1.0f, 1.0f), modeloNave, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
-		0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f));
+	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
+	// corregirlo de cara al cálculo de su movimiento
+	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
+		0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 1.5f), glm::vec3(0.0f, -90.0f, 0.0f));
 
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
@@ -150,7 +152,12 @@ int main (int argc, char **argv) {
 	float tiempoActual = 0;
 
 	// Se almacena en el controlador la referencias a los valores a modificar
-	
+	Controlador::posicionNave = nave->getPosicionReferencia ();
+	Controlador::velocidadNave = nave->getVelocidadReferencia ();
+	Controlador::rotacionNave = nave->getRotacionReferencia ();
+	Controlador::correcionRotNave = nave->getCorreccionRotacionReferencia ();
+
+
 	// Mientras no se haya indicado la finalización
 	while (!glfwWindowShouldClose (ventana)) {
 
@@ -165,6 +172,7 @@ int main (int argc, char **argv) {
 		// Se obtiene el tiempo transcurrido desde que se ha cargado la librería
 		tiempoActual = (float)glfwGetTime ();
 
+		nave->actualizarEstado ();
 
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
@@ -185,7 +193,11 @@ int main (int argc, char **argv) {
 		glfwPollEvents ();
 	}
 
-	// Se destruyen los astros
+	// Se destruyen los objetos creados y sus modelos
+	delete nave;
+	delete modeloNave;
+
+	delete luz;
 	
 
 	// Se destruyen las formas básicas
@@ -194,8 +206,6 @@ int main (int argc, char **argv) {
 	// Se destruyen los shaders
 	delete shader;
 
-	delete nave;
-	delete modeloNave;
 
 	return(0);
 }

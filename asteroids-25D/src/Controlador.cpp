@@ -8,13 +8,31 @@ float *Controlador::relacionAspecto = NULL;
 
 int Controlador::modoCamara = 4;
 
+glm::vec3 *Controlador::posicionNave = NULL;
+glm::vec3 *Controlador::velocidadNave = NULL;
+glm::vec3 *Controlador::rotacionNave = NULL;
+glm::vec3 *Controlador::correcionRotNave = NULL;
+
 
 // Control de la cámara
 void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara)
 {
-	viewMatrix = glm::lookAt (glm::vec3 (25.0f, 5.0f, 15.0f), glm::vec3 (0.0f, 5.f, 0.0f),
+	/*viewMatrix = glm::lookAt (glm::vec3 (0.0f, 40.0f, 1.0f), glm::vec3 (0.0f, 5.f, 0.0f),
 		glm::vec3 (0.0f, 1.0f, 0.0f));
-	posicionCamara = glm::vec3 (25.0f, 5.0f, 15.0f);
+
+		posicionCamara = glm::vec3 (0.0f, 40.0f, 1.0f);
+*/
+
+	viewMatrix = glm::lookAt (
+		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 80.0f,
+			40.0f,
+			posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 80.0f),
+		glm::vec3 (posicionNave->x, posicionNave->y, posicionNave->z),
+		glm::vec3 (0.0f, 1.0f, 0.0f));
+	/*
+	gluLookAt (posicionX + sinf (direccion) * 0.7, posicionY + 0.5, posicionZ + cosf (direccion) * 0.7, posicionX
+		- sinf (direccion) * 0.7, posicionY, posicionZ - cosf (direccion) * 0.7, 0.0, 1.0, 0.0);*/
+
 }
 
 void Controlador::inputTeclado (GLFWwindow *ventana)
@@ -26,31 +44,32 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		glfwSetWindowShouldClose (ventana, true);
 	}
 
-	/*// +
-	else if (glfwGetKey (ventana, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+	// W
+	else if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		*(Controlador::multiplicador) *= 1.1f;
+		// Se añade velocidad a la nave en función de la dirección a la que apunta
+		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * 0.5f;
+		velocidadNave->z -= cosf (glm::radians(rotacionNave->y)) * 0.5f;
+		std::cout << velocidadNave->x << velocidadNave->z << std::endl;
 	}
 
-	// -
-	else if (glfwGetKey (ventana, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+	// A
+	else if (glfwGetKey (ventana, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		*(Controlador::multiplicador) *= 0.9f;
+		// Se incrementa el ángulo de rotación de la nave en el eje Y
+		rotacionNave->y += 2.0f;
+		std::cout << rotacionNave->y << std::endl;
 	}
 
-	// n
-	else if (glfwGetKey (ventana, GLFW_KEY_N) == GLFW_PRESS)
+	// D
+	else if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		*(Controlador::orbitasAstros) = false;
+		// Se reduce el ángulo de rotación de la nave en el eje Y
+		rotacionNave->y -= 2.0f;
+		std::cout << rotacionNave->y << std::endl;
 	}
 
-	// o
-	else if (glfwGetKey (ventana, GLFW_KEY_O) == GLFW_PRESS)
-	{
-		*(Controlador::orbitasAstros) = true;
-	}
-
-	// F1
+	/*// F1
 	else if (glfwGetKey (ventana, GLFW_KEY_F1) == GLFW_PRESS)
 	{
 		Controlador::modoCamara = 1;

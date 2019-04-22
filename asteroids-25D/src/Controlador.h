@@ -15,6 +15,8 @@
 class Controlador
 {
 public:
+	/* Atributos */
+
 	// Tamaño de la ventana
 	static int *wWidth;
 	static int *wHeight;
@@ -24,7 +26,21 @@ public:
 
 	// Modo de la cámara
 	static int modoCamara;
+
+	// Posición de la nave
+	static glm::vec3 *posicionNave;
 	
+	// Velocidad de la nave en cada coordenada
+	static glm::vec3 *velocidadNave;
+
+	// Posición a la que apunta la nave
+	static glm::vec3 *rotacionNave;
+
+	// Corrección de la rotación de la nave
+	static glm::vec3 *correcionRotNave;
+
+
+	/* Métodos */
 
 	// Control de la cámara
 	static void calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara);

@@ -13,7 +13,7 @@ public:
 	/* Constructor */
 	
 	Movil (glm::vec3 escalado, Modelo *modelo, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 coefAceleracion,
-		glm::vec3 coefDeceleracion, glm::vec3 rotacion);
+		glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correcionRotacion);
 
 
 	/* Getters y setters */
@@ -21,6 +21,11 @@ public:
 	glm::vec3 & getPosicion ()
 	{
 		return this->posicion;
+	}
+
+	glm::vec3 * getPosicionReferencia ()
+	{
+		return &(this->posicion);
 	}
 
 	void setPosicion (glm::vec3 posicion)
@@ -31,6 +36,11 @@ public:
 	glm::vec3 & getVelocidad ()
 	{
 		return this->velocidad;
+	}
+
+	glm::vec3 * getVelocidadReferencia ()
+	{
+		return &(this->velocidad);
 	}
 
 	void setVelocidad (glm::vec3 velocidad)
@@ -63,13 +73,35 @@ public:
 		return this->rotacion;
 	}
 
+	glm::vec3 * getRotacionReferencia ()
+	{
+		return &(this->rotacion);
+	}
+
 	void setRotacion (glm::vec3 rotacion)
 	{
 		this->rotacion = rotacion;
 	}
 
+	glm::vec3 & getCorreccionRotacion ()
+	{
+		return this->correccionRotacion;
+	}
+
+	glm::vec3 * getCorreccionRotacionReferencia ()
+	{
+		return &(this->correccionRotacion);
+	}
+
+	void setCorreccionRotacion (glm::vec3 correccionRotacion)
+	{
+		this->correccionRotacion = correccionRotacion;
+	}
+
 
 	/* Métodos */
+
+	void actualizarEstado ();
 
 	void dibujar (glm::mat4 transformacionPadre, Shader *shader) const override;
 
@@ -95,6 +127,9 @@ private:
 
 	// Dirección en la que el móvil mira
 	glm::vec3 direccion;
+
+	// Corrección de la rotación por el modelo empleado
+	glm::vec3 correccionRotacion;
 };
 
 #endif
