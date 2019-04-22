@@ -8,22 +8,6 @@ float *Controlador::relacionAspecto = NULL;
 
 int Controlador::modoCamara = 4;
 
-float *Controlador::multiplicador = NULL;
-
-bool *Controlador::orbitasAstros = NULL;
-
-Astro *Controlador::sol = NULL;
-Astro *Controlador::mercurio = NULL;
-Astro *Controlador::venus = NULL;
-Astro *Controlador::tierra = NULL;
-Astro *Controlador::iss = NULL;
-Astro *Controlador::luna = NULL;
-Astro *Controlador::marte = NULL;
-Astro *Controlador::jupiter = NULL;
-Astro *Controlador::saturno = NULL;
-Astro *Controlador::urano = NULL;
-Astro *Controlador::neptuno = NULL;
-
 
 // Control de la cámara
 void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara)
@@ -42,7 +26,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		glfwSetWindowShouldClose (ventana, true);
 	}
 
-	// +
+	/*// +
 	else if (glfwGetKey (ventana, GLFW_KEY_KP_ADD) == GLFW_PRESS)
 	{
 		*(Controlador::multiplicador) *= 1.1f;
@@ -130,7 +114,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	else if (glfwGetKey (ventana, GLFW_KEY_F11) == GLFW_PRESS)
 	{
 		Controlador::modoCamara = 11;
-	}
+	}*/
 }
 
 void Controlador::redimensionarVentana (GLFWwindow *ventana, int ancho, int alto)

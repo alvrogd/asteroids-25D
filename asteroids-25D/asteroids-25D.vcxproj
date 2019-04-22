@@ -23,39 +23,31 @@
     <None Include="shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Astro.h" />
+    <ClInclude Include="src\Movil.h" />
+    <ClInclude Include="src\Objeto.h" />
     <ClInclude Include="src\Controlador.h" />
     <ClInclude Include="src\Esfera.h" />
-    <ClInclude Include="src\Estrella.h" />
     <ClInclude Include="src\Forma.h" />
     <ClInclude Include="src\ImageLoader.h" />
     <ClInclude Include="src\Inicializador.h" />
-    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Modelo.h" />
     <ClInclude Include="src\PuntoLuz.h" />
-    <ClInclude Include="src\Rastro.h" />
     <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\Sphere.h" />
-    <ClInclude Include="src\Textura.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\Astro.cpp" />
+    <ClCompile Include="src\Movil.cpp" />
+    <ClCompile Include="src\Objeto.cpp" />
     <ClCompile Include="src\Controlador.cpp" />
     <ClCompile Include="src\Esfera.cpp" />
-    <ClCompile Include="src\Estrella.cpp" />
     <ClCompile Include="src\Forma.cpp" />
     <ClCompile Include="src\Inicializador.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Modelo.cpp" />
     <ClCompile Include="src\PuntoLuz.cpp" />
-    <ClCompile Include="src\Rastro.cpp" />
     <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\Sphere.cpp" />
-    <ClCompile Include="src\Textura.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

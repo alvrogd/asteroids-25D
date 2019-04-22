@@ -12,8 +12,22 @@ Modelo::Modelo (const char * ruta)
 	cargarModelo (ruta);
 }
 
-void Modelo::dibujar (Shader * shader)
+void Modelo::dibujar (glm::mat4 transformacionPadre, Shader *shader)
 {
+	// Se activa el shader dado
+	shader->usar ();
+
+	// Se inicializan las matrices a emplear
+	glm::mat4 transformacion = transformacionPadre;
+	glm::mat3 normalMatrix;
+
+	// Se aplica la matriz de transformaciones al shader
+	shader->setMat4 ("modelMatrix", transformacion);
+
+	// Se calcula la matriz normal y se carga al shader
+	normalMatrix = glm::transpose (glm::inverse (glm::mat3 (transformacion)));
+	shader->setMat3 ("normalMatrix", normalMatrix);
+
 	// Se representan todos los meshes guardados
 	for (unsigned int i = 0; i < this->meshes.size (); i++)
 	{

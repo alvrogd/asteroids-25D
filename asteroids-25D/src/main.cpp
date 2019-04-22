@@ -29,21 +29,15 @@
 // Controlador de eventos
 #include "Controlador.h"
 
-// Para representar el sistema solar
-#include "Astro.h"
-#include "Estrella.h"
-
 // Para representar las figuras básicas
 #include "Forma.h"
-
-// Para dar a los objetos distintos materiales con los que reaccionar a la luz
-#include "Material.h"
 
 // Para crear puntos de luz en la escena
 #include "PuntoLuz.h"
 
-// Para asignar texturas a los astros
-#include "Textura.h"
+// Para crear los objetos a representar en pantalla
+#include "Objeto.h"
+#include "Movil.h"
 
 
 // Propiedades de la ventana a crear
@@ -56,34 +50,17 @@ float relacionAspecto = wWidth / wHeight;
 // FOV de la cámara
 const double FOV = 80.0;
 
+// Nombres de los ficheros que contienen los shaders
+const char *fragmentShader = "shader.frag";
+const char *vertexShader = "shader.vert";
 
-// Shaders para los vértices y su nombre
-const char *vertexShaderColor = "shaderColor.vert";
-const char *vertexShaderColorT1 = "shaderColorT1.vert";
-const char *vertexShaderColorT2 = "shaderColorT2.vert";
-const char *vertexShaderIluminacionT1 = "shaderPhongT1.vert";
-const char *vertexShaderIluminacionT2 = "shaderPhongT2.vert";
-const char *vertexShaderIluminacionNuevoT1 = "shaderPhongNuevoT1.vert";
-
-
-// Shaders para los fragmentos y su nombre
-const char *fragmentShaderColor = "shaderColor.frag";
-const char *fragmentShaderColorT1 = "shaderColorT1.frag";
-const char *fragmentShaderColorT2 = "shaderColorT2.frag";
-const char *fragmentShaderIluminacionT1 = "shaderPhongT1.frag";
-const char *fragmentShaderIluminacionT2 = "shaderPhongT2.frag";
-const char *fragmentShaderIluminacionNuevoT1 = "shaderPhongNuevoT1.frag";
-
-// Shaders que emplear en el renderizado
-Shader *shaderColor = NULL;
-Shader *shaderColorT1 = NULL;
-Shader *shaderColorT2 = NULL;
-Shader *shaderIluminacionT1 = NULL;
-Shader *shaderIluminacionT2 = NULL;
+// Shader que emplear en el renderizado
 Shader *shader = NULL;
 
+// Objetos que representar en pantalla y sus modelos
+Movil *nave = NULL;
+Modelo *modeloNave = NULL;
 
-Modelo *modelo = NULL;
 PuntoLuz *luz = NULL;
 
 
@@ -120,44 +97,15 @@ void display ()
 	Controlador::calcularViewMatrix (viewMatrix, posicionCamara);
 
 	// Se aplican las matrices a los shaders a emplear
-	/*shaderColor->usar ();
-	shaderColor->setMat4 ("projectionMatrix", projectionMatrix);
-	shaderColor->setMat4 ("viewMatrix", viewMatrix);
-
-	shaderColorT1->usar ();
-	shaderColorT1->setMat4 ("projectionMatrix", projectionMatrix);
-	shaderColorT1->setMat4 ("viewMatrix", viewMatrix);
-
-	shaderColorT2->usar ();
-	shaderColorT2->setMat4 ("projectionMatrix", projectionMatrix);
-	shaderColorT2->setMat4 ("viewMatrix", viewMatrix);
-
-	shaderIluminacionT1->usar ();
-	shaderIluminacionT1->setMat4 ("projectionMatrix", projectionMatrix);
-	shaderIluminacionT1->setMat4 ("viewMatrix", viewMatrix);
-
-	shaderIluminacionT2->usar ();
-	shaderIluminacionT2->setMat4 ("projectionMatrix", projectionMatrix);
-	shaderIluminacionT2->setMat4 ("viewMatrix", viewMatrix);*/
-
 	shader->usar ();
 	shader->setMat4 ("projectionMatrix", projectionMatrix);
 	shader->setMat4 ("viewMatrix", viewMatrix);
 
 	// Además, es necesario cargar la posición de la cámara para el cálcula de la iluminación en dichos shaders
-	/*shaderIluminacionT1->usar ();
-	shaderIluminacionT1->setVec3 ("posicionCamara", posicionCamara);
-	shaderIluminacionT2->usar ();
-	shaderIluminacionT2->setVec3 ("posicionCamara", posicionCamara);*/
-
-	shader->usar ();
-	shader->setMat4 ("modelMatrix", glm::mat4 (1.0f));
-	shader->setMat3 ("normalMatrix", glm::transpose (glm::inverse (glm::mat3 (1.0f))));
-	shader->setVec3 ("posicionCamara", posicionCamara);
-
 	luz->cargar (shader, glm::mat4(1.0f));
 
-	modelo->dibujar (shader);
+	// Se representa la nave
+	nave->dibujar (glm::mat4(1.0f), shader);
 
 	std::cout << glGetError () << std::endl;
 }
@@ -168,7 +116,7 @@ int main (int argc, char **argv) {
 	/* Inicialización de OpenGL */
 
 	GLFWwindow *ventana = NULL;
-	Inicializador::inicializarOpenGL (&ventana, "P6_33a", &wWidth, &wHeight, &relacionAspecto);
+	Inicializador::inicializarOpenGL (&ventana, "Asteroids 2.5D", &wWidth, &wHeight, &relacionAspecto);
 
 
 	/* Generación de los objetos */
@@ -176,23 +124,18 @@ int main (int argc, char **argv) {
 	// Se inicializan las formas básicas
 	Forma::inicializarFormas ();
 
+	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
+	nave = new Movil (glm::vec3 (2.5f, 1.0f, 1.0f), modeloNave, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
+		0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f));
+
+	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
+		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
 
 
 	/* Compilación de los shaders */
 	
-	/*shaderColor = new Shader (vertexShaderColor, fragmentShaderColor);
-	shaderColorT1 = new Shader (vertexShaderColorT1, fragmentShaderColorT1);
-	shaderColorT2 = new Shader (vertexShaderColorT2, fragmentShaderColorT2);
-	shaderIluminacionT1 = new Shader (vertexShaderIluminacionT1, fragmentShaderIluminacionT1);
-	shaderIluminacionT2 = new Shader (vertexShaderIluminacionT2, fragmentShaderIluminacionT2);*/
+	shader = new Shader (vertexShader, fragmentShader);
 
-	shader = new Shader ("shader.vert", "shader.frag");
-
-
-	modelo = new Modelo ("Viper-mk-IV-fighter.obj");
-
-    luz = new PuntoLuz(glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
-		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
 
 	/* Configuración de OpenGL */
 
@@ -207,7 +150,6 @@ int main (int argc, char **argv) {
 	float tiempoActual = 0;
 
 	// Se almacena en el controlador la referencias a los valores a modificar
-	Controlador::orbitasAstros = &(Astro::representarOrbitas);
 	
 	// Mientras no se haya indicado la finalización
 	while (!glfwWindowShouldClose (ventana)) {
@@ -250,11 +192,10 @@ int main (int argc, char **argv) {
 	Forma::destruirFormas ();
 
 	// Se destruyen los shaders
-	delete shaderColor;
-	delete shaderColorT1;
-	delete shaderColorT2;
-	delete shaderIluminacionT1;
-	delete shaderIluminacionT2;
+	delete shader;
+
+	delete nave;
+	delete modeloNave;
 
 	return(0);
 }

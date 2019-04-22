@@ -8,9 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Para almacenar referencias a astros
-#include "Astro.h"
-
 // Para modificar la matriz de visionado
 #include "Shader.h"
 
@@ -27,25 +24,6 @@ public:
 
 	// Modo de la cámara
 	static int modoCamara;
-	
-	// Referencia al multiplicador del tiempo transcurrido
-	static float *multiplicador;
-
-	// Referencia al switch con el que representar las órbitas de los astros
-	static bool *orbitasAstros;
-
-	// Referencias a los astros necesarios para el modo telescopio
-	static Astro *sol;
-	static Astro *mercurio;
-	static Astro *venus;
-	static Astro *tierra;
-	static Astro *iss;
-	static Astro *luna;
-	static Astro *marte;
-	static Astro *jupiter;
-	static Astro *saturno;
-	static Astro *urano;
-	static Astro *neptuno;
 	
 
 	// Control de la cámara

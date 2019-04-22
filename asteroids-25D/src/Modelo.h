@@ -55,10 +55,12 @@ public:
 
 	/* Métodos */
 
-	void dibujar (Shader *shader);
+	void dibujar (glm::mat4 transformacionPadre, Shader *shader);
 
 
 private:
+	/* Atributos */
+
 	// Información del modelo
 	std::vector<Mesh> meshes;
 	std::string directorio;
