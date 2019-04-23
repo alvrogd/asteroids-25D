@@ -21,8 +21,11 @@
   <ItemGroup>
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="shaderSkybox.frag" />
+    <None Include="shaderSkybox.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Cubemap.h" />
     <ClInclude Include="src\LectorImagen.h" />
     <ClInclude Include="src\Movil.h" />
     <ClInclude Include="src\Objeto.h" />
@@ -37,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="src\LectorImagen.cpp" />
     <ClCompile Include="src\Movil.cpp" />
     <ClCompile Include="src\Objeto.cpp" />

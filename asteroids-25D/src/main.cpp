@@ -39,6 +39,9 @@
 #include "Objeto.h"
 #include "Movil.h"
 
+// Para representar una skybox
+#include "Cubemap.h"
+
 
 // Propiedades de la ventana a crear
 int wWidth = 800;
@@ -54,8 +57,9 @@ const double FOV = 80.0;
 const char *fragmentShader = "shader.frag";
 const char *vertexShader = "shader.vert";
 
-// Shader que emplear en el renderizado
+// Shaders que emplear en el renderizado
 Shader *shader = NULL;
+Shader *shaderSkybox = NULL;
 
 // Objetos que representar en pantalla y sus modelos
 Movil *nave = NULL;
@@ -63,6 +67,27 @@ Modelo *modeloNave = NULL;
 
 PuntoLuz *luz = NULL;
 
+/*std::vector<std::string> caras
+{
+	"right.jpg",
+	"left.jpg",
+	"top.jpg",
+	"bottom.jpg",
+	"front.jpg",
+	"back.jpg"
+};*/
+
+std::vector<std::string> caras
+{
+	"PositiveX.png",
+	"NegativeX.png",
+	"PositiveY.png",
+	"NegativeY.png",
+	"PositiveZ.png",
+	"NegativeZ.png"
+};
+
+Cubemap *skybox = NULL;
 
 /**
  * Se renderiza un frame
@@ -89,7 +114,7 @@ void display ()
 	// Se calculan las matrices de proyección y de visionado
 
 	// Se aplica una proyección en perspectiva
-	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 2000.0);
+	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 100.0);
 
 	// La matriz de visionado la calcula en control puesto que la cámara es controlada por el input del usuario
 	glm::mat4 viewMatrix;
@@ -97,15 +122,24 @@ void display ()
 	Controlador::calcularViewMatrix (viewMatrix, posicionCamara);
 
 	// Se aplican las matrices a los shaders a emplear
+	
+
 	shader->usar ();
 	shader->setMat4 ("projectionMatrix", projectionMatrix);
 	shader->setMat4 ("viewMatrix", viewMatrix);
+
 
 	// Además, es necesario cargar la posición de la cámara para el cálcula de la iluminación en dichos shaders
 	luz->cargar (shader, glm::mat4(1.0f));
 
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);
+
+	shaderSkybox->usar ();
+	shaderSkybox->setMat4 ("projectionMatrix", projectionMatrix);
+	shaderSkybox->setMat4 ("viewMatrix", glm::mat4 (glm::mat3 (viewMatrix)));
+
+	skybox->dibujar (shaderSkybox);
 
 	//std::cout << glGetError () << std::endl;
 }
@@ -133,10 +167,16 @@ int main (int argc, char **argv) {
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
 
+	skybox = new Cubemap (caras);
+
 
 	/* Compilación de los shaders */
 	
 	shader = new Shader (vertexShader, fragmentShader);
+	shaderSkybox = new Shader ("shaderSkybox.vert", "shaderSkybox.frag");
+
+	shaderSkybox->usar ();
+	shaderSkybox->setInt ("skybox", 0);
 
 
 	/* Configuración de OpenGL */
@@ -198,6 +238,8 @@ int main (int argc, char **argv) {
 	delete modeloNave;
 
 	delete luz;
+
+	delete skybox;
 	
 
 	// Se destruyen las formas básicas
@@ -205,6 +247,7 @@ int main (int argc, char **argv) {
 
 	// Se destruyen los shaders
 	delete shader;
+	delete shaderSkybox;
 
 
 	return(0);

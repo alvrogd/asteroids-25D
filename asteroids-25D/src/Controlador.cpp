@@ -17,11 +17,10 @@ glm::vec3 *Controlador::correcionRotNave = NULL;
 // Control de la cámara
 void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara)
 {
-	/*viewMatrix = glm::lookAt (glm::vec3 (0.0f, 40.0f, 1.0f), glm::vec3 (0.0f, 5.f, 0.0f),
+	/*viewMatrix = glm::lookAt (glm::vec3 (5.5f, 0.0f, 0.5f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3 (0.0f, 1.0f, 0.0f));
 
-		posicionCamara = glm::vec3 (0.0f, 40.0f, 1.0f);
-*/
+	posicionCamara = glm::vec3 (5.5f, 0.0f, 0.5f);*/
 
 	viewMatrix = glm::lookAt (
 		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 80.0f,
