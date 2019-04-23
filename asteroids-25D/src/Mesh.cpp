@@ -46,7 +46,7 @@ void Mesh::dibujar (Shader * shader)
 			std::cout << "oh oh" << std::endl;
 		}
 
-		// Se carga en el uniform el ID de la textura
+		// Se carga el número de unidad de textura en el uniform que representa el material iterado
 		// TODO posible fallo
 		//shader->setInt (("material." + nombre + numero).c_str (), this->texturas.at (i).id);
 		shader->setInt (("material." + nombre + numero).c_str (), i);

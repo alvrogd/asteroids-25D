@@ -23,12 +23,12 @@
     <None Include="shader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\LectorImagen.h" />
     <ClInclude Include="src\Movil.h" />
     <ClInclude Include="src\Objeto.h" />
     <ClInclude Include="src\Controlador.h" />
     <ClInclude Include="src\Esfera.h" />
     <ClInclude Include="src\Forma.h" />
-    <ClInclude Include="src\ImageLoader.h" />
     <ClInclude Include="src\Inicializador.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Modelo.h" />
@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="src\LectorImagen.cpp" />
     <ClCompile Include="src\Movil.cpp" />
     <ClCompile Include="src\Objeto.cpp" />
     <ClCompile Include="src\Controlador.cpp" />

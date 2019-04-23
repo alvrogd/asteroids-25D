@@ -1,0 +1,22 @@
+#ifndef LECTOR_IMAGEN_H
+#define LECTOR_IMAGEN_H
+
+// Librerías de OpenGL
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <iostream>
+
+class LectorImagen
+{
+public:
+
+	/* Métodos */
+
+	static unsigned int ficheroATextura (const char * path, const std::string & directory);
+};
+
+#endif
