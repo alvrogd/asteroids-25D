@@ -119,8 +119,14 @@ unsigned int LectorImagen::cargarCubemap (std::vector<std::string> caras)
 		}
 	}
 
+	// Se emplea un interpolado lineal entre mipmaps y texels en la minimización para reducir el aliasing producido
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	// Se emplea un filtrado lineal en la magnificación para reducir el aliasing producido
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Si las coordenadas (s, t) no se encuentran en el rango (0.0f, 1.0f), se truncan los valores a dicho rango (la
+	// otra opción sería repetir las texturas mediante GL_REPEAT)
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
