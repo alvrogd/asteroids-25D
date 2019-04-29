@@ -39,6 +39,12 @@
 // Para representar una skybox
 #include "Cubemap.h"
 
+// Para conjuntos de datos
+#include <vector>
+
+// Para la generación de números aleatorios
+#include <ctime>
+
 
 // Propiedades de la ventana a crear
 int wWidth = 800;
@@ -66,7 +72,7 @@ Modelo *modeloNave = NULL;
 
 PuntoLuz *luz = NULL;
 
-Asteroide *asteroide = NULL;
+std::vector<Asteroide *> asteroides;
 Modelo *modeloAsteroide = NULL;
 
 // Ficheros que componen la skybox
@@ -109,7 +115,8 @@ void display ()
 	// Se calculan las matrices de proyección y de visionado
 
 	// Se aplica una proyección en perspectiva
-	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 1000.0);
+	// TODO relacionar el final con el área de warp
+	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 2000.0);
 
 	// La matriz de visionado la calcula en control puesto que la cámara es controlada por el input del usuario
 	glm::mat4 viewMatrix;
@@ -127,9 +134,12 @@ void display ()
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);
 
-	// El asteroide
-	asteroide->dibujar (glm::mat4 (1.0f), shader);
-
+	// Se representan todos los asteroides
+	for (Asteroide *asteroide : asteroides)
+	{
+		asteroide->dibujar (glm::mat4 (1.0f), shader);
+	}
+	
 	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
 	shaderSkybox->usar ();
 	shaderSkybox->setMat4 ("projectionMatrix", projectionMatrix);
@@ -144,6 +154,10 @@ void display ()
 
 int main (int argc, char **argv) {
 
+	// Se obtiene una semilla en función del tiempo para la generación de números aleatorios
+	std::srand (std::time (NULL));
+
+
 	/* Inicialización de OpenGL */
 
 	GLFWwindow *ventana = NULL;
@@ -154,7 +168,7 @@ int main (int argc, char **argv) {
 
 	// Se establece el warp de los objetos móviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
 	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
-	Movil::coordenadasWarp = glm::vec3 (100.0f, 100.0f, 100.0f);
+	Movil::coordenadasWarp = glm::vec3 (1000.0f, 1000.0f, 1000.0f);
 
 	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
@@ -173,8 +187,11 @@ int main (int argc, char **argv) {
 	/*asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
 		0.5f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3 (0.0f, 0.0f, 0.0f));*/
-	asteroide = new Asteroide ();
-	
+	// Se crean 100 asteroides
+	for (int i = 0; i < 100; i++)
+	{
+		asteroides.push_back (new Asteroide ());
+	}
 
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
@@ -226,7 +243,11 @@ int main (int argc, char **argv) {
 		tiempoActual = (float)glfwGetTime ();
 
 		nave->actualizarEstado ();
-		asteroide->actualizarEstado ();
+
+		for (Asteroide *asteroide : asteroides)
+		{
+			asteroide->actualizarEstado ();
+		}
 
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
@@ -251,7 +272,11 @@ int main (int argc, char **argv) {
 	delete nave;
 	delete modeloNave;
 
-	delete asteroide;
+	for (Asteroide *asteroide : asteroides)
+	{
+		delete asteroide;
+	}
+
 	delete modeloAsteroide;
 
 	delete luz;

@@ -3,8 +3,9 @@
 Modelo *Asteroide::modelo = NULL;
 
 Asteroide::Asteroide ()
-// Escalado de x0.1
-	: Movil (glm::vec3 (0.1f, 0.1f, 0.1f),
+	// Escalado aleatorio entre x0.1 y x0.3
+	: Movil (glm::vec3 (fmod (std::rand (), 3.0f) * 0.1f + 0.1f, fmod (std::rand (), 3.0f) * 0.1f + 0.1f, fmod (
+		std::rand (), 3.0f) * 0.1f + 0.1f),
 		// Modelo dado para los asteroides
 		Asteroide::modelo,
 		// Posición aleatoria dentro del rango de warp dado para los objetos móviles
