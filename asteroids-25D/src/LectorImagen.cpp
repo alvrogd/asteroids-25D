@@ -8,6 +8,8 @@
 #endif
 
 
+// TODO documentar
+
 unsigned int LectorImagen::ficheroATextura (const char * path, const std::string & directory)
 {
 	std::string filename = std::string (path);

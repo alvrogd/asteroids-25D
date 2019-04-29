@@ -13,7 +13,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 // Para cargar modelos
 #include "Modelo.h"
 
@@ -28,9 +27,6 @@
 
 // Controlador de eventos
 #include "Controlador.h"
-
-// Para representar las figuras básicas
-#include "Forma.h"
 
 // Para crear puntos de luz en la escena
 #include "PuntoLuz.h"
@@ -54,8 +50,10 @@ float relacionAspecto = wWidth / wHeight;
 const double FOV = 80.0;
 
 // Nombres de los ficheros que contienen los shaders
-const char *fragmentShader = "shader.frag";
-const char *vertexShader = "shader.vert";
+const char *fragmentShaderModelos = "shader.frag";
+const char *vertexShaderModelos = "shader.vert";
+const char *fragmentShaderSkybox = "shaderSkybox.frag";
+const char *vertexShaderSkybox = "shaderSkybox.vert";
 
 // Shaders que emplear en el renderizado
 Shader *shader = NULL;
@@ -67,16 +65,7 @@ Modelo *modeloNave = NULL;
 
 PuntoLuz *luz = NULL;
 
-/*std::vector<std::string> caras
-{
-	"right.jpg",
-	"left.jpg",
-	"top.jpg",
-	"bottom.jpg",
-	"front.jpg",
-	"back.jpg"
-};*/
-
+// Ficheros que componen la skybox
 std::vector<std::string> caras
 {
 	"PositiveX.png",
@@ -87,7 +76,9 @@ std::vector<std::string> caras
 	"NegativeZ.png"
 };
 
+// Skybox
 Cubemap *skybox = NULL;
+
 
 /**
  * Se renderiza un frame
@@ -121,24 +112,23 @@ void display ()
 	glm::vec3 posicionCamara;
 	Controlador::calcularViewMatrix (viewMatrix, posicionCamara);
 
-	// Se aplican las matrices a los shaders a emplear
-	
-
+	// Se aplican las matrices al shader de los modelos
 	shader->usar ();
 	shader->setMat4 ("projectionMatrix", projectionMatrix);
 	shader->setMat4 ("viewMatrix", viewMatrix);
 
-
-	// Además, es necesario cargar la posición de la cámara para el cálcula de la iluminación en dichos shaders
+	// Además, es necesario cargar la posición de la cámara para el cálculo de la iluminación
 	luz->cargar (shader, glm::mat4(1.0f));
 
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);
 
+	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
 	shaderSkybox->usar ();
 	shaderSkybox->setMat4 ("projectionMatrix", projectionMatrix);
 	shaderSkybox->setMat4 ("viewMatrix", glm::mat4 (glm::mat3 (viewMatrix)));
 
+	// Y se representa la skybox
 	skybox->dibujar (shaderSkybox);
 
 	//std::cout << glGetError () << std::endl;
@@ -155,14 +145,12 @@ int main (int argc, char **argv) {
 
 	/* Generación de los objetos */
 
-	// Se inicializan las formas básicas
-	Forma::inicializarFormas ();
-
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
 	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
 	// corregirlo de cara al cálculo de su movimiento
 	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
-		0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 1.5f), glm::vec3(0.0f, -90.0f, 0.0f));
+		0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 1.5f),
+		glm::vec3(0.0f, -90.0f, 0.0f));
 
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
@@ -172,11 +160,11 @@ int main (int argc, char **argv) {
 
 	/* Compilación de los shaders */
 	
-	shader = new Shader (vertexShader, fragmentShader);
-	shaderSkybox = new Shader ("shaderSkybox.vert", "shaderSkybox.frag");
+	shader = new Shader (vertexShaderModelos, fragmentShaderModelos);
+	shaderSkybox = new Shader (vertexShaderSkybox, fragmentShaderSkybox);
 
-	shaderSkybox->usar ();
-	shaderSkybox->setInt ("skybox", 0);
+	/*shaderSkybox->usar ();
+	shaderSkybox->setInt ("skybox", 0);*/
 
 
 	/* Configuración de OpenGL */
@@ -242,13 +230,10 @@ int main (int argc, char **argv) {
 	delete skybox;
 	
 
-	// Se destruyen las formas básicas
-	Forma::destruirFormas ();
-
 	// Se destruyen los shaders
 	delete shader;
 	delete shaderSkybox;
 
 
-	return(0);
+	return (0);
 }
