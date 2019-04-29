@@ -25,6 +25,7 @@
     <None Include="shaderSkybox.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Asteroide.h" />
     <ClInclude Include="src\Cubemap.h" />
     <ClInclude Include="src\LectorImagen.h" />
     <ClInclude Include="src\Movil.h" />
@@ -40,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="src\Asteroide.cpp" />
     <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="src\LectorImagen.cpp" />
     <ClCompile Include="src\Movil.cpp" />

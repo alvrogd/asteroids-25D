@@ -57,6 +57,9 @@
     <ClInclude Include="src\Cubemap.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\Asteroide.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Controlador.cpp">
@@ -99,6 +102,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\Cubemap.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asteroide.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

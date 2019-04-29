@@ -34,6 +34,7 @@
 // Para crear los objetos a representar en pantalla
 #include "Objeto.h"
 #include "Movil.h"
+#include "Asteroide.h"
 
 // Para representar una skybox
 #include "Cubemap.h"
@@ -65,7 +66,7 @@ Modelo *modeloNave = NULL;
 
 PuntoLuz *luz = NULL;
 
-Movil *asteroide = NULL;
+Asteroide *asteroide = NULL;
 Modelo *modeloAsteroide = NULL;
 
 // Ficheros que componen la skybox
@@ -151,8 +152,16 @@ int main (int argc, char **argv) {
 
 	/* Generación de los objetos */
 
+	// Se establece el warp de los objetos móviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
+	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
+	Movil::coordenadasWarp = glm::vec3 (100.0f, 100.0f, 100.0f);
+
+	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
 	modeloAsteroide = new Modelo ("rock_by_dommk.obj");
+
+	// Se almacena una referencia al modelo que emplerán los asteroides
+	Asteroide::modelo = modeloAsteroide;
 
 	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
 	// corregirlo de cara al cálculo de su movimiento
@@ -161,9 +170,11 @@ int main (int argc, char **argv) {
 		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.05f, 0.05f, 0.05f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
 
-	asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
+	/*asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
 		0.5f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f),
-		glm::vec3 (0.0f, 0.0f, 0.0f));
+		glm::vec3 (0.0f, 0.0f, 0.0f));*/
+	asteroide = new Asteroide ();
+	
 
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
@@ -198,9 +209,6 @@ int main (int argc, char **argv) {
 	Controlador::rotacionNave = nave->getRotacionReferencia ();
 	Controlador::correcionRotNave = nave->getCorreccionRotacionReferencia ();
 	Controlador::coefAceleracionNave = nave->getCoefAceleracionReferencia ();
-
-	// Se establece el warp de los objetos móviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
-	Movil::coordenadasWarp = glm::vec3 (100.0f, 100.0f, 100.0f);
 
 
 	// Mientras no se haya indicado la finalización
