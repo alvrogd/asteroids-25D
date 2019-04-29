@@ -1,5 +1,9 @@
 #include "Movil.h"
 
+#include <cmath>
+
+glm::vec3 Movil::coordenadasWarp = glm::vec3 (10.0f, 10.0f, 10.0f);
+
 
 Movil::Movil (glm::vec3 escalado, Modelo * modelo, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 coefAceleracion, glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correccionRotacion)
 	: Objeto(escalado, modelo)
@@ -18,6 +22,17 @@ void Movil::actualizarEstado ()
 	// Se modifica la posición del móvil en función de la velocidad registrada
 	this->posicion.x += this->velocidad.x;
 	this->posicion.z += this->velocidad.z;
+
+	// Si alguna de las coordenadas ha superado el warp establecido, se "invierte" para mover el móvil al lado opuesto
+	if (fabs (this->posicion.x) > Movil::coordenadasWarp.x)
+	{
+		this->posicion.x *= -1;
+	}
+
+	if (fabs (this->posicion.z) > Movil::coordenadasWarp.z)
+	{
+		this->posicion.z *= -1;
+	}
 
 	// Se reduce la velocidad de la nave en cada coordenada
 	this->velocidad.x *= 1 - this->coefDeceleracion.x;

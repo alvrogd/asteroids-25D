@@ -199,6 +199,9 @@ int main (int argc, char **argv) {
 	Controlador::correcionRotNave = nave->getCorreccionRotacionReferencia ();
 	Controlador::coefAceleracionNave = nave->getCoefAceleracionReferencia ();
 
+	// Se establece el warp de los objetos móviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
+	Movil::coordenadasWarp = glm::vec3 (100.0f, 100.0f, 100.0f);
+
 
 	// Mientras no se haya indicado la finalización
 	while (!glfwWindowShouldClose (ventana)) {

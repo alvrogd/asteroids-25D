@@ -10,6 +10,11 @@ class Movil :
 {
 public:
 
+	/* Atributos */
+
+	static glm::vec3 coordenadasWarp;
+
+
 	/* Constructor */
 	
 	Movil (glm::vec3 escalado, Modelo *modelo, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 coefAceleracion,
