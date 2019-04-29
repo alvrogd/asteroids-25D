@@ -12,6 +12,7 @@ glm::vec3 *Controlador::posicionNave = NULL;
 glm::vec3 *Controlador::velocidadNave = NULL;
 glm::vec3 *Controlador::rotacionNave = NULL;
 glm::vec3 *Controlador::correcionRotNave = NULL;
+glm::vec3 *Controlador::coefAceleracionNave = NULL;
 
 
 // Control de la cámara
@@ -23,9 +24,9 @@ void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicion
 	posicionCamara = glm::vec3 (5.5f, 0.0f, 0.5f);*/
 
 	viewMatrix = glm::lookAt (
-		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 80.0f,
-			40.0f,
-			posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 80.0f),
+		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 160.f,
+			80.0f,
+			posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 160.0f),
 		glm::vec3 (posicionNave->x, posicionNave->y, posicionNave->z),
 		glm::vec3 (0.0f, 1.0f, 0.0f));
 	/*
@@ -47,8 +48,8 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	else if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		// Se añade velocidad a la nave en función de la dirección a la que apunta
-		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * 0.5f;
-		velocidadNave->z -= cosf (glm::radians(rotacionNave->y)) * 0.5f;
+		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * coefAceleracionNave->x;
+		velocidadNave->z -= cosf (glm::radians(rotacionNave->y)) * coefAceleracionNave->z;
 		std::cout << velocidadNave->x << velocidadNave->z << std::endl;
 	}
 

@@ -65,6 +65,9 @@ Modelo *modeloNave = NULL;
 
 PuntoLuz *luz = NULL;
 
+Movil *asteroide = NULL;
+Modelo *modeloAsteroide = NULL;
+
 // Ficheros que componen la skybox
 std::vector<std::string> caras
 {
@@ -105,7 +108,7 @@ void display ()
 	// Se calculan las matrices de proyección y de visionado
 
 	// Se aplica una proyección en perspectiva
-	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 100.0);
+	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 1000.0);
 
 	// La matriz de visionado la calcula en control puesto que la cámara es controlada por el input del usuario
 	glm::mat4 viewMatrix;
@@ -122,6 +125,9 @@ void display ()
 
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);
+
+	// El asteroide
+	asteroide->dibujar (glm::mat4 (1.0f), shader);
 
 	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
 	shaderSkybox->usar ();
@@ -146,11 +152,18 @@ int main (int argc, char **argv) {
 	/* Generación de los objetos */
 
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
+	modeloAsteroide = new Modelo ("rock_by_dommk.obj");
+
 	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
 	// corregirlo de cara al cálculo de su movimiento
 	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
-		0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 1.5f),
+		// TODO antes el último era 1,5 0,0 0,0 no se por qué
+		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.05f, 0.05f, 0.05f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
+
+	asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
+		0.5f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f),
+		glm::vec3 (0.0f, 0.0f, 0.0f));
 
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
@@ -184,6 +197,7 @@ int main (int argc, char **argv) {
 	Controlador::velocidadNave = nave->getVelocidadReferencia ();
 	Controlador::rotacionNave = nave->getRotacionReferencia ();
 	Controlador::correcionRotNave = nave->getCorreccionRotacionReferencia ();
+	Controlador::coefAceleracionNave = nave->getCoefAceleracionReferencia ();
 
 
 	// Mientras no se haya indicado la finalización
@@ -201,6 +215,7 @@ int main (int argc, char **argv) {
 		tiempoActual = (float)glfwGetTime ();
 
 		nave->actualizarEstado ();
+		asteroide->actualizarEstado ();
 
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
@@ -224,6 +239,9 @@ int main (int argc, char **argv) {
 	// Se destruyen los objetos creados y sus modelos
 	delete nave;
 	delete modeloNave;
+
+	delete asteroide;
+	delete modeloAsteroide;
 
 	delete luz;
 

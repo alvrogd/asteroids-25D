@@ -20,8 +20,8 @@ void Movil::actualizarEstado ()
 	this->posicion.z += this->velocidad.z;
 
 	// Se reduce la velocidad de la nave en cada coordenada
-	this->velocidad.x *= 0.9f;
-	this->velocidad.z *= 0.9f;
+	this->velocidad.x *= 1 - this->coefDeceleracion.x;
+	this->velocidad.z *= 1 - this->coefDeceleracion.z;
 }
 
 void Movil::dibujar (glm::mat4 transformacionPadre, Shader * shader) const

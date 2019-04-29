@@ -53,6 +53,11 @@ public:
 		return this->coefAceleracion;
 	}
 
+	glm::vec3 * getCoefAceleracionReferencia ()
+	{
+		return &(this->coefAceleracion);
+	}
+
 	void setCoefAceleracion (glm::vec3 coefAceleracion)
 	{
 		this->coefAceleracion = coefAceleracion;

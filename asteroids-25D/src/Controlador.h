@@ -39,6 +39,9 @@ public:
 	// Corrección de la rotación de la nave
 	static glm::vec3 *correcionRotNave;
 
+	// Coeficiente de aceleración de la nave
+	static glm::vec3 *coefAceleracionNave;
+
 
 	/* Métodos */
 
