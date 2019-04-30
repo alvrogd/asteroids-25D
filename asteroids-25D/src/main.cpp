@@ -174,6 +174,10 @@ int main (int argc, char **argv) {
 	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
 	Movil::coordenadasWarp = glm::vec3 (1000.0f, 1000.0f, 1000.0f);
 
+	// Se guarda en la clase de asteroides una referencia al conjunto que contiene los asteroides a representar en
+	// pantalla
+	Asteroide::conjuntoAsteroides = &asteroides;
+
 	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
 	modeloAsteroide = new Modelo ("rock_by_dommk.obj");
@@ -185,7 +189,7 @@ int main (int argc, char **argv) {
 	// corregirlo de cara al cálculo de su movimiento
 	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, 8.0f, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
 		// TODO antes el último era 1,5 0,0 0,0 no se por qué
-		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.05f, 0.05f, 0.05f), glm::vec3 (0.0f, 0.0f, 0.0f),
+		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.02f, 0.02f, 0.02f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
 
 	/*asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
@@ -261,6 +265,9 @@ int main (int argc, char **argv) {
 			if (nave->checkColision (asteroides.at(i)))
 			{
 				std::cout << "colisión con el asteroide nº: " << i << std::endl;
+
+				// Se destruye el asteroide
+				asteroides.at (i)->explotar ();
 			}
 		}
 

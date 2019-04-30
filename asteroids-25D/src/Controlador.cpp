@@ -45,7 +45,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	}
 
 	// W
-	else if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		// Se añade velocidad a la nave en función de la dirección a la que apunta
 		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * coefAceleracionNave->x;
@@ -54,7 +54,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	}
 
 	// A
-	else if (glfwGetKey (ventana, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey (ventana, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		// Se incrementa el ángulo de rotación de la nave en el eje Y
 		rotacionNave->y += 2.0f;
@@ -62,7 +62,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	}
 
 	// D
-	else if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		// Se reduce el ángulo de rotación de la nave en el eje Y
 		rotacionNave->y -= 2.0f;
