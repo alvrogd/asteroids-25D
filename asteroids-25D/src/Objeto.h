@@ -59,7 +59,6 @@ private:
 
 	// Modelo que representa al objeto
 	Modelo *modelo;
-
 };
 
 #endif

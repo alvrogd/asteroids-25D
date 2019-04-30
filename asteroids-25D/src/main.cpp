@@ -32,6 +32,7 @@
 #include "PuntoLuz.h"
 
 // Para crear los objetos a representar en pantalla
+#include "Forma.h"
 #include "Objeto.h"
 #include "Movil.h"
 #include "Asteroide.h"
@@ -166,6 +167,9 @@ int main (int argc, char **argv) {
 
 	/* Generación de los objetos */
 
+	// Se inicializan las formas básicas
+	Forma::inicializarFormas ();
+
 	// Se establece el warp de los objetos móviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
 	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
 	Movil::coordenadasWarp = glm::vec3 (1000.0f, 1000.0f, 1000.0f);
@@ -179,7 +183,7 @@ int main (int argc, char **argv) {
 
 	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
 	// corregirlo de cara al cálculo de su movimiento
-	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
+	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, 8.0f, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
 		// TODO antes el último era 1,5 0,0 0,0 no se por qué
 		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.05f, 0.05f, 0.05f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
@@ -241,12 +245,23 @@ int main (int argc, char **argv) {
 
 		// Se obtiene el tiempo transcurrido desde que se ha cargado la librería
 		tiempoActual = (float)glfwGetTime ();
-
+		
+		// Se actualizan las posiciones de los objetos
 		nave->actualizarEstado ();
 
 		for (Asteroide *asteroide : asteroides)
 		{
 			asteroide->actualizarEstado ();
+		}
+
+		// Se comprueba si la nave ha colisionado con algún asteroide
+		// TODO sería más eficiente fusionar los bucles
+		for (int i = 0; i < asteroides.size(); i++)
+		{
+			if (nave->checkColision (asteroides.at(i)))
+			{
+				std::cout << "colisión con el asteroide nº: " << i << std::endl;
+			}
 		}
 
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
@@ -269,6 +284,8 @@ int main (int argc, char **argv) {
 	}
 
 	// Se destruyen los objetos creados y sus modelos
+	Forma::destruirFormas ();
+
 	delete nave;
 	delete modeloNave;
 

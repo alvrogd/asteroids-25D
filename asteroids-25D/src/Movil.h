@@ -17,11 +17,21 @@ public:
 
 	/* Constructor */
 	
-	Movil (glm::vec3 escalado, Modelo *modelo, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 coefAceleracion,
-		glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correcionRotacion);
+	Movil (glm::vec3 escalado, Modelo *modelo, float radioHitbox, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3
+		coefAceleracion, glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correcionRotacion);
 
 
 	/* Getters y setters */
+
+	float getRadioHitbox () const
+	{
+		return this->radioHitbox;
+	}
+
+	void setRadioHitbox (float radioHitbox)
+	{
+		this->radioHitbox = radioHitbox;
+	}
 
 	glm::vec3 & getPosicion ()
 	{
@@ -115,10 +125,15 @@ public:
 
 	void dibujar (glm::mat4 transformacionPadre, Shader *shader) const override;
 
+	bool checkColision (Movil *movil) const;
+
 
 private:
 
 	/* Atributos */
+
+	// Radio de su hitbox, las hitbox son esferas
+	float radioHitbox;
 
 	// Posición en el espacio
 	glm::vec3 posicion;

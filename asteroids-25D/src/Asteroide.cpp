@@ -8,6 +8,8 @@ Asteroide::Asteroide ()
 		std::rand (), 3.0f) * 0.1f + 0.1f),
 		// Modelo dado para los asteroides
 		Asteroide::modelo,
+		// Radio de la hitbox
+		0.0f,
 		// Posición aleatoria dentro del rango de warp dado para los objetos móviles
 		glm::vec3 (fmod (std::rand (), (Movil::coordenadasWarp.x * 2.0f)) - Movil::coordenadasWarp.x, 0.0f,
 			fmod (std::rand (), (Movil::coordenadasWarp.z * 2.0f)) - Movil::coordenadasWarp.z),
@@ -23,4 +25,21 @@ Asteroide::Asteroide ()
 		// Sin correción de rotación del modelo
 		glm::vec3 (0.0f, 0.0f, 0.0f))
 {
+	// Se reemplaza el radio de la hitbox por el máximo de los escalados generados, escalándolo en función del tamaño
+	// del modelo empleado
+	glm::vec3 escalado = getEscalado ();
+	float maximo = escalado.x;
+
+	if (escalado.y > maximo)
+	{
+		maximo = escalado.y;
+	}
+
+	if (escalado.z > maximo)
+	{
+		maximo = escalado.z;
+	}
+
+	// 86.0f medido en blender
+	setRadioHitbox (maximo * 43.0f);
 }

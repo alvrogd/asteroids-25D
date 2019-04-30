@@ -2,13 +2,17 @@
 
 #include <cmath>
 
+#include "Forma.h"
+
 glm::vec3 Movil::coordenadasWarp = glm::vec3 (10.0f, 10.0f, 10.0f);
 
 
-Movil::Movil (glm::vec3 escalado, Modelo * modelo, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 coefAceleracion, glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correccionRotacion)
+Movil::Movil (glm::vec3 escalado, Modelo * modelo, float radioHitbox, glm::vec3 posicion, glm::vec3 velocidad,
+	glm::vec3 coefAceleracion, glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correccionRotacion)
 	: Objeto(escalado, modelo)
 {
 	// Se guardan los parámetros dados
+	this->radioHitbox = radioHitbox;
 	this->posicion = posicion;
 	this->velocidad = velocidad;
 	this->coefAceleracion = coefAceleracion;
@@ -55,4 +59,18 @@ void Movil::dibujar (glm::mat4 transformacionPadre, Shader * shader) const
 	// Se ejecuta el método sobreescrito pasándole como argumento la matriz compuesta; es decir, se preserva el método
 	// original y simplemente se añaden las transformaciones aquí realizadas
 	Objeto::dibujar (transformacion, shader);
+
+	// Hitbox para ayuda
+	//Forma::dibujarEsfera(
+}
+
+bool Movil::checkColision (Movil * movil) const
+{
+	// Las hitbox son esferas
+
+	// Se obtiene la distancia entre los centros de los móviles
+	float distancia = glm::distance(this->posicion, movil->getPosicion ());
+
+	// Los móviles colisionarán si la distancia entre ellos es menor que la suma de sus radios
+	return(distancia < this->radioHitbox + movil->getRadioHitbox ());
 }

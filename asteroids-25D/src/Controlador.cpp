@@ -50,7 +50,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		// Se añade velocidad a la nave en función de la dirección a la que apunta
 		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * coefAceleracionNave->x;
 		velocidadNave->z -= cosf (glm::radians(rotacionNave->y)) * coefAceleracionNave->z;
-		std::cout << velocidadNave->x << velocidadNave->z << std::endl;
+		//std::cout << velocidadNave->x << velocidadNave->z << std::endl;
 	}
 
 	// A
@@ -58,7 +58,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	{
 		// Se incrementa el ángulo de rotación de la nave en el eje Y
 		rotacionNave->y += 2.0f;
-		std::cout << rotacionNave->y << std::endl;
+		//std::cout << rotacionNave->y << std::endl;
 	}
 
 	// D
@@ -66,7 +66,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	{
 		// Se reduce el ángulo de rotación de la nave en el eje Y
 		rotacionNave->y -= 2.0f;
-		std::cout << rotacionNave->y << std::endl;
+		//std::cout << rotacionNave->y << std::endl;
 	}
 
 	/*// F1
