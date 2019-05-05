@@ -25,12 +25,33 @@ public:
 
 	Asteroide ();
 
-	Asteroide (glm::vec3 escalado);
+	Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas);
+
+
+	/* Getters y setters */
+
+	int getVidas () const
+	{
+		return this->vidas;
+	}
+
+	void setVidas (int vidas)
+	{
+		this->vidas = vidas;
+	}
 
 
 	/* Métodos */
 
 	void explotar ();
+
+
+private:
+
+	/* Atributos */
+
+	// Número de veces que el asteroide dará lugar a dos asteroides más pequeños
+	int vidas;
 };
 
 #endif
