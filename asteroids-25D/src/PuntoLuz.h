@@ -56,7 +56,7 @@ public:
 
 	/* Métodos */
 
-	void cargar (Shader *shader, glm::mat4 transformacion) const;
+	void cargar (Shader *shader, glm::mat4 transformacion, int numLuz) const;
 
 
 private:

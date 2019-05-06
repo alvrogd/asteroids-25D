@@ -137,7 +137,7 @@ void display ()
 	shader->setMat4 ("viewMatrix", viewMatrix);
 
 	// Además, es necesario cargar la posición de la cámara para el cálculo de la iluminación
-	luz->cargar (shader, glm::mat4(1.0f));
+	luz->cargar (shader, glm::mat4(1.0f), 0);
 
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);

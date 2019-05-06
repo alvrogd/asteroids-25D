@@ -10,6 +10,9 @@
 // Para conjuntos de datos
 #include <vector>
 
+// Para emitir luz
+#include "PuntoLuz.h"
+
 
 class Disparo :
 	public Movil
@@ -59,6 +62,9 @@ private:
 
 	// Número de warps restantes del disparo antes de desaparecer
 	int warpsRestantes;
+
+	// Luz emitida
+
 };
 
 #endif
