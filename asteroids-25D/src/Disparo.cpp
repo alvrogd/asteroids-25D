@@ -24,6 +24,10 @@ Disparo::Disparo (glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 rotacion)
 {
 	// Se registra el disparo creado en el conjunto de disparos activos de la escena
 	Disparo::conjuntoDisparos->push_back (this);
+
+	// Se crea una luz rosa que el disparo emitirá
+	this->luz = new PuntoLuz (getPosicion (), 1.0f, 0.027, 0.0028, glm::vec3 (1.0f, 0.0f, 1.0f), glm::vec3 (1.0f, 0.0f,
+		1.0f), glm::vec3 (1.0f, 0.0f, 1.0f));
 }
 
 Disparo::~Disparo ()
@@ -40,6 +44,9 @@ Disparo::~Disparo ()
 			Disparo::conjuntoDisparos->erase (Disparo::conjuntoDisparos->begin () + i);
 		}
 	}
+
+	// Se elimina la luz emitida
+	delete this->luz;
 }
 
 void Disparo::actualizarEstado (float tiempoTranscurrido)
@@ -76,6 +83,9 @@ void Disparo::actualizarEstado (float tiempoTranscurrido)
 	{
 		this->warpsRestantes--;
 	}
+
+	// Se actualiza la posición de la luz emitida a la nueva posición calculada para el disparo
+	this->luz->setPosicion (posicion);
 }
 
 void Disparo::dibujar (glm::mat4 transformacionPadre, Shader * shader)

@@ -40,7 +40,8 @@ uniform vec3 posicionCamara;
 uniform Material material;
 
 // Putos de luz presentes en la escena
-#define N_PUNTOS_LUZ 1
+#define N_PUNTOS_LUZ 50
+uniform int numPuntosLuz;
 uniform PuntoLuz puntosLuz[N_PUNTOS_LUZ];
 
 
@@ -99,7 +100,7 @@ void main()
 
 	// Se calculan las aportaciones a la iluminación de los puntos de luz especificados
 	vec3 resultado = vec3(0.0f, 0.0f, 0.0f);
-	for(int i = 0; i < N_PUNTOS_LUZ; i++)
+	for(int i = 0; i < numPuntosLuz; i++)
 	{
 		resultado += calcularPuntoLuz(puntosLuz[i], norm, FragPos, direccionCamara);
 	}

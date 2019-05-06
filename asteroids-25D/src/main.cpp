@@ -136,8 +136,28 @@ void display ()
 	shader->setMat4 ("projectionMatrix", projectionMatrix);
 	shader->setMat4 ("viewMatrix", viewMatrix);
 
-	// Además, es necesario cargar la posición de la cámara para el cálculo de la iluminación
+	// Además, es necesario cargar las luces presentes en la escena
 	luz->cargar (shader, glm::mat4(1.0f), 0);
+	
+	// Ya se ha cargado la luz principal
+	int numLuces = 1;
+
+	// Es necesario considerar el límite de luces del shader
+	int max = std::min (disparos.size (), (size_t) 50);
+	for (int i = 0; i < max; i++)
+	{
+		// Se carga la luz del disparo iterado
+		disparos.at (i)->getLuz ()->cargar (shader, glm::mat4 (1.0f), numLuces);
+
+		// Se incrementa el número de luces cargadas
+		numLuces++;
+	}
+
+	// Se indica el número de luces cargadas
+	shader->setInt ("numPuntosLuz", numLuces);
+
+	// Y la posición de la cámara para el cálculo de la iluminación
+	shader->setVec3 ("posicionCamara", posicionCamara);
 
 	// Se representa la nave
 	nave->dibujar (glm::mat4(1.0f), shader);

@@ -23,6 +23,16 @@ public:
 
 	/* Getters y setters */
 
+	glm::vec3 & getPosicion ()
+	{
+		return this->posicion;
+	}
+
+	void setPosicion (glm::vec3 posicion)
+	{
+		this->posicion = posicion;
+	}
+
 	glm::vec3 & getAmbiental ()
 	{
 		return this->ambiental;

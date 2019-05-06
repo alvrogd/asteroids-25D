@@ -48,6 +48,16 @@ public:
 		this->warpsRestantes = warpsRestantes;
 	}
 
+	PuntoLuz *getLuz ()
+	{
+		return this->luz;
+	}
+
+	void setLuz (PuntoLuz *luz)
+	{
+		this->luz = luz;
+	}
+
 
 	/* Métodos */
 
@@ -64,7 +74,7 @@ private:
 	int warpsRestantes;
 
 	// Luz emitida
-
+	PuntoLuz *luz;
 };
 
 #endif
