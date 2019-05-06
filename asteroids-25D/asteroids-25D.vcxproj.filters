@@ -68,6 +68,9 @@
     <ClInclude Include="src\Nave.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sonido.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Controlador.cpp">
@@ -119,6 +122,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\Nave.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sonido.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

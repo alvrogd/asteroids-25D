@@ -54,6 +54,12 @@ public:
 	// Nave
 	static Nave *nave;
 
+	// Si se ha soltado el botón de disparo
+	static bool botonDisparoSoltado;
+
+	// Número de disparos de la nave en una pulsación del botón de disparo
+	static int numDisparosPulsacion;
+
 
 	/* Métodos */
 

@@ -7,6 +7,9 @@
 // Para disparar
 #include "Disparo.h"
 
+// Sonido
+#include <irrKlang.h>
+
 
 class Nave :
 	public Movil
@@ -19,9 +22,29 @@ public:
 		coefAceleracion, glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correcionRotacion);
 
 
+	/* Getters y setters */
+
+	irrklang::ISound *getSonidoDisparo ()
+	{
+		return this->sonidoDisparo;
+	}
+
+	void setSonidoDisparo (irrklang::ISound *sonidoDisparo)
+	{
+		this->sonidoDisparo = sonidoDisparo;
+	}
+
+
 	/* Métodos */
 
 	void disparar ();
+
+
+private:
+
+	/* Atributos */
+
+	irrklang::ISound *sonidoDisparo = NULL;
 };
 
 #endif

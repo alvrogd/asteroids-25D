@@ -42,6 +42,7 @@
     <ClInclude Include="src\Modelo.h" />
     <ClInclude Include="src\PuntoLuz.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Sonido.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
@@ -61,6 +62,7 @@
     <ClCompile Include="src\Modelo.cpp" />
     <ClCompile Include="src\PuntoLuz.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Sonido.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

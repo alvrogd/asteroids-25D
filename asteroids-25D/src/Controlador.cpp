@@ -1,5 +1,7 @@
 #include "Controlador.h"
+
 #include <iostream>
+
 
 int *Controlador::wWidth = NULL;
 int *Controlador::wHeight = NULL;
@@ -17,6 +19,10 @@ glm::vec3 *Controlador::correcionRotNave = NULL;
 glm::vec3 *Controlador::coefAceleracionNave = NULL;
 
 Nave *Controlador::nave = NULL;
+
+bool Controlador::botonDisparoSoltado = true;
+
+int Controlador::numDisparosPulsacion = 0;
 
 
 // Control de la cámara
@@ -73,11 +79,32 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		//std::cout << rotacionNave->y << std::endl;
 	}
 
-	// Espacio
+	// Espacio presionado
 	if (glfwGetKey (ventana, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		// Se indica a la nave que debe disparar
-		Controlador::nave->disparar ();
+		// Si la barra espaciadora se encontraba suelta previamente o aún no se ha alcanzado el máximo de disparos en
+		// una pulsación
+		if (Controlador::botonDisparoSoltado || Controlador::numDisparosPulsacion < 4)
+		{
+			// Se indica a la nave que debe disparar
+			Controlador::nave->disparar ();
+
+			// Se indica que se ha presionado la barra espaciadora
+			Controlador::botonDisparoSoltado = false;
+
+			// Y se incrementa el número de disparos en una pulsación de la barra espaciadora
+			Controlador::numDisparosPulsacion++;
+		}
+	}
+
+	// Espacio soltado
+	else
+	{
+		// Se indica que se ha soltado el botón de disparo
+		Controlador::botonDisparoSoltado = true;
+
+		// Y se resetea el número de disparos realizados en una pulsación
+		Controlador::numDisparosPulsacion = 0;
 	}
 
 	// R

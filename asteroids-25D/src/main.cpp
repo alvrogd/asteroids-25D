@@ -45,6 +45,9 @@
 // Para representar una skybox
 #include "Cubemap.h"
 
+// Para la reproducción de sonido
+#include "Sonido.h"
+
 // Para conjuntos de datos
 #include <vector>
 
@@ -99,9 +102,6 @@ std::vector<std::string> caras
 
 // Skybox
 Cubemap *skybox = NULL;
-
-// Sonido
-irrklang::ISoundEngine *musicaFondo = irrklang::createIrrKlangDevice ();
 
 
 /**
@@ -291,8 +291,11 @@ int main (int argc, char **argv) {
 	Controlador::nave = nave;
 
 	// Se comienza a reproducir la música de fondo en un bucle infinito
-	musicaFondo->play2D ("breakout.mp3", GL_TRUE);
-
+	//Sonido::getSonido()->getSonido2D ()->play2D("breakout.mp3", GL_TRUE);
+	irrklang::ISound *musica = Sonido::getSonido ()->getSonido3D ()->play3D ("Galactic Funk.mp3", irrklang::vec3df (0.0f, 0.0f, 0.0f), GL_TRUE, GL_FALSE, GL_TRUE);
+	musica->setMinDistance (200.0f);
+	// Realmente no es necesario que solo es repetirse
+	musica->setPosition (irrklang::vec3df (0.0f, 0.0f, 0.0f));
 
 	// Mientras no se haya indicado la finalización
 	while (!glfwWindowShouldClose (ventana)) {
@@ -380,6 +383,22 @@ int main (int argc, char **argv) {
 		tiempoAnterior = tiempoActual;
 
 
+		// Se establece la nueva posición de la nave como la posición del oyente de la música de fondo; también es
+		// necesaria la dirección en la que mira el oyente
+		glm::vec3 posicionNave = nave->getPosicion ();
+
+		glm::vec3 direccionNave = glm::vec3 (
+			-sinf (glm::radians (nave->getRotacion ().y)),
+			0.0f,
+			-cos (glm::radians (nave->getRotacion ().y))
+		);
+		// cos^2(x) + sen^2(x) = 1 -> para que sea un vector unitario
+		direccionNave *= direccionNave;
+
+		Sonido::getSonido ()->getSonido3D ()->setListenerPosition (irrklang::vec3df (posicionNave.x, posicionNave.y,
+			posicionNave.z), irrklang::vec3df (direccionNave.x, direccionNave.y, direccionNave.z));
+
+
 		/* Render */
 
 		// Se emplea la función ya definida para renderizar un frame
@@ -418,8 +437,10 @@ int main (int argc, char **argv) {
 	delete shaderColor;
 	delete shaderSkybox;
 
-	// Se destruyen los sound engines creados
-	musicaFondo->drop ();
+
+	// Se destruyen los reproductores de sonido
+	Sonido::getSonido ()->~Sonido ();
+
 
 	return (0);
 }
