@@ -13,6 +13,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// Sonido
+#include <irrKlang.h>
+
 // Para cargar modelos
 #include "Modelo.h"
 
@@ -96,6 +99,9 @@ std::vector<std::string> caras
 
 // Skybox
 Cubemap *skybox = NULL;
+
+// Sonido
+irrklang::ISoundEngine *musicaFondo = irrklang::createIrrKlangDevice ();
 
 
 /**
@@ -284,6 +290,9 @@ int main (int argc, char **argv) {
 
 	Controlador::nave = nave;
 
+	// Se comienza a reproducir la música de fondo en un bucle infinito
+	musicaFondo->play2D ("breakout.mp3", GL_TRUE);
+
 
 	// Mientras no se haya indicado la finalización
 	while (!glfwWindowShouldClose (ventana)) {
@@ -409,6 +418,8 @@ int main (int argc, char **argv) {
 	delete shaderColor;
 	delete shaderSkybox;
 
+	// Se destruyen los sound engines creados
+	musicaFondo->drop ();
 
 	return (0);
 }
