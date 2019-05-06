@@ -17,6 +17,9 @@ void Inicializador::inicializarOpenGL (GLFWwindow **ventana, const char *nombreV
 
 	// Se especifican las dimensiones de la vista inicial y cómo redimensionarlas
 	Inicializador::configurarDimensionadoVentana (*ventana, wWidth, wHeight, relacionAspecto);
+
+	// Se configura el input de la ventana
+	Inicializador::configurarInputVentana (*ventana);
 }
 
 void Inicializador::inicializarGLFW ()
@@ -72,6 +75,14 @@ void Inicializador::configurarDimensionadoVentana (GLFWwindow *ventana, int *wWi
 
 	// Se indica la función a ejecutar ante un redimensionado de la ventana
 	glfwSetFramebufferSizeCallback (ventana, Controlador::redimensionarVentana);
+}
+
+void Inicializador::configurarInputVentana (GLFWwindow * ventana)
+{
+	// TODO useless
+
+	// Se establece el input del teclado al modo "sticky"
+	glfwSetInputMode (ventana, GLFW_STICKY_KEYS, GLFW_TRUE);
 }
 
 void Inicializador::configurarOpenGL ()

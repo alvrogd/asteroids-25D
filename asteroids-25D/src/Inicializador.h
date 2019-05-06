@@ -26,6 +26,8 @@ public:
 
 	static void configurarDimensionadoVentana (GLFWwindow *ventana,	int *wWidth, int *wHeight, float *relacionAspecto);
 
+	static void configurarInputVentana (GLFWwindow *ventana);
+
 	static void configurarOpenGL ();
 };
 

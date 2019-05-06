@@ -121,9 +121,9 @@ public:
 
 	/* Métodos */
 
-	void actualizarEstado ();
+	virtual void actualizarEstado (float tiempoTranscurrido);
 
-	void dibujar (glm::mat4 transformacionPadre, Shader *shader) const override;
+	void dibujar (glm::mat4 transformacionPadre, Shader *shader) override;
 
 	bool checkColision (Movil *movil) const;
 

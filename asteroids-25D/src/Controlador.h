@@ -11,6 +11,9 @@
 // Para modificar la matriz de visionado
 #include "Shader.h"
 
+// Para almacenar una referencia a la nave representada
+#include "Nave.h"
+
 
 class Controlador
 {
@@ -41,6 +44,9 @@ public:
 
 	// Coeficiente de aceleración de la nave
 	static glm::vec3 *coefAceleracionNave;
+
+	// Nave
+	static Nave *nave;
 
 
 	/* Métodos */

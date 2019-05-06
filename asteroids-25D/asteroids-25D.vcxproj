@@ -21,10 +21,14 @@
   <ItemGroup>
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="shaderColor.frag" />
+    <None Include="shaderColor.vert" />
     <None Include="shaderSkybox.frag" />
     <None Include="shaderSkybox.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Nave.h" />
+    <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\Asteroide.h" />
     <ClInclude Include="src\Cubemap.h" />
     <ClInclude Include="src\LectorImagen.h" />
@@ -41,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="src\Nave.cpp" />
+    <ClCompile Include="src\Disparo.cpp" />
     <ClCompile Include="src\Asteroide.cpp" />
     <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="src\LectorImagen.cpp" />

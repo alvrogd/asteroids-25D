@@ -35,7 +35,9 @@
 #include "Forma.h"
 #include "Objeto.h"
 #include "Movil.h"
+#include "Nave.h"
 #include "Asteroide.h"
+#include "Disparo.h"
 
 // Para representar una skybox
 #include "Cubemap.h"
@@ -60,21 +62,26 @@ const double FOV = 80.0;
 // Nombres de los ficheros que contienen los shaders
 const char *fragmentShaderModelos = "shader.frag";
 const char *vertexShaderModelos = "shader.vert";
+const char *fragmentShaderColor = "shaderColor.frag";
+const char *vertexShaderColor = "shaderColor.vert";
 const char *fragmentShaderSkybox = "shaderSkybox.frag";
 const char *vertexShaderSkybox = "shaderSkybox.vert";
 
 // Shaders que emplear en el renderizado
 Shader *shader = NULL;
+Shader *shaderColor = NULL;
 Shader *shaderSkybox = NULL;
 
 // Objetos que representar en pantalla y sus modelos
-Movil *nave = NULL;
+Nave *nave = NULL;
 Modelo *modeloNave = NULL;
 
 PuntoLuz *luz = NULL;
 
 std::vector<Asteroide *> asteroides;
 Modelo *modeloAsteroide = NULL;
+
+std::vector<Disparo *> disparos;
 
 // Ficheros que componen la skybox
 std::vector<std::string> caras
@@ -140,6 +147,17 @@ void display ()
 	{
 		asteroide->dibujar (glm::mat4 (1.0f), shader);
 	}
+
+	// Se carga el shader de color y se le aplican las matrices
+	shaderColor->usar ();
+	shaderColor->setMat4 ("projectionMatrix", projectionMatrix);
+	shaderColor->setMat4 ("viewMatrix", viewMatrix);
+
+	// Se representan todos los disparos
+	for (Disparo *disparo : disparos)
+	{
+		disparo->dibujar (glm::mat4 (1.0f), shaderColor);
+	}
 	
 	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
 	shaderSkybox->usar ();
@@ -178,6 +196,10 @@ int main (int argc, char **argv) {
 	// pantalla
 	Asteroide::conjuntoAsteroides = &asteroides;
 
+	// Se guarda en la clase de disparos una referencia al conjunto que contiene los disparos a representar en
+	// pantalla
+	Disparo::conjuntoDisparos = &disparos;
+
 	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
 	modeloAsteroide = new Modelo ("rock_by_dommk.obj");
@@ -187,7 +209,7 @@ int main (int argc, char **argv) {
 
 	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
 	// corregirlo de cara al cálculo de su movimiento
-	nave = new Movil (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, 8.0f, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
+	nave = new Nave (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, 8.0f, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
 		// TODO antes el último era 1,5 0,0 0,0 no se por qué
 		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.02f, 0.02f, 0.02f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
@@ -210,6 +232,7 @@ int main (int argc, char **argv) {
 	/* Compilación de los shaders */
 	
 	shader = new Shader (vertexShaderModelos, fragmentShaderModelos);
+	shaderColor = new Shader (vertexShaderColor, fragmentShaderColor);
 	shaderSkybox = new Shader (vertexShaderSkybox, fragmentShaderSkybox);
 
 	/*shaderSkybox->usar ();
@@ -227,6 +250,7 @@ int main (int argc, char **argv) {
 	// Para saber el tiempo transcurrido entre frames
 	float tiempoAnterior = 0;
 	float tiempoActual = 0;
+	float delta = 0;
 
 	// Se almacena en el controlador la referencias a los valores a modificar
 	Controlador::posicionNave = nave->getPosicionReferencia ();
@@ -234,6 +258,8 @@ int main (int argc, char **argv) {
 	Controlador::rotacionNave = nave->getRotacionReferencia ();
 	Controlador::correcionRotNave = nave->getCorreccionRotacionReferencia ();
 	Controlador::coefAceleracionNave = nave->getCoefAceleracionReferencia ();
+
+	Controlador::nave = nave;
 
 
 	// Mientras no se haya indicado la finalización
@@ -249,13 +275,33 @@ int main (int argc, char **argv) {
 
 		// Se obtiene el tiempo transcurrido desde que se ha cargado la librería
 		tiempoActual = (float)glfwGetTime ();
+
+		// Se actualizarán los objetos en pantalla en función del tiempo transcurrido
+		delta = tiempoActual - tiempoAnterior;
 		
 		// Se actualizan las posiciones de los objetos
-		nave->actualizarEstado ();
+		nave->actualizarEstado (delta);
 
 		for (Asteroide *asteroide : asteroides)
 		{
-			asteroide->actualizarEstado ();
+			asteroide->actualizarEstado (delta);
+		}
+
+		// NO CAMBIAR A FOR EACH PORQUE, SI SE ELIMINA UN DISPARO, PUEDE PETAR
+		for (int i = 0; i < disparos.size(); i++)
+		{
+			Disparo *disparo = disparos.at (i);
+
+			disparo->actualizarEstado (delta);
+
+			// Si se han agotado los warps restantes, se elimina el disparo de la escena
+			if (disparo->getWarpsRestantes () < 0)
+			{
+				delete disparo;
+
+				// Corrección del iterador para no saltarse ningún asteroide
+				i--;
+			}
 		}
 
 		// Se comprueba si la nave ha colisionado con algún asteroide
@@ -268,6 +314,33 @@ int main (int argc, char **argv) {
 
 				// Se destruye el asteroide
 				asteroides.at (i)->explotar ();
+
+				// Corrección del iterador para no saltarse ningún asteroide
+				i--;
+			}
+		}
+
+		// Se comprueba si los disparos han colisionado con algún asteroide
+		for (int i = 0; i < asteroides.size (); i++)
+		{
+			for (int j = 0; j < disparos.size (); j++)
+			{
+				if (disparos.at (j)->checkColision (asteroides.at (i)))
+				{
+					std::cout << "colisión con el asteroide nº: " << i << std::endl;
+
+					// Se destruye el asteroide
+					asteroides.at (i)->explotar ();
+
+					// Se destruye el disparo
+					delete disparos.at (j);
+
+					// Corrección del iterador para no saltarse ningún asteroide
+					i--;
+
+					// Ya no es necesario comprobar la colisión del asteroide iterado con algún otro disparo
+					break;
+				}
 			}
 		}
 
@@ -310,6 +383,7 @@ int main (int argc, char **argv) {
 
 	// Se destruyen los shaders
 	delete shader;
+	delete shaderColor;
 	delete shaderSkybox;
 
 

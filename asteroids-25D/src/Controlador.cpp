@@ -14,6 +14,8 @@ glm::vec3 *Controlador::rotacionNave = NULL;
 glm::vec3 *Controlador::correcionRotNave = NULL;
 glm::vec3 *Controlador::coefAceleracionNave = NULL;
 
+Nave *Controlador::nave = NULL;
+
 
 // Control de la cámara
 void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara)
@@ -67,6 +69,13 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		// Se reduce el ángulo de rotación de la nave en el eje Y
 		rotacionNave->y -= 2.0f;
 		//std::cout << rotacionNave->y << std::endl;
+	}
+
+	// Espacio
+	if (glfwGetKey (ventana, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		// Se indica a la nave que debe disparar
+		Controlador::nave->disparar ();
 	}
 
 	/*// F1

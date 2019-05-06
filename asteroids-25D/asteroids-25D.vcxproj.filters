@@ -19,6 +19,8 @@
     <None Include="shader.frag" />
     <None Include="shaderSkybox.vert" />
     <None Include="shaderSkybox.frag" />
+    <None Include="shaderColor.vert" />
+    <None Include="shaderColor.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Controlador.h">
@@ -58,6 +60,12 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="src\Asteroide.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Disparo.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nave.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,6 +113,12 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\Asteroide.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Disparo.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nave.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

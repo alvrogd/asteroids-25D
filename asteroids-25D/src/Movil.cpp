@@ -21,7 +21,7 @@ Movil::Movil (glm::vec3 escalado, Modelo * modelo, float radioHitbox, glm::vec3 
 	this->correccionRotacion = correccionRotacion;
 }
 
-void Movil::actualizarEstado ()
+void Movil::actualizarEstado (float tiempoTranscurrido)
 {
 	// Se modifica la posición del móvil en función de la velocidad registrada
 	this->posicion.x += this->velocidad.x;
@@ -38,12 +38,12 @@ void Movil::actualizarEstado ()
 		this->posicion.z *= -1;
 	}
 
-	// Se reduce la velocidad de la nave en cada coordenada
+	// Se reduce la velocidad del móvil en cada coordenada
 	this->velocidad.x *= 1 - this->coefDeceleracion.x;
 	this->velocidad.z *= 1 - this->coefDeceleracion.z;
 }
 
-void Movil::dibujar (glm::mat4 transformacionPadre, Shader * shader) const
+void Movil::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 {
 	// Se inicializan las matrices a emplear
 	glm::mat4 transformacion = transformacionPadre;
@@ -59,9 +59,6 @@ void Movil::dibujar (glm::mat4 transformacionPadre, Shader * shader) const
 	// Se ejecuta el método sobreescrito pasándole como argumento la matriz compuesta; es decir, se preserva el método
 	// original y simplemente se añaden las transformaciones aquí realizadas
 	Objeto::dibujar (transformacion, shader);
-
-	// Hitbox para ayuda
-	//Forma::dibujarEsfera(
 }
 
 bool Movil::checkColision (Movil * movil) const

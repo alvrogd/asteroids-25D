@@ -48,7 +48,7 @@ public:
 
 	/* Métodos */
 
-	virtual void dibujar (glm::mat4 transformacionPadre, Shader *shader) const;
+	virtual void dibujar (glm::mat4 transformacionPadre, Shader *shader);
 
 
 private:
