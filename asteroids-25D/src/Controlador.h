@@ -11,6 +11,9 @@
 // Para modificar la matriz de visionado
 #include "Shader.h"
 
+// Para almacenar referencias a los asteroides de la escena
+#include "Asteroide.h"
+
 // Para almacenar una referencia a la nave representada
 #include "Nave.h"
 
@@ -29,6 +32,9 @@ public:
 
 	// Modo de la cámara
 	static int modoCamara;
+
+	// Asteroides en la escena
+	static std::vector<Asteroide *> *asteroides;
 
 	// Posición de la nave
 	static glm::vec3 *posicionNave;

@@ -273,6 +273,9 @@ int main (int argc, char **argv) {
 	float delta = 0;
 
 	// Se almacena en el controlador la referencias a los valores a modificar
+	Controlador::asteroides = &asteroides;
+
+	// TODO eliminar estas referencias y usar la de la nave directamente
 	Controlador::posicionNave = nave->getPosicionReferencia ();
 	Controlador::velocidadNave = nave->getVelocidadReferencia ();
 	Controlador::rotacionNave = nave->getRotacionReferencia ();

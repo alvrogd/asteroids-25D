@@ -8,6 +8,8 @@ float *Controlador::relacionAspecto = NULL;
 
 int Controlador::modoCamara = 4;
 
+std::vector<Asteroide *> *Controlador::asteroides = NULL;
+
 glm::vec3 *Controlador::posicionNave = NULL;
 glm::vec3 *Controlador::velocidadNave = NULL;
 glm::vec3 *Controlador::rotacionNave = NULL;
@@ -76,6 +78,23 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	{
 		// Se indica a la nave que debe disparar
 		Controlador::nave->disparar ();
+	}
+
+	// R
+	if (glfwGetKey (ventana, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		// Se crean 100 asteroides
+		for (int i = 0; i < 100; i++)
+		{
+			Controlador::asteroides->push_back (new Asteroide ());
+		}
+	}
+
+	// C
+	if (glfwGetKey (ventana, GLFW_KEY_C) == GLFW_PRESS)
+	{
+		// Se eliminan los asteroides en la escena
+		Controlador::asteroides->clear ();
 	}
 
 	/*// F1
