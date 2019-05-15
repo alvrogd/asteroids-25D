@@ -4,7 +4,7 @@
 // Clase a heredar
 #include "Movil.h"
 
-// Se representán como rectángulos
+// Se representán como esferas
 #include "Forma.h"
 
 // Para conjuntos de datos

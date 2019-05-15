@@ -21,6 +21,8 @@
     <None Include="shaderSkybox.frag" />
     <None Include="shaderColor.vert" />
     <None Include="shaderColor.frag" />
+    <None Include="shaderParticula.frag" />
+    <None Include="shaderParticula.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Controlador.h">
@@ -69,6 +71,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="src\Sonido.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particula.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -125,6 +130,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\Sonido.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Particula.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

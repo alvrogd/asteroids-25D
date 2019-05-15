@@ -41,6 +41,7 @@
 #include "Nave.h"
 #include "Asteroide.h"
 #include "Disparo.h"
+#include "Particula.h"
 
 // Para representar una skybox
 #include "Cubemap.h"
@@ -72,11 +73,14 @@ const char *fragmentShaderColor = "shaderColor.frag";
 const char *vertexShaderColor = "shaderColor.vert";
 const char *fragmentShaderSkybox = "shaderSkybox.frag";
 const char *vertexShaderSkybox = "shaderSkybox.vert";
+const char *fragmentShaderParticulas = "shaderParticula.frag";
+const char *vertexShaderParticulas = "shaderParticula.vert";
 
 // Shaders que emplear en el renderizado
 Shader *shader = NULL;
 Shader *shaderColor = NULL;
 Shader *shaderSkybox = NULL;
+Shader *shaderParticulas = NULL;
 
 // Objetos que representar en pantalla y sus modelos
 Nave *nave = NULL;
@@ -102,6 +106,9 @@ std::vector<std::string> caras
 
 // Skybox
 Cubemap *skybox = NULL;
+
+// Partículas presentes en pantalla
+std::vector<Particula *> particulas;
 
 
 /**
@@ -184,6 +191,17 @@ void display ()
 	{
 		disparo->dibujar (glm::mat4 (1.0f), shaderColor);
 	}
+
+	// Se carga el shader de partículas y se aplican las matrices
+	shaderParticulas->usar ();
+	shaderParticulas->setMat4 ("projectionMatrix", projectionMatrix);
+	shaderParticulas->setMat4 ("viewMatrix", viewMatrix);
+
+	// Se representan todas las partículas
+	for (Particula *particula : particulas)
+	{
+		particula->dibujar (glm::mat4 (1.0f), shaderParticulas);
+	}
 	
 	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
 	shaderSkybox->usar ();
@@ -226,6 +244,10 @@ int main (int argc, char **argv) {
 	// pantalla
 	Disparo::conjuntoDisparos = &disparos;
 
+	// Se guarda en la clase de partículas una referencia al conjunto que contiene las partículas a representar en
+	// pantalla
+	Particula::conjuntoParticulas = &particulas;
+
 	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
 	modeloAsteroide = new Modelo ("rock_by_dommk.obj");
@@ -254,12 +276,19 @@ int main (int argc, char **argv) {
 
 	skybox = new Cubemap (caras);
 
+	for (int i = 0; i < 50; i++)
+	{
+		particulas.push_back (new Particula (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, rand() % 5, 0.0f),
+			glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 2.0f));
+	}
+
 
 	/* Compilación de los shaders */
 	
 	shader = new Shader (vertexShaderModelos, fragmentShaderModelos);
 	shaderColor = new Shader (vertexShaderColor, fragmentShaderColor);
 	shaderSkybox = new Shader (vertexShaderSkybox, fragmentShaderSkybox);
+	shaderParticulas = new Shader (vertexShaderParticulas, fragmentShaderParticulas);
 
 	/*shaderSkybox->usar ();
 	shaderSkybox->setInt ("skybox", 0);*/
@@ -379,6 +408,32 @@ int main (int argc, char **argv) {
 			}
 		}
 
+		// Se actualiza la posición de las partículas visibles en pantalla
+		for (int i = 0; i < particulas.size (); i++)
+		{
+			Particula *particula = particulas.at (i);
+
+			particula->actualizarEstado (delta);
+
+			// Si se han agotado la vida de la partícula, se elimina de la escena
+			if (particula->getVida() < 0.0f)
+			{
+				delete particula;
+
+				particulas.erase (particulas.begin () + i);
+
+				// Corrección del iterador para no saltarse ninguna partícula
+				i--;
+			}
+		}
+
+		// Se añaden nuevas partículas
+		for (int i = 0; i < 5; i++)
+		{
+			particulas.push_back (new Particula (glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, rand () % 5, 0.0f),
+				glm::vec4 (1.0f, 0.0f, 0.0f, 1.0f), 2.0f));
+		}
+
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
 
@@ -436,6 +491,7 @@ int main (int argc, char **argv) {
 	delete shader;
 	delete shaderColor;
 	delete shaderSkybox;
+	delete shaderParticulas;
 
 
 	// Se destruyen los reproductores de sonido
