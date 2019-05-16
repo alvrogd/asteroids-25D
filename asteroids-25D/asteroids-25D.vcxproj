@@ -29,6 +29,7 @@
     <None Include="shaderSkybox.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ConjuntoParticulas.h" />
     <ClInclude Include="src\Particula.h" />
     <ClInclude Include="src\Nave.h" />
     <ClInclude Include="src\Disparo.h" />
@@ -49,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="src\ConjuntoParticulas.cpp" />
     <ClCompile Include="src\Particula.cpp" />
     <ClCompile Include="src\Nave.cpp" />
     <ClCompile Include="src\Disparo.cpp" />

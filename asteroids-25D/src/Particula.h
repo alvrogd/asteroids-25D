@@ -28,6 +28,8 @@ public:
 
 	Particula (glm::vec3 posicion, glm::vec3 velocidad, glm::vec4 color, float vida);
 
+	Particula (glm::vec3 posicion, glm::vec3 velocidad, glm::vec4 color, float vida, bool perteneceConjunto);
+
 
 	/* Destructor */
 
@@ -86,6 +88,16 @@ public:
 		this->edad = edad;
 	}
 
+	bool getPerteneceConjunto () const
+	{
+		return this->perteneceConjunto;
+	}
+
+	void setPerteneceConjunto (bool perteneceConjunto)
+	{
+		this->perteneceConjunto = perteneceConjunto;
+	}
+
 
 	/* Métodos */
 
@@ -112,6 +124,9 @@ private:
 
 	// Tiempo que lleva activa en pantalla
 	float edad;
+
+	// Si la partícula forma parte de un conjunto de partículas
+	bool perteneceConjunto;
 };
 
 #endif

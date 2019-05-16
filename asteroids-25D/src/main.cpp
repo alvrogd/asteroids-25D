@@ -42,6 +42,7 @@
 #include "Asteroide.h"
 #include "Disparo.h"
 #include "Particula.h"
+#include "ConjuntoParticulas.h"
 
 // Para representar una skybox
 #include "Cubemap.h"
@@ -109,6 +110,7 @@ Cubemap *skybox = NULL;
 
 // Partículas presentes en pantalla
 std::vector<Particula *> particulas;
+std::vector<ConjuntoParticulas *> conjuntosParticulas;
 
 
 /**
@@ -197,10 +199,15 @@ void display ()
 	shaderParticulas->setMat4 ("projectionMatrix", projectionMatrix);
 	shaderParticulas->setMat4 ("viewMatrix", viewMatrix);
 
-	// Se representan todas las partículas
+	// Se representan todas las partículas, tanto las individuales como las contenidas en conjuntos de partículas
 	for (Particula *particula : particulas)
 	{
 		particula->dibujar (glm::mat4 (1.0f), shaderParticulas);
+	}
+
+	for (ConjuntoParticulas *conjuntoParticulas : conjuntosParticulas)
+	{
+		conjuntoParticulas->dibujar (glm::mat4 (1.0f), shaderParticulas);
 	}
 	
 	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
@@ -247,6 +254,10 @@ int main (int argc, char **argv) {
 	// Se guarda en la clase de partículas una referencia al conjunto que contiene las partículas a representar en
 	// pantalla
 	Particula::conjuntoParticulas = &particulas;
+
+	// Se guarda en la clase de conjuntos de partículas una referencia al conjunto que contiene los conjuntos de
+	// partículas a representar en pantalla
+	ConjuntoParticulas::conjuntoConjuntoParticulas = &conjuntosParticulas;
 
 	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
@@ -430,6 +441,24 @@ int main (int argc, char **argv) {
 			{
 				delete particula;
 
+				// Corrección del iterador para no saltarse ninguna partícula
+				i--;
+			}
+		}
+
+		// Se actualiza la posición de los conjuntos de partículas visibles en pantalla
+		for (int i = 0; i < conjuntosParticulas.size (); i++)
+		{
+			ConjuntoParticulas *conjuntoParticulas = conjuntosParticulas.at (i);
+
+			conjuntoParticulas->actualizarEstado (delta);
+
+			// Si se han agotado la vida de la partícula, se elimina de la escena
+			if (conjuntoParticulas->isMuerto ())
+			{
+				std::cout << "1. borrando" << std::endl;
+				delete conjuntoParticulas;
+				std::cout << "5. borrado completado" << std::endl;
 				// Corrección del iterador para no saltarse ninguna partícula
 				i--;
 			}

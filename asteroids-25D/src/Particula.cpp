@@ -23,18 +23,38 @@ Particula::Particula (glm::vec3 posicion, glm::vec3 velocidad, glm::vec4 color, 
 
 	// Inicialmente, la edad se inicializa a 0 dado que acaba de generarse
 	this->edad = 0.0f;
+
+	// Al no indicarse, se asume que la partícula no pertenece a un conjunto de partículas
+	this->perteneceConjunto = false;
+}
+
+Particula::Particula (glm::vec3 posicion, glm::vec3 velocidad, glm::vec4 color, float vida, bool perteneceConjunto)
+{
+	// Se guardan los valores dados
+	this->posicion = posicion;
+	this->velocidad = velocidad;
+	this->color = color;
+	this->vida = vida;
+	this->perteneceConjunto = perteneceConjunto;
+
+	// Inicialmente, la edad se inicializa a 0 dado que acaba de generarse
+	this->edad = 0.0f;
 }
 
 Particula::~Particula ()
 {
-	// La partícula se busca a sí misma en el conjunto de partículas en escena
-	for (int i = 0; i < Particula::conjuntoParticulas->size (); i++)
+	// La partícula se busca a sí misma en el conjunto de partículas en escena; tan solo se habrá añadido a él si no
+	// pertenece a un conjunto de partículas
+	if (!this->perteneceConjunto)
 	{
-		// Si se ha encontrado
-		if (Particula::conjuntoParticulas->at (i) == this)
+		for (int i = 0; i < Particula::conjuntoParticulas->size (); i++)
 		{
-			// Se elimina la partícula del conjunto de partículas
-			Particula::conjuntoParticulas->erase (Particula::conjuntoParticulas->begin () + i);
+			// Si se ha encontrado
+			if (Particula::conjuntoParticulas->at (i) == this)
+			{
+				// Se elimina la partícula del conjunto de partículas
+				Particula::conjuntoParticulas->erase (Particula::conjuntoParticulas->begin () + i);
+			}
 		}
 	}
 }
@@ -95,7 +115,6 @@ void Particula::generarExplosion (glm::vec3 posicion)
 		glm::vec3 velocidad;
 
 		// Para ello, se calcula inicialmente un vector unitario que defina el sentido del movimiento.
-		//
 		//
 		// Para una esfera:
 		//	x = r * sin(theta) * cos(phi)

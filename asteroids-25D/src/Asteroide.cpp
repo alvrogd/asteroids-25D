@@ -1,6 +1,7 @@
 #include "Asteroide.h"
 
 // Para generar explosiones
+#include "ConjuntoParticulas.h"
 #include "Particula.h"
 #include "Sonido.h"
 
@@ -116,8 +117,12 @@ void Asteroide::explotar ()
 					this->vidas - 1));
 			}
 
-			// Se genera una explosión en la posición del asteroide
-			Particula::generarExplosion (this->getPosicion ());
+			// Se genera una explosión en la posición del asteroide; en lugar de generar muchas partículas
+			// individuales, se crea un conjunto de partículas para obtener un mejor rendimiento
+			ConjuntoParticulas *conjuntoParticulas = new ConjuntoParticulas (this->getPosicion (),
+				glm::vec4 (1.0f, 0.0f, 1.0f, 1.0f));
+			ConjuntoParticulas::conjuntoConjuntoParticulas->push_back (conjuntoParticulas);
+			conjuntoParticulas->generarExplosion (3.0f);
 
 			// Se reproduce un efecto de explosión en la posición del asteroide
 			Sonido::getSonido ()->reproducirExplosion (this->getPosicion ());
