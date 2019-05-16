@@ -53,7 +53,7 @@ void Nave::disparar ()
 
 	// Se reproduce un efecto de disparo; sin repetición, reproducción desde el inicio, y tratamiento de "track" para
 	// obtener una referencia a él
-	this->sonidoDisparo = Sonido::getSonido ()->getSonido2D ()->play2D ("laser_rapid.mp3", GL_FALSE, GL_FALSE, GL_TRUE);
+	this->sonidoDisparo = Sonido::getSonido ()->getSonido2D ()->play2D ("laser_rapid.ogg", GL_FALSE, GL_FALSE, GL_TRUE);
 	// Se reduce su volumen
 	this->sonidoDisparo->setVolume (0.5f);
 }

@@ -386,8 +386,28 @@ int main (int argc, char **argv) {
 					// Se destruye el asteroide
 					asteroides.at (i)->explotar ();
 
-					// Se destruye el disparo
-					delete disparos.at (j);
+					// Se destruyen los disparos próximos al disparo que ha explotado
+					std::vector<Disparo *> disparosEliminar;
+
+					for (int k = 0; k < disparos.size (); k++)
+					{
+						// Si se encuentran distanciados en menos de 100 unidades (se incluye a propósito el propio
+						// disparo que ha explotado para eliminarlo en el mismo bucle
+						if (glm::distance (disparos.at (k)->getPosicion (),	disparos.at (j)->getPosicion ()) < 100.0f)
+						{
+							// Se marca el disparo para destrucción
+							disparosEliminar.push_back (disparos.at (k));
+						}
+					}
+
+					// Se destruyen los disparos encontrados
+					while (disparosEliminar.size () > 0)
+					{
+						delete disparosEliminar.at (0);
+						// Es necesario eliminar el disparo del vector manualmente, dado que los disparos simplemente
+						// se eliminan a sí mismos en el vector global de "main.cpp"
+						disparosEliminar.erase (disparosEliminar.begin());
+					}
 
 					// Corrección del iterador para no saltarse ningún asteroide
 					i--;
