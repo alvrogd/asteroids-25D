@@ -72,13 +72,26 @@ void Particula::actualizarEstado (float tiempoTranscurrido)
 
 void Particula::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 {
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_SRC_ALPHA);
 
 	// Se activa el shader dado
 	shader->usar ();
 
-	// Se establece el color de la partícula en el shader
-	shader->setVec4 ("Color", this->color);
+	// Se establece el color de la partícula en el shader:
+	//	- El color se desvanecerá a medida que la partícula se acerque a su fin
+	//	- El color tornará hacia blanco a medida que la partícula se acerque a su fin
+	glm::vec4 color = this->color;
+
+	float porcentajeRestante = (this->vida - this->edad) / this->vida;
+	float porcentajeAvanzado = 1 - porcentajeRestante;
+
+	color.r += porcentajeAvanzado;
+	color.g += porcentajeAvanzado;
+	color.b += porcentajeAvanzado;
+	color.a *= porcentajeRestante;
+
+	shader->setVec4 ("Color", color);
 
 	// Se inicializan las matrices a emplear
 	glm::mat4 transformacion = transformacionPadre;
@@ -102,8 +115,7 @@ void Particula::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 	// Se representa el disparo
 	Forma::dibujarEsfera ();
 
-
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable (GL_BLEND);
 }
 
 void Particula::generarExplosion (glm::vec3 posicion)

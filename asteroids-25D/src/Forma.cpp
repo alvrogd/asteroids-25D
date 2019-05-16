@@ -5,7 +5,7 @@ Esfera * Forma::esfera = NULL;
 void Forma::inicializarFormas ()
 {
 	// Se crea una esfera
-	Forma::esfera = new Esfera (1.0f, 10, 10);
+	Forma::esfera = new Esfera (1.0f, 6, 6);
 }
 
 void Forma::destruirFormas ()
