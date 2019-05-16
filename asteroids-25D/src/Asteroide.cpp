@@ -1,5 +1,9 @@
 #include "Asteroide.h"
 
+// Para generar explosiones
+#include "Particula.h"
+
+
 Modelo *Asteroide::modelo = NULL;
 std::vector<Asteroide*> * Asteroide::conjuntoAsteroides = NULL;
 
@@ -110,6 +114,9 @@ void Asteroide::explotar ()
 				Asteroide::conjuntoAsteroides->push_back (new Asteroide (getEscalado () * 0.6f, getPosicion (),
 					this->vidas - 1));
 			}
+
+			// Se genera una explosión en la posición del asteriode
+			Particula::generarExplosion (this->getPosicion ());
 
 			// Se elimina el asteroide
 			delete this;

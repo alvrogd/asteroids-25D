@@ -416,11 +416,9 @@ int main (int argc, char **argv) {
 			particula->actualizarEstado (delta);
 
 			// Si se han agotado la vida de la partícula, se elimina de la escena
-			if (particula->getVida() < 0.0f)
+			if (particula->isMuerta ())
 			{
 				delete particula;
-
-				particulas.erase (particulas.begin () + i);
 
 				// Corrección del iterador para no saltarse ninguna partícula
 				i--;

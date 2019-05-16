@@ -29,6 +29,11 @@ public:
 	Particula (glm::vec3 posicion, glm::vec3 velocidad, glm::vec4 color, float vida);
 
 
+	/* Destructor */
+
+	~Particula ();
+
+
 	/* Getters y setters */
 
 	glm::vec3 & getPosicion ()
@@ -71,6 +76,16 @@ public:
 		this->vida = vida;
 	}
 
+	float getEdad () const
+	{
+		return this->edad;
+	}
+
+	void setEdad (float edad)
+	{
+		this->edad = edad;
+	}
+
 
 	/* Métodos */
 
@@ -78,7 +93,9 @@ public:
 
 	void dibujar (glm::mat4 transformacionPadre, Shader *shader);
 
-	void generarExplosion (glm::vec3 posicion);
+	static void generarExplosion (glm::vec3 posicion);
+
+	bool isMuerta () const;
 
 
 private:
@@ -90,8 +107,11 @@ private:
 
 	glm::vec4 color;
 
-	// Tiempo restante hasta desaparecer
+	// Tiempo desde que aparece hasta que debe dejar de mostrarse en pantalla
 	float vida;
+
+	// Tiempo que lleva activa en pantalla
+	float edad;
 };
 
 #endif
