@@ -2,6 +2,7 @@
 
 // Para generar explosiones
 #include "Particula.h"
+#include "Sonido.h"
 
 
 Modelo *Asteroide::modelo = NULL;
@@ -115,8 +116,11 @@ void Asteroide::explotar ()
 					this->vidas - 1));
 			}
 
-			// Se genera una explosión en la posición del asteriode
+			// Se genera una explosión en la posición del asteroide
 			Particula::generarExplosion (this->getPosicion ());
+
+			// Se reproduce un efecto de explosión en la posición del asteroide
+			Sonido::getSonido ()->reproducirExplosion (this->getPosicion ());
 
 			// Se elimina el asteroide
 			delete this;

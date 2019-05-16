@@ -276,12 +276,6 @@ int main (int argc, char **argv) {
 
 	skybox = new Cubemap (caras);
 
-	for (int i = 0; i < 50; i++)
-	{
-		particulas.push_back (new Particula (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, rand() % 5, 0.0f),
-			glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 2.0f));
-	}
-
 
 	/* Compilación de los shaders */
 	
@@ -320,11 +314,7 @@ int main (int argc, char **argv) {
 	Controlador::nave = nave;
 
 	// Se comienza a reproducir la música de fondo en un bucle infinito
-	//Sonido::getSonido()->getSonido2D ()->play2D("breakout.mp3", GL_TRUE);
-	irrklang::ISound *musica = Sonido::getSonido ()->getSonido3D ()->play3D ("Galactic Funk.mp3", irrklang::vec3df (0.0f, 0.0f, 0.0f), GL_TRUE, GL_FALSE, GL_TRUE);
-	musica->setMinDistance (200.0f);
-	// Realmente no es necesario que solo es repetirse
-	musica->setPosition (irrklang::vec3df (0.0f, 0.0f, 0.0f));
+	Sonido::getSonido()->getSonido2D ()->play2D("Galactic Funk.mp3", GL_TRUE);
 
 	// Mientras no se haya indicado la finalización
 	while (!glfwWindowShouldClose (ventana)) {
@@ -425,18 +415,11 @@ int main (int argc, char **argv) {
 			}
 		}
 
-		// Se añaden nuevas partículas
-		for (int i = 0; i < 5; i++)
-		{
-			particulas.push_back (new Particula (glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, rand () % 5, 0.0f),
-				glm::vec4 (1.0f, 0.0f, 0.0f, 1.0f), 2.0f));
-		}
-
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
 
 
-		// Se establece la nueva posición de la nave como la posición del oyente de la música de fondo; también es
+		// Se establece la nueva posición de la nave como la posición del oyente de los sonidos 3D activos; también es
 		// necesaria la dirección en la que mira el oyente
 		glm::vec3 posicionNave = nave->getPosicion ();
 
@@ -448,8 +431,7 @@ int main (int argc, char **argv) {
 		// cos^2(x) + sen^2(x) = 1 -> para que sea un vector unitario
 		direccionNave *= direccionNave;
 
-		Sonido::getSonido ()->getSonido3D ()->setListenerPosition (irrklang::vec3df (posicionNave.x, posicionNave.y,
-			posicionNave.z), irrklang::vec3df (direccionNave.x, direccionNave.y, direccionNave.z));
+		Sonido::getSonido ()->actualizar (posicionNave, direccionNave);
 
 
 		/* Render */

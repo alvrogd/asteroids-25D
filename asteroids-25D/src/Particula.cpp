@@ -33,8 +33,6 @@ Particula::~Particula ()
 		// Si se ha encontrado
 		if (Particula::conjuntoParticulas->at (i) == this)
 		{
-			std::cout << "partícula encontrada" << std::endl;
-
 			// Se elimina la partícula del conjunto de partículas
 			Particula::conjuntoParticulas->erase (Particula::conjuntoParticulas->begin () + i);
 		}
