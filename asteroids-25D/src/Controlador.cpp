@@ -60,7 +60,16 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		// Se añade velocidad a la nave en función de la dirección a la que apunta
 		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * coefAceleracionNave->x;
 		velocidadNave->z -= cosf (glm::radians(rotacionNave->y)) * coefAceleracionNave->z;
+
+		// Y se le indica que se encuentra acelerando
+		nave->setIsAcelerando (true);
 		//std::cout << velocidadNave->x << velocidadNave->z << std::endl;
+	}
+
+	else
+	{
+		// Se indica a la nave que no se encuentra acelerando
+		nave->setIsAcelerando (false);
 	}
 
 	// A

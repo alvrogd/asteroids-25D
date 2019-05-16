@@ -34,8 +34,20 @@ public:
 		this->sonidoDisparo = sonidoDisparo;
 	}
 
+	bool getIsAcelerando () const
+	{
+		return this->isAcelerando;
+	}
+
+	void setIsAcelerando(bool isAcelerando)
+	{
+		this->isAcelerando = isAcelerando;
+	}
+
 
 	/* Métodos */
+
+	void actualizarEstado (float tiempoTranscurrido) override;
 
 	void disparar ();
 
@@ -45,6 +57,9 @@ private:
 	/* Atributos */
 
 	irrklang::ISound *sonidoDisparo = NULL;
+
+	// Si el usuario se encuentra presionando la tecla que provoca que la nave acelere
+	bool isAcelerando;
 };
 
 #endif

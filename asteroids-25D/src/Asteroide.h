@@ -20,6 +20,8 @@ public:
 
 	static std::vector<Asteroide *> * conjuntoAsteroides;
 
+	static const int MAXIMO_VIDAS = 2;
+
 
 	/* Constructor */
 

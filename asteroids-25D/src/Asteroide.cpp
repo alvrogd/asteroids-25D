@@ -51,7 +51,7 @@ Asteroide::Asteroide ()
 	setRadioHitbox (maximo * 43.0f);
 
 	// El asteroide dará lugar a nuevos asteroides en dos ocasiones
-	this->vidas = 2;
+	this->vidas = Asteroide::MAXIMO_VIDAS;
 }
 
 Asteroide::Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas)
@@ -64,9 +64,15 @@ Asteroide::Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas)
 		// Posición dada
 		posicion,
 		// Velocidad aleatoria de hasta 1 unidad por frame (no se puede calcular mod 10 porque siempre resultaría una
-		// velocidad nula
-		glm::vec3 (fmod (std::rand (), 10.0f) * 0.1f, fmod (std::rand (), 10.0f) * 0.1f, fmod (std::rand (), 10.0f) *
-			0.1f),
+		// velocidad nula; se aplica un multiplicador inversamente proporcional al número de vidas dado, regido por el
+		// máximo de vidas de un asteroide, y limitado a x2
+		// TODO optimizar
+		glm::vec3 (fmod (std::rand (), 10.0f) * 0.1f * (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) /
+				(float)Asteroide::MAXIMO_VIDAS),
+			fmod (std::rand (), 10.0f) * 0.1f * (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) /
+				(float)Asteroide::MAXIMO_VIDAS),
+			fmod (std::rand (), 10.0f) * 0.1f * (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) /
+				(float)Asteroide::MAXIMO_VIDAS)),
 		// Aceleración y deceleración nulas
 		glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3 (0.0f, 0.0f, 0.0f),
@@ -91,6 +97,9 @@ Asteroide::Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas)
 
 	// 86.0f medido en blender
 	setRadioHitbox (maximo * 43.0f);
+
+	// Se guarda el número de vidas dado
+	this->vidas = vidas;
 }
 
 void Asteroide::explotar ()

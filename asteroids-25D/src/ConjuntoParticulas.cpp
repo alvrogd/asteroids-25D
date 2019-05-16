@@ -60,7 +60,7 @@ void ConjuntoParticulas::dibujar (glm::mat4 transformacionPadre, Shader * shader
 
 void ConjuntoParticulas::generarExplosion (float vida)
 {
-	// Se generan 200 partículas aleatorias centradas en el punto de la explosión
+	// Se generan 100 partículas aleatorias centradas en el punto de la explosión
 	for (int i = 0; i < 100; i++)
 	{
 		// La partícula saldrá disparada en una dirección aleatoria
@@ -82,6 +82,16 @@ void ConjuntoParticulas::generarExplosion (float vida)
 		// Se calcula un cos(theta) aleatorio, en el rango [-1, 1) con precisión de centésimas
 		aleatorio = (std::rand () % 200) - 100;
 		float cosTheta = (float)aleatorio / 100.f;
+
+
+		/* NO VA
+		// Se calcula una phi aleatoria, en el rango [0, 2pi) con precisión de centésimas
+		float phi = fmod (std::rand (), 2 * PI);
+
+		// Se calcula un cos(theta) aleatorio, en el rango [-1, 1) con precisión de centésimas
+		float cosTheta = fmod (std::rand (), 2.0f) - 1.0f;
+		*/
+
 
 		// Se obtiene la theta correspondiente al cos(theta) generado
 		float theta = acos (cosTheta);
