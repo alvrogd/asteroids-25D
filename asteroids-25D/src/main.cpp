@@ -375,8 +375,6 @@ int main (int argc, char **argv) {
 		{
 			if (nave->checkColision (asteroides.at(i)))
 			{
-				std::cout << "colisión con el asteroide nº: " << i << std::endl;
-
 				// Se destruye el asteroide
 				asteroides.at (i)->explotar ();
 
@@ -392,8 +390,6 @@ int main (int argc, char **argv) {
 			{
 				if (disparos.at (j)->checkColision (asteroides.at (i)))
 				{
-					std::cout << "colisión con el asteroide nº: " << i << std::endl;
-
 					// Se destruye el asteroide
 					asteroides.at (i)->explotar ();
 
@@ -456,9 +452,8 @@ int main (int argc, char **argv) {
 			// Si se han agotado la vida de la partícula, se elimina de la escena
 			if (conjuntoParticulas->isMuerto ())
 			{
-				std::cout << "1. borrando" << std::endl;
 				delete conjuntoParticulas;
-				std::cout << "5. borrado completado" << std::endl;
+
 				// Corrección del iterador para no saltarse ninguna partícula
 				i--;
 			}

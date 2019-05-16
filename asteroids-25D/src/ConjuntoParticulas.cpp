@@ -16,13 +16,12 @@ ConjuntoParticulas::ConjuntoParticulas (glm::vec3 posicion, glm::vec4 color)
 
 ConjuntoParticulas::~ConjuntoParticulas ()
 {
-	std::cout << "2. borrando particulas" << std::endl;
 	// Se destruyen todas las partículas contenidas
 	for (Particula *particula : this->particulas)
 	{
 		delete particula;
 	}
-	std::cout << "3. particulas borradas" << std::endl;
+
 	// El conjunto de partículas se busca a sí mismo en el conjunto de conjuntos de partículas en escena
 	for (int i = 0; i < ConjuntoParticulas::conjuntoConjuntoParticulas->size (); i++)
 	{
@@ -34,7 +33,6 @@ ConjuntoParticulas::~ConjuntoParticulas ()
 				ConjuntoParticulas::conjuntoConjuntoParticulas->begin () + i);
 		}
 	}
-	std::cout << "4. eliminado del array" << std::endl;
 }
 
 void ConjuntoParticulas::actualizarEstado (float tiempoTranscurrido)
