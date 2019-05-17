@@ -15,15 +15,19 @@ class Esfera
 {
 public:
 	/* Constructor */
+
 	Esfera (float radio, int sectores, int stacks);
 
+
 	/* Destructor */
+
 	~Esfera ();
 
 
 	/* Métodos */
+
 	void dibujar() const;
-	
+
 
 private:
 	/* Atributos */

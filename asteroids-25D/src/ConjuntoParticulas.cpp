@@ -40,7 +40,7 @@ void ConjuntoParticulas::actualizarEstado (float tiempoTranscurrido)
 	// Se modifica la posición de todas las partículas contenidas
 	for (Particula *particula : this->particulas)
 	{
-		particula->actualizarEstado (tiempoTranscurrido);
+		particula->actualizarEstadoConjunto (tiempoTranscurrido);
 	}
 
 	// Se aumenta el tiempo que la partícula lleva activa
@@ -49,17 +49,42 @@ void ConjuntoParticulas::actualizarEstado (float tiempoTranscurrido)
 
 void ConjuntoParticulas::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 {
-	// Se dibujan todas las partículas contenidas
+	// Se activa la transparencia
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_SRC_ALPHA);
+
+	// Se activa el shader dado
+	shader->usar ();
+
+	// Se establece el color de las partículas en el shader:
+	//	- El color se desvanecerá a medida que las partículas se acerquen a su fin
+	//	- El color tornará hacia blanco a medida que las partículas se acerquen a su fin (desactivado)
+	glm::vec4 color = this->color;
+
+	float porcentajeRestante = (this->vida - this->edad) * this->inversoVida;
+	//float porcentajeAvanzado = 1 - porcentajeRestante;
+
+	/*color.r += porcentajeAvanzado;
+	color.g += porcentajeAvanzado;
+	color.b += porcentajeAvanzado;*/
+	color.a *= porcentajeRestante;
+
+	shader->setVec4 ("Color", color);
+
+	// Se representan todas las partículas contenidas
 	for (Particula *particula : this->particulas)
 	{
-		particula->dibujar(transformacionPadre, shader);
+		particula->dibujarConjunto (transformacionPadre, shader);
 	}
+
+	// Se desactiva la transparencia
+	glDisable (GL_BLEND);
 }
 
 void ConjuntoParticulas::generarExplosion (float vida)
 {
-	// Se generan 75 partículas aleatorias centradas en el punto de la explosión
-	for (int i = 0; i < 75; i++)
+	// Se generan 60 partículas aleatorias centradas en el punto de la explosión
+	for (int i = 0; i < 60; i++)
 	{
 		// La partícula saldrá disparada en una dirección aleatoria
 		glm::vec3 velocidad;
@@ -114,6 +139,7 @@ void ConjuntoParticulas::generarExplosion (float vida)
 	// Se guarda la duración dada para el conjunto y se inicializa a 0 su edad
 	this->edad = 0;
 	this->vida = vida;
+	this->inversoVida = 1 / this->vida;
 }
 
 bool ConjuntoParticulas::isMuerto () const

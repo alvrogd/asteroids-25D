@@ -74,7 +74,8 @@ void Mesh::configurarMesh ()
 	glBindBuffer (GL_ARRAY_BUFFER, this->VBO);
 
 	// Se cargan todos los datos de los vértices dados
-	glBufferData (GL_ARRAY_BUFFER, this->vertices.size () * sizeof (SVertice), this->vertices.data (), GL_STATIC_DRAW);
+	glBufferData (GL_ARRAY_BUFFER, this->vertices.size () * sizeof (SVertice), this->vertices.data (),
+		GL_STATIC_DRAW);
 
 	// Ahora se configura el EBO
 	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, this->EBO);

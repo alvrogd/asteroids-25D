@@ -403,7 +403,7 @@ int main (int argc, char **argv) {
 	Controlador::setNave (nave);
 
 	// Se comienza a reproducir la música de fondo en un bucle infinito
-	Sonido::getSonido()->getSonido2D ()->play2D("Galactic Funk.mp3", GL_TRUE);
+	Sonido::getSonido()->getSonido2D ()->play2D("Galactic Funk.ogg", GL_TRUE);
 
 	// Se crea un hilo que ayude concurrentemente con la actualización de las partículas que se encuentran en
 	// conjuntos; para ello, se le indicará una variable que debe comprobar en cada iteración para saber si dene

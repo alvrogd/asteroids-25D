@@ -112,6 +112,9 @@ private:
 	// Tiempo desde que aparece hasta que debe dejar de mostrarse en pantalla
 	float vida;
 
+	// Inverso de la vida dada
+	float inversoVida;
+
 	// Tiempo que lleva activo en pantalla
 	float edad;
 };

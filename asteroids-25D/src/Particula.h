@@ -103,7 +103,11 @@ public:
 
 	void actualizarEstado (float tiempoTranscurrido);
 
+	void actualizarEstadoConjunto (float tiempoTranscurrido);
+
 	void dibujar (glm::mat4 transformacionPadre, Shader *shader);
+
+	void dibujarConjunto (glm::mat4 transformacionPadre, Shader *shader);
 
 	static void generarExplosion (glm::vec3 posicion);
 

@@ -70,8 +70,19 @@ void Particula::actualizarEstado (float tiempoTranscurrido)
 	this->edad += tiempoTranscurrido;
 }
 
+void Particula::actualizarEstadoConjunto (float tiempoTranscurrido)
+{
+	// Se modifica la posición de la partícula en función de la velocidad registrada
+	this->posicion.x += this->velocidad.x;
+	this->posicion.y += this->velocidad.y;
+	this->posicion.z += this->velocidad.z;
+
+	// Al pertenecer a un conjunto, no es necesario que la partícula sepa su edad individual
+}
+
 void Particula::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 {
+	// Se activa la transparencia
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_SRC_ALPHA);
 
@@ -96,15 +107,8 @@ void Particula::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 	// Se inicializan las matrices a emplear
 	glm::mat4 transformacion = transformacionPadre;
 
-	// 3 -> Se aplica la traslación guardada
+	// 2 -> Se aplica la traslación guardada
 	transformacion = glm::translate (transformacion, getPosicion ());
-
-	/*// 2 -> Se aplica la rotación guardada sobre cada uno de los ejes
-	glm::vec3 rot = getRotacion ();
-	glm::vec3 correcion = getCorreccionRotacion ();
-	transformacion = glm::rotate (transformacion, glm::radians (rot.x + correcion.x), glm::vec3 (1.0f, 0.0f, 0.0f));
-	transformacion = glm::rotate (transformacion, glm::radians (rot.y + correcion.y), glm::vec3 (0.0f, 1.0f, 0.0f));
-	transformacion = glm::rotate (transformacion, glm::radians (rot.z + correcion.z), glm::vec3 (0.0f, 0.0f, 1.0f));*/
 
 	// 1 -> Se aplica un escalado estándar para todas las partículas
 	transformacion = glm::scale (transformacion, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -112,15 +116,37 @@ void Particula::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 	// Se aplica la transformación calculada a la matriz del modelo del shader
 	shader->setMat4 ("modelMatrix", transformacion);
 
-	// Se representa el disparo
+	// Se representa la partícula
 	Forma::dibujarEsfera ();
 
+	// Se desactiva la transparencia
 	glDisable (GL_BLEND);
+}
+
+void Particula::dibujarConjunto (glm::mat4 transformacionPadre, Shader * shader)
+{
+	// Como la partícula pertenece a un conjunto, este ya habrá activado el "blend", el shader dado y habrá
+	// establecido en el shader el color degradado de la partícula
+	
+	// Se inicializan las matrices a emplear
+	glm::mat4 transformacion = transformacionPadre;
+
+	// 2 -> Se aplica la traslación guardada
+	transformacion = glm::translate (transformacion, getPosicion ());
+
+	// 1 -> Se aplica un escalado estándar para todas las partículas
+	transformacion = glm::scale (transformacion, glm::vec3 (1.0f, 1.0f, 1.0f));
+
+	// Se aplica la transformación calculada a la matriz del modelo del shader
+	shader->setMat4 ("modelMatrix", transformacion);
+
+	// Se representa la partícula
+	Forma::dibujarEsfera ();
 }
 
 void Particula::generarExplosion (glm::vec3 posicion)
 {
-	// Se generan 200 partículas aleatorias centradas en el punto de la explosión
+	// Se generan 100 partículas aleatorias centradas en el punto de la explosión
 	for (int i = 0; i < 100; i++)
 	{
 		// La partícula saldrá disparada en una dirección aleatoria
