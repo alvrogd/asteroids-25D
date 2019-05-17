@@ -18,6 +18,7 @@
 class Objeto
 {
 public:
+
 	/* Constructor */
 
 	Objeto (glm::vec3 escalado, Modelo *modelo);
@@ -52,6 +53,7 @@ public:
 
 
 private:
+
 	/* Atributos */
 
 	// Factor de escalado en cada coordenada

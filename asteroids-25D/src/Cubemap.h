@@ -1,6 +1,7 @@
 #ifndef CUBEMAP_H
 #define CUBEMAP_H
 
+
 // Librerías de OpenGL
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -14,12 +15,14 @@
 // Para cargar imágenes
 #include "LectorImagen.h"
 
+// Para conjuntos de datos
 #include <vector>
 
 
 class Cubemap
 {
 public:
+
 	/* Constructor */
 
 	Cubemap (std::vector<std::string> caras);
@@ -38,8 +41,10 @@ public:
 	void dibujar (Shader *shader) const;
 
 private:
+
 	/* Atributos */
 
+	// Identificador dentro de OpenGL
 	unsigned int id;
 
 	// VBO, EBO y VAO para su representación

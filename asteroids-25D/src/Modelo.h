@@ -19,12 +19,14 @@
 // Se compondrá de meshes
 #include "Mesh.h"
 
-#include <iostream>
+// Para conjuntos de datos
 #include <vector>
+
 
 class Modelo
 {
 public:
+
 	/* Constructor */
 
 	Modelo (const char *ruta);
@@ -59,6 +61,7 @@ public:
 
 
 private:
+
 	/* Atributos */
 
 	// Información del modelo
@@ -75,8 +78,6 @@ private:
 	Mesh procesarMesh (aiMesh *mesh, const aiScene *escena);
 
 	std::vector<STextura> cargarTexturasMateriales (aiMaterial *material, aiTextureType tipo, std::string nombreTipo);
-
-	unsigned int ficheroATextura (const char *path, const std::string &directory);
 };
 
 #endif

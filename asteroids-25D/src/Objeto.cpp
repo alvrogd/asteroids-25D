@@ -12,4 +12,3 @@ void Objeto::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 	// Se aplica el escalado guardado a la matriz dada, y se le pasa al modelo que representa al objeto
 	this->modelo->dibujar (glm::scale(transformacionPadre, this->escalado), shader);
 }
-

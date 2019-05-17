@@ -68,6 +68,7 @@ private:
 
 	/* Atributos */
 
+	// Sonido reproducido cuando la nave dispara
 	irrklang::ISound *sonidoDisparo = NULL;
 
 	// Si el usuario se encuentra presionando la tecla que provoca que la nave acelere

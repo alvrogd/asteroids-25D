@@ -9,6 +9,7 @@
 Modelo *Asteroide::modelo = NULL;
 std::vector<Asteroide*> * Asteroide::conjuntoAsteroides = NULL;
 
+
 Asteroide::Asteroide ()
 	// Escalado aleatorio entre x0.5 y x0.8
 	: Movil (glm::vec3 (fmod (std::rand (), 3.0f) * 0.1f + 0.5f, fmod (std::rand (), 3.0f) * 0.3f + 0.5f, fmod (
@@ -107,8 +108,6 @@ Asteroide::~Asteroide ()
 		// Si se ha encontrado
 		if (Asteroide::conjuntoAsteroides->at (i) == this)
 		{
-			std::cout << "encontrado" << std::endl;
-
 			// Se elimina la partícula del conjunto de partículas
 			Asteroide::conjuntoAsteroides->erase (Asteroide::conjuntoAsteroides->begin () + i);
 		}

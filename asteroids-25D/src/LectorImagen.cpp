@@ -1,11 +1,14 @@
 #include "LectorImagen.h"
 
+
 // Carga de imágenes
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 // Para cargar imágenes del disco
 #include <stb_image.h>
 #endif
+
+#include <iostream>
 
 
 unsigned int LectorImagen::ficheroATextura (const char *ruta)

@@ -1,6 +1,8 @@
 #include "Mesh.h"
 
+
 #include <iostream>
+
 
 Mesh::Mesh (std::vector<SVertice> vertices, std::vector<unsigned int> indices, std::vector<STextura> texturas)
 {
@@ -92,7 +94,8 @@ void Mesh::configurarMesh ()
 
 	// Coordenadas de texturas de los vértices
 	glEnableVertexAttribArray (2);
-	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)offsetof (SVertice, coordenadasTexturas));
+	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)offsetof (SVertice,
+		coordenadasTexturas));
 
 	// Se desvincula el VAO
 	glBindVertexArray (0);

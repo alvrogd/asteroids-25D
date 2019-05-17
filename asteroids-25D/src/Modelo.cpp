@@ -1,8 +1,13 @@
 #include "Modelo.h"
 
+
+// Para cargar texturas a partir de ficheros
 #include "LectorImagen.h"
 
-Modelo::Modelo (const char * ruta)
+#include <iostream>
+
+
+Modelo::Modelo (const char *ruta)
 {
 	cargarModelo (ruta);
 }
@@ -56,8 +61,8 @@ void Modelo::cargarModelo (std::string ruta)
 
 void Modelo::procesarNodo (aiNode * nodo, const aiScene * escena)
 {
-	// Se procesan todos los meshes del nodo (cada nodo contiene índices de los meshes guardados en la escena de los que
-	// se compone)
+	// Se procesan todos los meshes del nodo (cada nodo contiene índices de los meshes guardados en la escena de los
+	// que se compone)
 	for (unsigned int i = 0; i < nodo->mNumMeshes; i++)
 	{
 		aiMesh *mesh = escena->mMeshes[nodo->mMeshes[i]];
@@ -124,11 +129,13 @@ Mesh Modelo::procesarMesh (aiMesh * mesh, const aiScene * escena)
 		aiMaterial *material = escena->mMaterials[mesh->mMaterialIndex];
 
 		// Se cargan sus mapas difusos y se almacenan en el vector de texturas
-		std::vector<STextura> mapasDifusos = cargarTexturasMateriales (material, aiTextureType_DIFFUSE, "texturaDifusa");
+		std::vector<STextura> mapasDifusos = cargarTexturasMateriales (material, aiTextureType_DIFFUSE,
+			"texturaDifusa");
 		texturas.insert (texturas.end (), mapasDifusos.begin (), mapasDifusos.end ());
 
 		// Se cargan sus mapas especulares y se almacenan en el vector de texturas
-		std::vector<STextura> mapasEspeculares = cargarTexturasMateriales (material, aiTextureType_SPECULAR, "texturaEspecular");
+		std::vector<STextura> mapasEspeculares = cargarTexturasMateriales (material, aiTextureType_SPECULAR,
+			"texturaEspecular");
 		texturas.insert (texturas.end (), mapasEspeculares.begin (), mapasEspeculares.end ());
 	}
 
@@ -136,7 +143,8 @@ Mesh Modelo::procesarMesh (aiMesh * mesh, const aiScene * escena)
 	return Mesh (vertices, indices, texturas);
 }
 
-std::vector<STextura> Modelo::cargarTexturasMateriales (aiMaterial *material, aiTextureType tipo, std::string nombreTipo)
+std::vector<STextura> Modelo::cargarTexturasMateriales (aiMaterial *material, aiTextureType tipo, std::string
+	nombreTipo)
 {
 	// Resultado
 	std::vector<STextura> texturas;

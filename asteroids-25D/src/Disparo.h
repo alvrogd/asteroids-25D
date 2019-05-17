@@ -7,11 +7,11 @@
 // Se representán como esferas
 #include "Forma.h"
 
-// Para conjuntos de datos
-#include <vector>
-
 // Para emitir luz
 #include "PuntoLuz.h"
+
+// Para conjuntos de datos
+#include <vector>
 
 
 class Disparo :

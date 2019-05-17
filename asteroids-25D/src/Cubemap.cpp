@@ -85,11 +85,19 @@ void Cubemap::dibujar (Shader *shader) const
 	// Se emplea el shader dado
 	shader->usar ();
 
-	// Se renderiza el cubemap, empleando la textura cargada
+	// Se renderiza el cubemap
+
+	// Se vincula el VAO creado
 	glBindVertexArray (this->VAO);
+
+	// Se activa la primera unidad de textura y se vincula la textura cargada para el cubemap
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture (GL_TEXTURE_CUBE_MAP, this->id);
+
+	// Se renderizar los triángulos de los que se compone el cubemap
 	glDrawArrays (GL_TRIANGLES, 0, 36);
+
+	// Se desvincula el VAO dado que ya no va a hacer falta de nuevo
 	glBindVertexArray (0);
 
 	// Se restaura la función de depth-testing por defecto

@@ -1,6 +1,8 @@
 #include "Forma.h"
 
+
 Esfera * Forma::esfera = NULL;
+
 
 void Forma::inicializarFormas ()
 {
@@ -16,6 +18,6 @@ void Forma::destruirFormas ()
 
 void Forma::dibujarEsfera ()
 {
+	// Se relega a la esfera creada la tarea de representarse
 	Forma::esfera->dibujar ();
-	//Mesh::sphere->draw ();
 }

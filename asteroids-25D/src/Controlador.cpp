@@ -1,7 +1,5 @@
 #include "Controlador.h"
 
-#include <iostream>
-
 
 /* Propiedades de la ventana */
 

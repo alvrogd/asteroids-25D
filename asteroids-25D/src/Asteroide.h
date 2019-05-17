@@ -6,8 +6,6 @@
 // Para conjuntos de datos
 #include <vector>
 
-#include <iostream>
-
 
 class Asteroide :
 	public Movil

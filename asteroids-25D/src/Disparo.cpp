@@ -1,5 +1,6 @@
 #include "Disparo.h"
 
+
 std::vector<Disparo *> *Disparo::conjuntoDisparos = NULL;
 
 
@@ -38,8 +39,6 @@ Disparo::~Disparo ()
 		// Si se ha encontrado
 		if (Disparo::conjuntoDisparos->at (i) == this)
 		{
-			std::cout << "disparo encontrado" << std::endl;
-
 			// Se elimina el disparo del conjunto de disparos
 			Disparo::conjuntoDisparos->erase (Disparo::conjuntoDisparos->begin () + i);
 		}
@@ -115,6 +114,6 @@ void Disparo::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 	// Se aplica la transformación calculada a la matriz del modelo del shader
 	shader->setMat4 ("modelMatrix", transformacion);
 
-	// Se representa el disparo
+	// Se representa el disparo mediante una esfera a la que se aplicarán las transformaciones computadas
 	Forma::dibujarEsfera ();
 }

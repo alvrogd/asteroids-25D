@@ -40,10 +40,13 @@ void Inicializador::crearVentana (GLFWwindow **ventana, const int WINDOW_WIDTH, 
 	*ventana = glfwCreateWindow (WINDOW_WIDTH, WINDOW_HEIGHT, nombreVentana, NULL, NULL);
 
 	// Si no se ha podido crear la ventana
-	if (ventana == NULL) {
+	if (ventana == NULL)
+	{
 		std::cout << "ERROR::INICIALIZADOR::VENTANA_NO_CREADA" << std::endl;
+
+		// Se finaliza la ejecución del programa (se liberan antes los recursos consumidos por la librería GLFW)
 		glfwTerminate ();
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 
 	// Se indica al hilo actual que establezca el contexto de la ventana creada como su contexto de OpenGL
@@ -60,10 +63,11 @@ void Inicializador::inicializarGLAD ()
 	}
 }
 
-void Inicializador::configurarDimensionadoVentana (GLFWwindow *ventana, int *wWidth, int *wHeight, float *relacionAspecto)
+void Inicializador::configurarDimensionadoVentana (GLFWwindow *ventana, int *wWidth, int *wHeight, float
+	*relacionAspecto)
 {
-	// Se indica a OpenGL el tamaño de la ventana (los dos primeros parámetros son las coordenadas de la esquina inferior
-	// izquierda
+	// Se indica a OpenGL el tamaño de la ventana (los dos primeros parámetros son las coordenadas de la esquina
+	// inferior izquierda
 	glViewport (0, 0, *wWidth, *wHeight);
 
 	// Se almacenan en el controlador las referencias al tamaño de la ventana

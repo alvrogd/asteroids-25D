@@ -2,8 +2,7 @@
 
 #include <cmath>
 
-#include "Forma.h"
-
+// Se inicializan a un valor predeterminado mínimo
 glm::vec3 Movil::coordenadasWarp = glm::vec3 (10.0f, 10.0f, 10.0f);
 
 
@@ -63,8 +62,6 @@ void Movil::dibujar (glm::mat4 transformacionPadre, Shader * shader)
 
 bool Movil::checkColision (Movil * movil) const
 {
-	// Las hitbox son esferas
-
 	// Se obtiene la distancia entre los centros de los móviles
 	float distancia = glm::distance(this->posicion, movil->getPosicion ());
 

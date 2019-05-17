@@ -1,4 +1,4 @@
-// Valor de PI
+Ôªø// Valor de PI
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -6,7 +6,7 @@
 // Variables de windows
 #include <windows.h>
 
-// LibrerÌas de OpenGL
+// Librer√≠as de OpenGL
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -16,7 +16,7 @@
 // Sonido
 #include <irrKlang.h>
 
-// EjecuciÛn multihilo
+// Ejecuci√≥n multihilo
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -54,43 +54,53 @@
 // Para representar una skybox
 #include "Cubemap.h"
 
-// Para la reproducciÛn de sonido
+// Para la reproducci√≥n de sonido
 #include "Sonido.h"
 
 // Para conjuntos de datos
 #include <vector>
 
-// Para la generaciÛn de n˙meros aleatorios
+// Para la generaci√≥n de n√∫meros aleatorios
 #include <ctime>
 
 
-// M˙texes y variables de condiciÛn mediante las cuales emular barreras (estas ˙ltimas no se encuentran disponibles
-// en C++)
+// M√∫texes y variables de condici√≥n mediante las cuales emular barreras (estas √∫ltimas no se encuentran disponibles
+// en C++):
+//
+//	- Regi√≥n 1: el hilo auxiliar esperar√° en ella hasta que el hilo principal comience una nueva iteraci√≥n del main
+//	            loop.
+//	- Regi√≥n 2: el hilo principal esperar√° en ella hasta que el hilo auxiliar realice una iteraci√≥n de la funci√≥n de
+//				actualizaci√≥n de part√≠culas, de modo que se sincronicen para evitar carreras cr√≠ticas.
 std::mutex mutexRegion1;
 std::mutex mutexRegion2;
 std::condition_variable condicionRegion1;
 std::condition_variable condicionRegion2;
 
 
-// Tiempo transcurrido entre frames; se actualizan en cada iteraciÛn del bucle principal
+// Tiempo transcurrido entre frames; se actualizan en cada iteraci√≥n del bucle principal
 float tiempoAnterior = 0;
 float tiempoActual = 0;
 float delta = 0;
-// Variables auxiliares empleadas para la sincronizaciÛn entre los dos hilos usados
+// Variables auxiliares empleadas para la sincronizaci√≥n entre los dos hilos usados
 bool nuevoDelta = false;
 bool hiloAuxiliarFinalizado = false;
+
+// Si existe temblor y cu√°ndo se activ√≥ uno por √∫ltima vez
+bool hayTemblor = false;
+float ultimoTemblor = 0.0f;
+
 
 // Propiedades de la ventana a crear
 int wWidth = 800;
 int wHeight = 800;
 
-// RelaciÛn de aspecto de la ventana
-float relacionAspecto = wWidth / wHeight;
+// Relaci√≥n de aspecto de la ventana
+float relacionAspecto = (float)wWidth / (float)wHeight;
 
-// FOV de la c·mara
+// FOV de la c√°mara
 const double FOV = 80.0;
 
-// Distancia m·xima a la que renderizar los objetos de la escena
+// Distancia m√°xima a la que renderizar los objetos de la escena
 double distanciaMaximaRenderizado = 100.0;
 
 
@@ -109,6 +119,7 @@ Shader *shader = NULL;
 Shader *shaderColor = NULL;
 Shader *shaderSkybox = NULL;
 Shader *shaderParticulas = NULL;
+
 
 // Objetos que representar en pantalla y sus modelos
 Nave *nave = NULL;
@@ -138,9 +149,6 @@ std::vector<std::string> caras
 // Skybox
 Cubemap *skybox = NULL;
 
-// Si existe temblor y cu·ndo se activÛ por ˙ltima vez
-bool hayTemblor = false;
-float ultimoTemblor = 0.0f;
 
 
 /**
@@ -158,33 +166,34 @@ void display ()
 	// Se limpia el buffer de profundidad
 	glClear (GL_DEPTH_BUFFER_BIT);
 
-	// Se emplear· toda la ventana en el renderizado
+	// Se emplear√° toda la ventana en el renderizado
 	glViewport (0, 0, wWidth, wHeight);
 
-	// Se representar·n los cuerpos con relleno
+	// Se representar√°n los cuerpos con relleno
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
 
-	// Se calculan las matrices de proyecciÛn y de visionado
+	// Se calculan las matrices de proyecci√≥n y de visionado
 
-	// Se aplica una proyecciÛn en perspectiva
+	// Se aplica una proyecci√≥n en perspectiva
 	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1,
 		distanciaMaximaRenderizado);
 
-	// La matriz de visionado la calcula en control puesto que la c·mara es controlada por el input del usuario
+	// La matriz de visionado la calcula en control puesto que la c√°mara es controlada por el input del usuario
 	glm::mat4 viewMatrix;
 	glm::vec3 posicionCamara;
 	Controlador::calcularViewMatrix (viewMatrix, posicionCamara);
 
-	// Se aplica un temblor a la matriz base del modelo si es necesario
+	// Se inicializa la matriz base de los modelos a la identidad
 	glm::mat4 modelMatrixBase = glm::mat4 (1.0f);
 
+	// Se aplica un temblor a la matriz base de los modelos si es necesario
 	if (hayTemblor)
 	{
 		modelMatrixBase = glm::translate (modelMatrixBase, glm::vec3 (
 			cosf (tiempoActual * 10.0f) * 2.0f,
-			-sinf (tiempoActual * 10.0f) * 4.0f,
-			-cosf (tiempoActual * 10.0f) * 3.0f
+			-sinf (tiempoActual * 10.0f) * 3.5f,
+			-cosf (tiempoActual * 10.0f) * 2.7f
 		));
 	}
 
@@ -193,30 +202,30 @@ void display ()
 	shader->setMat4 ("projectionMatrix", projectionMatrix);
 	shader->setMat4 ("viewMatrix", viewMatrix);
 
-	// Adem·s, es necesario cargar las luces presentes en la escena
+	// Adem√°s, es necesario cargar las luces presentes en la escena
 	luz->cargar (shader, glm::mat4(1.0f), 0);
 	
 	// Ya se ha cargado la luz principal
 	int numLuces = 1;
 
-	// Es necesario considerar el lÌmite de luces del shader
+	// Es necesario considerar el l√≠mite de luces del shader
 	int max = std::min (disparos.size (), (size_t) 50);
 	for (int i = 0; i < max; i++)
 	{
 		// Se carga la luz del disparo iterado
 		disparos.at (i)->getLuz ()->cargar (shader, glm::mat4 (1.0f), numLuces);
 
-		// Se incrementa el n˙mero de luces cargadas
+		// Se incrementa el n√∫mero de luces cargadas
 		numLuces++;
 	}
 
-	// Se indica el n˙mero de luces cargadas
+	// Se indica el n√∫mero de luces cargadas
 	shader->setInt ("numPuntosLuz", numLuces);
 
-	// Y la posiciÛn de la c·mara para el c·lculo de la iluminaciÛn
+	// Y la posici√≥n de la c√°mara para el c√°lculo de la iluminaci√≥n
 	shader->setVec3 ("posicionCamara", posicionCamara);
 
-	// Se representa la nave si a˙n no ha sido destruida
+	// Se representa la nave si a√∫n no ha sido destruida
 	if (!(nave->getIsDestruida ()))
 	{
 		nave->dibujar (modelMatrixBase, shader);
@@ -239,12 +248,12 @@ void display ()
 		disparo->dibujar (modelMatrixBase, shaderColor);
 	}
 
-	// Se carga el shader de partÌculas y se aplican las matrices
+	// Se carga el shader de part√≠culas y se aplican las matrices
 	shaderParticulas->usar ();
 	shaderParticulas->setMat4 ("projectionMatrix", projectionMatrix);
 	shaderParticulas->setMat4 ("viewMatrix", viewMatrix);
 
-	// Se representan todas las partÌculas, tanto las individuales como las contenidas en conjuntos de partÌculas
+	// Se representan todas las part√≠culas, tanto las individuales como las contenidas en conjuntos de part√≠culas
 	for (Particula *particula : particulas)
 	{
 		particula->dibujar (modelMatrixBase, shaderParticulas);
@@ -255,28 +264,27 @@ void display ()
 		conjuntoParticulas->dibujar (modelMatrixBase, shaderParticulas);
 	}
 	
-	// Ahora se carga el shader de la skybox y se aplican tambiÈn las matrices necesarias
+	// Ahora se carga el shader de la skybox y se aplican tambi√©n las matrices necesarias
 	shaderSkybox->usar ();
 	shaderSkybox->setMat4 ("projectionMatrix", projectionMatrix);
 	shaderSkybox->setMat4 ("viewMatrix", glm::mat4 (glm::mat3 (viewMatrix)));
 
 	// Y se representa la skybox
 	skybox->dibujar (shaderSkybox);
-
-	//std::cout << glGetError () << std::endl;
 }
 
 
 /*
- * Se actualiza la posiciÛn de las partÌculas representadas en la escena que pertenecen a conjuntos y, si se les agota
+ * Se actualiza la posici√≥n de las part√≠culas representadas en la escena que pertenecen a conjuntos y, si se les agota
  * el tiempo de vida, son eliminadas
  */
 void actualizarParticulasConjuntos (std::future<void> condicionFinalizacion)
 {
+	// El hilo auxiliar se ejecutar√° hasta que el hilo principal le indique que debe finalizar para acabar el programa
 	while (true)
 	{
 		{
-			// Se bloquea el mutex de la regiÛn 1
+			// Se bloquea el mutex de la regi√≥n 1
 			std::unique_lock<std::mutex> lock (mutexRegion1);
 
 			// Mientras no se haya calculado un nuevo delta
@@ -285,77 +293,77 @@ void actualizarParticulasConjuntos (std::future<void> condicionFinalizacion)
 				condicionRegion1.wait (lock);
 			}
 
-		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regiÛn 1
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regi√≥n 1
 
-		// Se comprueba si ha recibido una seÒal de finalizaciÛn
+		// Se comprueba si ha recibido una se√±al de finalizaci√≥n
 		if (condicionFinalizacion.wait_for (std::chrono::microseconds (100)) != std::future_status::timeout)
 		{
 			break;
 		}
 
-		// Se actualiza la posiciÛn de los conjuntos de partÌculas visibles en pantalla
-		for (int i = 0; i < conjuntosParticulas.size (); i++)
+		// Se actualiza la posici√≥n de los conjuntos de part√≠culas visibles en pantalla
+		for (unsigned int i = 0; i < conjuntosParticulas.size (); i++)
 		{
 			ConjuntoParticulas *conjuntoParticulas = conjuntosParticulas.at (i);
 
 			conjuntoParticulas->actualizarEstado (delta);
 
-			// Si se han agotado la vida de la partÌcula, se elimina de la escena
+			// Si se han agotado la vida de la part√≠cula, se elimina de la escena
 			if (conjuntoParticulas->isMuerto ())
 			{
 				delete conjuntoParticulas;
 
-				// CorrecciÛn del iterador para no saltarse ninguna partÌcula
+				// Correcci√≥n del iterador para no saltarse ninguna part√≠cula
 				i--;
 			}
 		}
 
 		{
-			// Se bloquea el mutex de la regiÛn 2
+			// Se bloquea el mutex de la regi√≥n 2
 			std::unique_lock<std::mutex> lock (mutexRegion2);
 
-			// Se indica que el hilo auxiliar ha completado su iteraciÛn
+			// Se indica que el hilo auxiliar ha completado su iteraci√≥n
 			hiloAuxiliarFinalizado = true;
 
-			// Adem·s, Èl mismo establece a falsa la condiciÛn de que se haya generado un nuevo delta para bloquearse
-			// hasta que el hilo principal comience una nueva actualizaciÛn de los objetos en la escena
+			// Adem√°s, √©l mismo establece a falsa la condici√≥n de que se haya generado un nuevo delta para bloquearse
+			// hasta que el hilo principal comience una nueva actualizaci√≥n de los objetos en la escena
 			nuevoDelta = false;
 
 			// Se despierta al hilo principal por si se ha dormido previamente esperando a que el hilo auxiliar
-			// completase una iteraciÛn de su funciÛn de trabajo
+			// completase una iteraci√≥n de su funci√≥n de trabajo
 			condicionRegion2.notify_one ();
 
-		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regiÛn 2
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regi√≥n 2
 	}
 }
 
 
 int main (int argc, char **argv) {
 
-	// Se obtiene una semilla en funciÛn del tiempo para la generaciÛn de n˙meros aleatorios
+	// Se obtiene una semilla en funci√≥n del tiempo para la generaci√≥n de n√∫meros aleatorios
 	std::srand (std::time (NULL));
 
 
-	/* InicializaciÛn de OpenGL */
+	/* Inicializaci√≥n de OpenGL */
 
 	GLFWwindow *ventana = NULL;
 	Inicializador::inicializarOpenGL (&ventana, "Asteroids 2.5D", &wWidth, &wHeight, &relacionAspecto);
 
 
-	/* GeneraciÛn de los objetos */
+	/* Generaci√≥n de los objetos */
 
-	// Se inicializan las formas b·sicas
+	// Se inicializan las formas b√°sicas
 	Forma::inicializarFormas ();
 
-	// Se establece el warp de los objetos mÛviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
+	// Se establece el warp de los objetos m√≥viles, permitiendo que se muevan dentro de un cuadrado de lado 1000
 	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
 	Movil::coordenadasWarp = glm::vec3 (2000.0f, 2000.0f, 2000.0f);
 
-	// La distancia m·xima de renderizado debe ser el mayor que el warp m·ximo establecido para los mÛviles respecto
-	// al origen de coordenadas (0, 0, 0), para poder ver asÌ todos los objetos de la escena aunque el jugador se
-	// encuentre en una punta de la escena. Adem·s debe considerarse que, al ser el ·rea cuadrada, el jugador podrÌa
-	// encontrarse en una esquina y, de no hacerse, los objetos de la esquina contraria no se podrÌan ver si tan solo
-	// se establece la distancia m·xima al doble del warp m·ximo.
+	// La distancia m√°xima de renderizado debe ser el mayor que el warp m√°ximo establecido para los m√≥viles respecto
+	// al origen de coordenadas (0, 0, 0), para poder ver as√≠ todos los objetos de la escena aunque el jugador se
+	// encuentre en una punta de la escena. Adem√°s debe considerarse que, al ser el √°rea cuadrada, el jugador podr√≠a
+	// encontrarse en una esquina y, de no hacerse, los objetos de la esquina contraria no se podr√≠an ver si tan solo
+	// se establece la distancia m√°xima al doble del warp m√°ximo.
 	distanciaMaximaRenderizado = std::sqrt(2.0 * 4000.0 * 4000.0);
 
 	// Se guarda en la clase de asteroides una referencia al conjunto que contiene los asteroides a representar en
@@ -366,56 +374,50 @@ int main (int argc, char **argv) {
 	// pantalla
 	Disparo::conjuntoDisparos = &disparos;
 
-	// Se guarda en la clase de partÌculas una referencia al conjunto que contiene las partÌculas a representar en
+	// Se guarda en la clase de part√≠culas una referencia al conjunto que contiene las part√≠culas a representar en
 	// pantalla
 	Particula::conjuntoParticulas = &particulas;
 
-	// Se guarda en la clase de conjuntos de partÌculas una referencia al conjunto que contiene los conjuntos de
-	// partÌculas a representar en pantalla
+	// Se guarda en la clase de conjuntos de part√≠culas una referencia al conjunto que contiene los conjuntos de
+	// part√≠culas a representar en pantalla
 	ConjuntoParticulas::conjuntoConjuntoParticulas = &conjuntosParticulas;
 
 	// Se cargan los modelos necesarios
 	modeloNave = new Modelo ("Viper-mk-IV-fighter.obj");
 	modeloAsteroide = new Modelo ("rock_by_dommk.obj");
 
-	// Se almacena una referencia al modelo que empler·n los asteroides
+	// Se almacena una referencia al modelo que empler√°n los asteroides
 	Asteroide::modelo = modeloAsteroide;
 
-	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotaciÛn inicial correspondiente para
-	// corregirlo de cara al c·lculo de su movimiento
+	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotaci√≥n inicial correspondiente para
+	// corregirlo de cara al c√°lculo de su movimiento
 	nave = new Nave (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, 8.0f, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
 		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.02f, 0.02f, 0.02f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
 
-	/*asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
-		0.5f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f),
-		glm::vec3 (0.0f, 0.0f, 0.0f));*/
-	// Se crean 100 asteroides
+	// Se crean 100 asteroides de forma aleatoria
 	for (int i = 0; i < 100; i++)
 	{
 		asteroides.push_back (new Asteroide ());
 	}
 
-	// Se crea una pequeÒa luz que ilumine la escena de color blanco principalmente
+	// Se crea una peque√±a luz que ilumine la escena, principalmente, de color blanco
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
 
-	// Se crea un skybox para dar la sensaciÛn de encontrarse en medio del espacio
+	// Se crea un skybox para dar la sensaci√≥n de encontrarse en medio del espacio
 	skybox = new Cubemap (caras);
 
 
-	/* CompilaciÛn de los shaders */
+	/* Compilaci√≥n de los shaders */
 	
 	shader = new Shader (vertexShaderModelos, fragmentShaderModelos);
 	shaderColor = new Shader (vertexShaderColor, fragmentShaderColor);
 	shaderSkybox = new Shader (vertexShaderSkybox, fragmentShaderSkybox);
 	shaderParticulas = new Shader (vertexShaderParticulas, fragmentShaderParticulas);
 
-	/*shaderSkybox->usar ();
-	shaderSkybox->setInt ("skybox", 0);*/
 
-
-	/* ConfiguraciÛn de OpenGL */
+	/* Configuraci√≥n de OpenGL */
 
 	// Se configura OpenGL con una serie de opciones ya definidas
 	Inicializador::configurarOpenGL ();
@@ -423,26 +425,28 @@ int main (int argc, char **argv) {
 
 	/* Bucle de renderizado (main loop) */
 
-	// Se almacena en el controlador la referencias a los valores a modificar
+	// Se almacena en el controlador la referencias a los valores que necesita para su correcto funcionamiento
 	Controlador::asteroides = &asteroides;
 	Controlador::particulas = &particulas;
 	Controlador::conjuntosParticulas = &conjuntosParticulas;
-
 	Controlador::setNave (nave);
 
-	// Se comienza a reproducir la m˙sica de fondo en un bucle infinito
+	// Se comienza a reproducir la m√∫sica de fondo en un bucle infinito
 	Sonido::getSonido()->getSonido2D ()->play2D("Galactic Funk.ogg", GL_TRUE);
 
-	// Se crea un hilo que ayude concurrentemente con la actualizaciÛn de las partÌculas que se encuentran en
-	// conjuntos; para ello, se le indicar· una variable que debe comprobar en cada iteraciÛn para saber si dene
-	// finalizar su ejecuciÛn
+	// Se crea un hilo que ayude concurrentemente con la actualizaci√≥n de las part√≠culas que se encuentran en
+	// conjuntos; para ello, se le indicar√° una variable que debe comprobar en cada iteraci√≥n para saber si debe
+	// finalizar su ejecuci√≥n
 	std::promise<void> senalSalida;
 	std::future<void> objetoFuturo = senalSalida.get_future ();
 
 	std::thread hiloParticulas (actualizarParticulasConjuntos, std::move(objetoFuturo));
 
-	std::cout << "COMENZANDO" << std::endl;
-	// Mientras no se haya indicado la finalizaciÛn
+
+	std::cout << std::endl << "========== Comenzando el juego ==========" << std::endl << std::endl;
+
+
+	// Mientras no se haya indicado la finalizaci√≥n del programa
 	while (!glfwWindowShouldClose (ventana))
 	{
 		/* Input */
@@ -451,33 +455,33 @@ int main (int argc, char **argv) {
 		Controlador::inputTeclado (ventana);
 
 
-		/* ActualizaciÛn */
+		/* Actualizaci√≥n */
 
-		// Se obtiene el tiempo transcurrido desde que se ha cargado la librerÌa
+		// Se obtiene el tiempo transcurrido desde que se ha cargado la librer√≠a
 		tiempoActual = (float)glfwGetTime ();
 
-		// Se actualizar·n los objetos en pantalla en funciÛn del tiempo transcurrido
+		// Se actualizar√°n los objetos en pantalla en funci√≥n del tiempo transcurrido
 		{
-			// Se bloquea el mutex de la regiÛn 1
+			// Se bloquea el mutex de la regi√≥n 1
 			std::unique_lock<std::mutex> lock (mutexRegion1);
 
-			// Se almacena el nuevo delta y se indica que es necesario efectuar una actualizaciÛn de los objetos en
+			// Se almacena el nuevo delta y se indica que es necesario efectuar una actualizaci√≥n de los objetos en
 			// pantalla
 			delta = tiempoActual - tiempoAnterior;
 			nuevoDelta = true;
 
-			// Se establece a falsa la condiciÛn de que el hilo auxiliar haya completado la iteraciÛn del bucle que
-			// deber· realizar; esta condiciÛn ser· establecida a verdadera por Èl mismo, de modo que el hilo
-			// principal pueda avanzar sin temor a causar carreras crÌticas
+			// Se establece a falsa la condici√≥n de que el hilo auxiliar haya completado la iteraci√≥n del bucle que
+			// deber√° realizar; esta condici√≥n ser√° establecida a verdadera por √©l mismo, de modo que el hilo
+			// principal pueda avanzar sin temor a causar carreras cr√≠ticas
 			hiloAuxiliarFinalizado = false;
 
-			// Se despierta al hilo auxiliar por si se ha dormido previamente esperando por una nueva actualizaciÛn de
+			// Se despierta al hilo auxiliar por si se ha dormido previamente esperando por una nueva actualizaci√≥n de
 			// los objetos en pantalla
 			condicionRegion1.notify_one ();
 
-		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regiÛn 1
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regi√≥n 1
 
-		// Se actualiza las posiciÛn de la nave si no ha sido destruida
+		// Se actualiza las posici√≥n de la nave si no ha sido destruida
 		if (!(nave->getIsDestruida ()))
 		{
 			nave->actualizarEstado (delta);
@@ -489,9 +493,11 @@ int main (int argc, char **argv) {
 			asteroide->actualizarEstado (delta);
 		}
 
-		// NO CAMBIAR A FOR EACH PORQUE, SI SE ELIMINA UN DISPARO, PUEDE PETAR
+		// NO SE PUEDE EMPLEAR UN BLOQUE "FOR EACH" PORQUE, SI SE DESTRUYE UNO DE LOS √çTEMS ITERADOS, ESTE SER√Å
+		// ELIMINADO TAMBI√âN DEL CONJUNTO DE DATOS ITERADO Y CAUSAR√Å UN ERROR
+
 		// Se actualizan las posiciones de los disparos
-		for (int i = 0; i < disparos.size(); i++)
+		for (unsigned int i = 0; i < disparos.size(); i++)
 		{
 			Disparo *disparo = disparos.at (i);
 
@@ -502,31 +508,31 @@ int main (int argc, char **argv) {
 			{
 				delete disparo;
 
-				// CorrecciÛn del iterador para no saltarse ning˙n asteroide
+				// Correcci√≥n del iterador para no saltarse ning√∫n disparo
 				i--;
 			}
 		}
 
-		// Se actualiza la posiciÛn de las partÌculas visibles en pantalla y que no se encuentran en conjuntos
-		for (int i = 0; i < particulas.size (); i++)
+		// Se actualiza la posici√≥n de las part√≠culas visibles en pantalla y que no se encuentran en conjuntos
+		for (unsigned int i = 0; i < particulas.size (); i++)
 		{
 			Particula *particula = particulas.at (i);
 
 			particula->actualizarEstado (delta);
 
-			// Si se han agotado la vida de la partÌcula, se elimina de la escena
+			// Si se han agotado la vida de la part√≠cula, se elimina de la escena
 			if (particula->isMuerta ())
 			{
 				delete particula;
 
-				// CorrecciÛn del iterador para no saltarse ninguna partÌcula
+				// Correcci√≥n del iterador para no saltarse ninguna part√≠cula
 				i--;
 			}
 		}
 
 
-		// Se establece la nueva posiciÛn de la nave como la posiciÛn del oyente de los sonidos 3D activos; tambiÈn es
-		// necesaria la direcciÛn en la que mira el oyente
+		// Se establece la nueva posici√≥n de la nave como la posici√≥n del oyente de los sonidos 3D activos; tambi√©n es
+		// necesaria la direcci√≥n en la que mira el oyente
 		glm::vec3 posicionNave = nave->getPosicion ();
 
 		glm::vec3 direccionNave = glm::vec3 (
@@ -539,43 +545,44 @@ int main (int argc, char **argv) {
 
 		Sonido::getSonido ()->actualizar (posicionNave, direccionNave);
 
-		// Se comprueba si la nave ha colisionado con alg˙n asteroide, en caso de que a˙n no haya sido destruida
+
+		// Se comprueba si la nave ha colisionado con alg√∫n asteroide, en caso de que a√∫n no haya sido destruida
 		bool hayColision = false;
 		Asteroide *asteroideChoque = NULL;
 
 		if (!(nave->getIsDestruida ()))
 		{
-			for (int i = 0; i < asteroides.size (); i++)
+			for (unsigned int i = 0; i < asteroides.size (); i++)
 			{
 				if (nave->checkColision (asteroides.at (i)))
 				{
-					// Se marca el asteroide para destrucciÛn
+					// Se marca el asteroide para destrucci√≥n
 					asteroideChoque = asteroides.at (i);
 
-					// Se indica que ha habido una colisiÛn
+					// Se indica que ha habido una colisi√≥n
 					hayColision = true;
 
-					// Ya no ser· necesario comprobar la colisiÛn con ning˙n asteroide m·s
+					// Ya no ser√° necesario comprobar la colisi√≥n con ning√∫n asteroide m√°s
 					break;
 				}
 			}
 		}
 
-		// Se espera a que el hilo auxiliar finalice; hasta este momento, el hilo auxiliar probablemente habr· tenido
+		// Se espera a que el hilo auxiliar finalice; hasta este momento, el hilo auxiliar probablemente habr√° tenido
 		// suficiente entero como para ejecutar la mayor parte de su tarea mientras que el hilo principal se encargaba
-		// de efectuar otras actualizaciones. La espera se realiza aquÌ para evitar carreras crÌticas entre los hilos,
-		// dado que el hilo principal deber· comprobar ahora una gran cantidad de colisiones y, en caso de ser
-		// necesario, generar las correspondientes partÌculas de una explosiÛn.
+		// de efectuar otras actualizaciones. La espera se realiza aqu√≠ para evitar carreras cr√≠ticas entre los hilos,
+		// dado que el hilo principal deber√° comprobar ahora una gran cantidad de colisiones y, en caso de ser
+		// necesario, generar las correspondientes part√≠culas de una explosi√≥n.
 		//
-		// La comprobaciÛn de colisiones entre la nave y los asteroides se hace a propÛsito en el anterior bucle,
+		// La comprobaci√≥n de colisiones entre la nave y los asteroides se hace a prop√≥sito en el anterior bucle,
 		// pero, en vez de manejarlas al instante, simplemente se marca el asteroide que puede haber colisionado para
-		// llevar a cabo las acciones de una colisiÛn tras asegurarse que no se producir·n carreras crÌticas. De este
-		// modo, se aumenta la cantidad de trabajo que los dos hilos pueden realizar.
+		// llevar a cabo las acciones de una colisi√≥n tras asegurarse que no se producir√°n carreras cr√≠ticas. De este
+		// modo, se aumenta la cantidad de trabajo que los dos hilos pueden realizar de forma paralela.
 		//
-		// En el siguiente bucle tan solo estar· activo el hilo principal dada la complejidad de intentar permitir que
+		// En el siguiente bucle tan solo estar√° activo el hilo principal dada la complejidad de intentar permitir que
 		// los dos hilos se ejecuten en paralelo mientras el principal se encuentre en dicho bucle.
 		{
-			// Se bloquea el mutex de la regiÛn 2
+			// Se bloquea el mutex de la regi√≥n 2
 			std::unique_lock<std::mutex> lock (mutexRegion2);
 
 			// Mientras el hilo auxiliar no haya acabado
@@ -584,12 +591,12 @@ int main (int argc, char **argv) {
 				condicionRegion2.wait (lock);
 			}
 
-		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regiÛn 2
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la regi√≥n 2
 
-		// Inicialmente, se presupone que en la actualizaciÛn no se ha generado un nuevo temblor
+		// Inicialmente, se presupone que en la actualizaci√≥n no se ha generado un nuevo temblor
 		bool generarTemblor = false;
 
-		// Si ha habido una colisiÛn de la nave con los asteroides, se lleva a cabo
+		// Si ha habido una colisi√≥n de la nave con los asteroides, se lleva a cabo
 		if (hayColision)
 		{
 			// Se destruye el asteroide que ha colisionado
@@ -602,26 +609,26 @@ int main (int argc, char **argv) {
 			generarTemblor = true;
 		}
 
-		// Se comprueba si los disparos han colisionado con alg˙n asteroide
-		for (int i = 0; i < asteroides.size (); i++)
+		// Se comprueba si los disparos han colisionado con alg√∫n asteroide
+		for (unsigned int i = 0; i < asteroides.size (); i++)
 		{
-			for (int j = 0; j < disparos.size (); j++)
+			for (unsigned int j = 0; j < disparos.size (); j++)
 			{
 				if (disparos.at (j)->checkColision (asteroides.at (i)))
 				{
 					// Se destruye el asteroide
 					asteroides.at (i)->explotar ();
 
-					// Se destruyen los disparos prÛximos al disparo que ha explotado
+					// Se destruyen los disparos pr√≥ximos al disparo que ha explotado
 					std::vector<Disparo *> disparosEliminar;
 
-					for (int k = 0; k < disparos.size (); k++)
+					for (unsigned int k = 0; k < disparos.size (); k++)
 					{
-						// Si se encuentran distanciados en menos de 100 unidades (se incluye a propÛsito el propio
+						// Si se encuentran distanciados en menos de 100 unidades (se incluye a prop√≥sito el propio
 						// disparo que ha explotado para eliminarlo en el mismo bucle
 						if (glm::distance (disparos.at (k)->getPosicion (),	disparos.at (j)->getPosicion ()) < 100.0f)
 						{
-							// Se marca el disparo para destrucciÛn
+							// Se marca el disparo para destrucci√≥n
 							disparosEliminar.push_back (disparos.at (k));
 						}
 					}
@@ -631,17 +638,17 @@ int main (int argc, char **argv) {
 					{
 						delete disparosEliminar.at (0);
 						// Es necesario eliminar el disparo del vector manualmente, dado que los disparos simplemente
-						// se eliminan a sÌ mismos en el vector global de "main.cpp"
+						// se eliminan a s√≠ mismos en el vector global de "main.cpp"
 						disparosEliminar.erase (disparosEliminar.begin());
 					}
 
 					// Se aplica un efecto de temblor a la escena
 					generarTemblor = true;
 
-					// CorrecciÛn del iterador para no saltarse ning˙n asteroide
+					// Correcci√≥n del iterador para no saltarse ning√∫n asteroide
 					i--;
 
-					// Ya no es necesario comprobar la colisiÛn del asteroide iterado con alg˙n otro disparo
+					// Ya no es necesario comprobar la colisi√≥n del asteroide iterado con alg√∫n otro disparo
 					break;
 				}
 			}
@@ -651,7 +658,7 @@ int main (int argc, char **argv) {
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
 
-		// Y, si se ha producido un temblor, se registra cu·ndo
+		// Y, si se ha producido un temblor, se registra cu√°ndo
 		if (generarTemblor)
 		{
 			hayTemblor = true;
@@ -659,23 +666,20 @@ int main (int argc, char **argv) {
 
 		}
 
-		// En caso contrario, se desactiva el temblor si lleva m·s de 100 ms activo
-		else if (tiempoActual - ultimoTemblor > 0.1f)
+		// En caso contrario, se desactiva el temblor si lleva m√°s de 120 ms activo
+		else if (tiempoActual - ultimoTemblor > 0.12f)
 		{
 			hayTemblor = false;
 		}
-		
-		// Se indica que el delta actualmente guardado ya no es v·lido
-		nuevoDelta = false;
 
 
 		/* Render */
 
-		// Se emplea la funciÛn ya definida para renderizar un frame
+		// Se emplea la funci√≥n ya definida para renderizar un frame
 		display ();
 
 
-		/* Final iteraciÛn */
+		/* Final iteraci√≥n */
 
 		// Se intercambian los buffers de color delantero y trasero
 		glfwSwapBuffers (ventana);
@@ -684,10 +688,13 @@ int main (int argc, char **argv) {
 		glfwPollEvents ();
 	}
 
-	// Se indica al hilo auxiliar que finalice; para ello, se activa en primer lugar la seÒal de salida, y tras ello se
-	// despierta envÌa una seÒal asociada a su condiciÛn de bloqueo por si se encuentra esperando a tener que realizar
-	// una nueva actualizaciÛn de los objetos en pantalla
+	// Se indica al hilo auxiliar que finalice; para ello, se activa en primer lugar la se√±al de salida, y tras ello
+	// se env√≠a una se√±al asociada a su condici√≥n de bloqueo por si se encuentra esperando a tener que realizar una
+	// nueva actualizaci√≥n de los objetos en pantalla
 	senalSalida.set_value ();
+	// Es importante establecer la condici√≥n "nuevoDelta" a verdadera para que, cuando se env√≠e la se√±al asociada a la
+	// variable de condici√≥n por la cual el hilo auxiliar se ha bloqueado, este no vuelva a bloquearse y contin√∫e para
+	// finalizar su ejecuci√≥n
 	nuevoDelta = true;
 	condicionRegion1.notify_one ();
 
@@ -699,20 +706,20 @@ int main (int argc, char **argv) {
 
 	while (particulas.size () > 0)
 	{
-		// Las partÌculas que no pertenencen a conjuntos se eliminan autom·ticamente del vector
+		// Las part√≠culas que no pertenencen a conjuntos se eliminan autom√°ticamente del vector
 		delete particulas.at (0);
 	}
 
 	while (conjuntosParticulas.size () > 0)
 	{
-		// Las conjuntos de partÌculas se eliminan autom·ticamente del vector
+		// Las conjuntos de part√≠culas se eliminan autom√°ticamente del vector
 		delete conjuntosParticulas.at (0);
 	}
 
 	// Se eliminan los asteroides en la escena
 	while (asteroides.size () > 0)
 	{
-		// Los asteroides se eliminan autom·ticamente del vector
+		// Los asteroides se eliminan autom√°ticamente del vector
 		delete asteroides.at (0);
 	}
 
@@ -736,6 +743,6 @@ int main (int argc, char **argv) {
 	// Se espera a que finalice el hilo auxiliar
 	hiloParticulas.join ();
 
-	// Se finaliza la ejecuciÛn
-	return(0);
+	// Se finaliza la ejecuci√≥n
+	exit(EXIT_SUCCESS);
 }

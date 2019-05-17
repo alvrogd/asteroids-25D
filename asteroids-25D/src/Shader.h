@@ -18,6 +18,7 @@
 class Shader
 {
 public:
+
 	/* Constructor */
 
 	Shader (const char *vertexShaderFichero, const char *fragmentShaderFichero);
@@ -58,10 +59,16 @@ public:
 
 
 private:
+
+	/* Atributos */
+
 	// Identificador del shader en OpenGL
 	unsigned int ID;
 
-	// Métodos auxiliares del constructor
+	
+	/* Métodos */
+
+	// Todos son métodos auxiliares del constructor
 	void cargarShader (unsigned int &shader, const char *nombreFichero, GLenum tipo);
 	void vincularCodigo (unsigned int &shader, const char *nombreFichero);
 	void comprobarError (unsigned int shader, int tipo) const;

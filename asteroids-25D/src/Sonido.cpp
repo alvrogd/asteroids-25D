@@ -1,8 +1,8 @@
 #include "Sonido.h"
 
-#include <iostream>
 #include <sstream>
 #include <string>
+
 
 Sonido *Sonido::sonido = NULL;
 
@@ -20,7 +20,7 @@ Sonido * Sonido::getSonido ()
 
 void Sonido::actualizar (glm::vec3 posicionOyente, glm::vec3 direccionOyente)
 {
-	// Se actualiza, en el reproductor 3D, la posición y dirección del oyente
+	// Se actualiza, en el reproductor 3D, la posición y dirección del oyente con los valores dados
 	Sonido::getSonido ()->getSonido3D ()->setListenerPosition (irrklang::vec3df (posicionOyente.x, posicionOyente.y,
 		posicionOyente.z), irrklang::vec3df (direccionOyente.x, direccionOyente.y, direccionOyente.z));
 }
@@ -32,7 +32,7 @@ void Sonido::reproducirExplosion (glm::vec3 posicion)
 	//	- Posición dada
 	//	- Sin repetición
 	//	- Reproducción inmediata
-	//	- Sin seguimiento
+	//	- Sin seguimiento para evitar tener que liberar manualmente los recursos que haya usado
 	//	- Sin efectos de sonido
 	std::ostringstream fichero;
 	fichero << "infinity_war_disintegration";
