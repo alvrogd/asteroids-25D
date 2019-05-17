@@ -3,11 +3,12 @@
 
 // Para representar esferas
 #include "Esfera.h"
-#include "Sphere.h"
+
 
 class Forma
 {
 public:
+
 	/* Getters y setters */
 
 	static Esfera & getEsfera ()
@@ -31,10 +32,10 @@ public:
 
 
 private:
+
 	/* Atributos */
 
 	static Esfera *esfera;
-	static Sphere *sphere;
 };
 
 #endif

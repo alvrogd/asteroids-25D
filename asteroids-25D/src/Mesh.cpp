@@ -1,6 +1,8 @@
 #include "Mesh.h"
 
+
 #include <iostream>
+
 
 Mesh::Mesh (std::vector<SVertice> vertices, std::vector<unsigned int> indices, std::vector<STextura> texturas)
 {
@@ -25,6 +27,7 @@ void Mesh::dibujar (Shader * shader)
 		// Se activa la unidad de textura necesaria
 		glActiveTexture (GL_TEXTURE0 + i);
 
+		// Y se carga la textura correspondiente empleando el ID que fue generado cuando se cargó
 		glBindTexture (GL_TEXTURE_2D, this->texturas.at(i).id);
 
 		// Se compone el nombre de la variable uniform que corresponderá a la textura iterada
@@ -43,17 +46,12 @@ void Mesh::dibujar (Shader * shader)
 
 		else
 		{
-			std::cout << "oh oh" << std::endl;
+			std::cout << "ERROR::MESH::DIBUJAR::TIPO_TEXTURA_DESCONOCIDO::" << nombre << std::endl;
 		}
 
-		// Se carga en el uniform el ID de la textura
-		// TODO posible fallo
-		//shader->setInt (("material." + nombre + numero).c_str (), this->texturas.at (i).id);
+		// Se carga el número de unidad de textura en el uniform que representa el material iterado
 		shader->setInt (("material." + nombre + numero).c_str (), i);
 	}
-
-	// TODO no es necesario si no me equivoco
-	// glActiveTexture(GL_TEXTURE0);
 
 	// Ahora sí se representa el mesh
 	glBindVertexArray (this->VAO);
@@ -74,14 +72,15 @@ void Mesh::configurarMesh ()
 	glBindBuffer (GL_ARRAY_BUFFER, this->VBO);
 
 	// Se cargan todos los datos de los vértices dados
-	glBufferData (GL_ARRAY_BUFFER, this->vertices.size () * sizeof (SVertice), this->vertices.data (), GL_STATIC_DRAW);
+	glBufferData (GL_ARRAY_BUFFER, this->vertices.size () * sizeof (SVertice), this->vertices.data (),
+		GL_STATIC_DRAW);
 
 	// Ahora se configura el EBO
 	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 
 	// Se cargan todos los índices dados
 	glBufferData (GL_ELEMENT_ARRAY_BUFFER, this->indices.size () * sizeof (unsigned int), this->indices.data (),
-	GL_STATIC_DRAW);
+		GL_STATIC_DRAW);
 
 	// Se configuran los inputs de la información cargada para los shaders
 
@@ -95,10 +94,13 @@ void Mesh::configurarMesh ()
 
 	// Coordenadas de texturas de los vértices
 	glEnableVertexAttribArray (2);
-	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)offsetof (SVertice, coordenadasTexturas));
+	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)offsetof (SVertice,
+		coordenadasTexturas));
 
 	// Se desvincula el VAO
 	glBindVertexArray (0);
 
-	// TODO si no me equivoco ahora podrían eliminarse los buffers
+	// Se eliminan los buffers creados al haber vinculado ya la información correspondiente al VAO
+	glDeleteBuffers (1, &(this->VBO));
+	glDeleteBuffers (1, &(this->EBO));
 }

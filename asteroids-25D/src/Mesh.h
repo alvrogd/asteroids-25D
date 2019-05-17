@@ -11,7 +11,9 @@
 // Para representarse
 #include "Shader.h"
 
+// Para conjuntos de datos
 #include <vector>
+
 
 // Representación de un vértice (no se modela como una clase para aprovechar mejor el principio de localidad)
 struct SVertice
@@ -104,7 +106,11 @@ public:
 
 	void dibujar (Shader *shader);
 
+
 private:
+
+	/* Atributos */
+
 	// Datos del mesh
 	std::vector<SVertice> vertices;
 	std::vector<unsigned int> indices;
@@ -113,7 +119,9 @@ private:
 	// Información de renderizado
 	unsigned int VAO, VBO, EBO;
 
-	// Método para inicializar el mesh
+
+	/* Métodos */
+
 	void configurarMesh ();
 };
 

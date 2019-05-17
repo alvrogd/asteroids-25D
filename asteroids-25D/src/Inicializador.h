@@ -11,9 +11,13 @@
 // Controlador de eventos
 #include "Controlador.h"
 
+
 class Inicializador
 {
 public:
+
+	/* Métodos */
+
 	static void inicializarOpenGL (GLFWwindow **ventana, const char *nombreVentana, int *wWidth, int *wHeight, float
 		*relacionAspecto);
 
@@ -24,7 +28,10 @@ public:
 
 	static void inicializarGLAD ();
 
-	static void configurarDimensionadoVentana (GLFWwindow *ventana,	int *wWidth, int *wHeight, float *relacionAspecto);
+	static void configurarDimensionadoVentana (GLFWwindow *ventana,	int *wWidth, int *wHeight, float
+		*relacionAspecto);
+
+	static void configurarInputVentana (GLFWwindow *ventana);
 
 	static void configurarOpenGL ();
 };

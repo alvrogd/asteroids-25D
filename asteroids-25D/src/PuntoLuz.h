@@ -15,13 +15,24 @@
 class PuntoLuz
 {
 public:
+
 	/* Constructor */
 
-	PuntoLuz (glm::vec3 posicion, float constante, float lineal, float cuadratica, glm::vec3 ambiental, glm::vec3 difusa,
-		glm::vec3 especular);
+	PuntoLuz (glm::vec3 posicion, float constante, float lineal, float cuadratica, glm::vec3 ambiental, glm::vec3
+		difusa, glm::vec3 especular);
 
 
 	/* Getters y setters */
+
+	glm::vec3 & getPosicion ()
+	{
+		return this->posicion;
+	}
+
+	void setPosicion (glm::vec3 posicion)
+	{
+		this->posicion = posicion;
+	}
 
 	glm::vec3 & getAmbiental ()
 	{
@@ -56,10 +67,13 @@ public:
 
 	/* Métodos */
 
-	void cargar (Shader *shader, glm::mat4 transformacion) const;
+	void cargar (Shader *shader, glm::mat4 transformacion, int numLuz) const;
 
 
 private:
+
+	/* Atributos */
+
 	// Posición del punto de luz
 	glm::vec3 posicion;
 

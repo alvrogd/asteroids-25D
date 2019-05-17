@@ -21,41 +21,54 @@
   <ItemGroup>
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="shaderColor.frag" />
+    <None Include="shaderColor.vert" />
+    <None Include="shaderParticula.frag" />
+    <None Include="shaderParticula.vert" />
+    <None Include="shaderSkybox.frag" />
+    <None Include="shaderSkybox.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Astro.h" />
+    <ClInclude Include="src\ConjuntoParticulas.h" />
+    <ClInclude Include="src\Particula.h" />
+    <ClInclude Include="src\Nave.h" />
+    <ClInclude Include="src\Disparo.h" />
+    <ClInclude Include="src\Asteroide.h" />
+    <ClInclude Include="src\Cubemap.h" />
+    <ClInclude Include="src\LectorImagen.h" />
+    <ClInclude Include="src\Movil.h" />
+    <ClInclude Include="src\Objeto.h" />
     <ClInclude Include="src\Controlador.h" />
     <ClInclude Include="src\Esfera.h" />
-    <ClInclude Include="src\Estrella.h" />
     <ClInclude Include="src\Forma.h" />
-    <ClInclude Include="src\ImageLoader.h" />
     <ClInclude Include="src\Inicializador.h" />
-    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Modelo.h" />
     <ClInclude Include="src\PuntoLuz.h" />
-    <ClInclude Include="src\Rastro.h" />
     <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\Sphere.h" />
-    <ClInclude Include="src\Textura.h" />
+    <ClInclude Include="src\Sonido.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\Astro.cpp" />
+    <ClCompile Include="src\ConjuntoParticulas.cpp" />
+    <ClCompile Include="src\Particula.cpp" />
+    <ClCompile Include="src\Nave.cpp" />
+    <ClCompile Include="src\Disparo.cpp" />
+    <ClCompile Include="src\Asteroide.cpp" />
+    <ClCompile Include="src\Cubemap.cpp" />
+    <ClCompile Include="src\LectorImagen.cpp" />
+    <ClCompile Include="src\Movil.cpp" />
+    <ClCompile Include="src\Objeto.cpp" />
     <ClCompile Include="src\Controlador.cpp" />
     <ClCompile Include="src\Esfera.cpp" />
-    <ClCompile Include="src\Estrella.cpp" />
     <ClCompile Include="src\Forma.cpp" />
     <ClCompile Include="src\Inicializador.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Modelo.cpp" />
     <ClCompile Include="src\PuntoLuz.cpp" />
-    <ClCompile Include="src\Rastro.cpp" />
     <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\Sphere.cpp" />
-    <ClCompile Include="src\Textura.cpp" />
+    <ClCompile Include="src\Sonido.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -115,12 +128,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLM;$(SolutionDir)Dependencies\STB\include;$(SolutionDir)Dependencies\ASSIMP\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLM;$(SolutionDir)Dependencies\STB\include;$(SolutionDir)Dependencies\ASSIMP\include;$(SolutionDir)Dependencies\IRRKLANG\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2015;$(SolutionDir)Dependencies\ASSIMP\lib\x64\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2015;$(SolutionDir)Dependencies\ASSIMP\lib\x64\;$(SolutionDir)Dependencies\IRRKLANG\lib\Win32-visualStudio\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,14 +153,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLM;$(SolutionDir)Dependencies\STB\include;$(SolutionDir)Dependencies\ASSIMP\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLM;$(SolutionDir)Dependencies\STB\include;$(SolutionDir)Dependencies\ASSIMP\include;$(SolutionDir)Dependencies\IRRKLANG\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2015;$(SolutionDir)Dependencies\ASSIMP\lib\x64\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2015;$(SolutionDir)Dependencies\ASSIMP\lib\x64\;$(SolutionDir)Dependencies\IRRKLANG\lib\Win32-visualStudio\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

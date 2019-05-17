@@ -17,6 +17,7 @@ uniform mat4 modelMatrix;
 // Se calcula en la CPU para evitar calcularla para cada vértice
 uniform mat3 normalMatrix;
 
+
 void main()
 {
 	/* Información para el fragment shader */
