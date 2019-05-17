@@ -511,12 +511,41 @@ int main (int argc, char **argv) {
 
 		Sonido::getSonido ()->actualizar (posicionNave, direccionNave);
 
+		// Se comprueba si la nave ha colisionado con algún asteroide, en caso de que aún no haya sido destruida
+		bool hayColision = false;
+		Asteroide *asteroideChoque = NULL;
+
+		if (!(nave->getIsDestruida ()))
+		{
+			for (int i = 0; i < asteroides.size (); i++)
+			{
+				if (nave->checkColision (asteroides.at (i)))
+				{
+					// Se marca el asteroide para destrucción
+					asteroideChoque = asteroides.at (i);
+
+					// Se indica que ha habido una colisión
+					hayColision = true;
+
+					// Ya no será necesario comprobar la colisión con ningún asteroide más
+					break;
+				}
+			}
+		}
 
 		// Se espera a que el hilo auxiliar finalice; hasta este momento, el hilo auxiliar probablemente habrá tenido
 		// suficiente entero como para ejecutar la mayor parte de su tarea mientras que el hilo principal se encargaba
 		// de efectuar otras actualizaciones. La espera se realiza aquí para evitar carreras críticas entre los hilos,
-		// dado que el hilo principal deberá comprobar ahora colisiones y, en caso de ser necesario, generar las
-		// correspondientes partículas de una explosión
+		// dado que el hilo principal deberá comprobar ahora una gran cantidad de colisiones y, en caso de ser
+		// necesario, generar las correspondientes partículas de una explosión.
+		//
+		// La comprobación de colisiones entre la nave y los asteroides se hace a propósito en el anterior bucle,
+		// pero, en vez de manejarlas al instante, simplemente se marca el asteroide que puede haber colisionado para
+		// llevar a cabo las acciones de una colisión tras asegurarse que no se producirán carreras críticas. De este
+		// modo, se aumenta la cantidad de trabajo que los dos hilos pueden realizar.
+		//
+		// En el siguiente bucle tan solo estará activo el hilo principal dada la complejidad de intentar permitir que
+		// los dos hilos se ejecuten en paralelo mientras el principal se encuentre en dicho bucle.
 		{
 			// Se bloquea el mutex de la región 2
 			std::unique_lock<std::mutex> lock (mutexRegion2);
@@ -529,25 +558,14 @@ int main (int argc, char **argv) {
 
 		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 2
 
-
-		// Se comprueba si la nave ha colisionado con algún asteroide, en caso de que aún no haya sido destruida
-		// TODO sería más eficiente fusionar los bucles
-		if (!(nave->getIsDestruida ()))
+		// Si ha habido una colisión de la nave con los asteroides, se lleva a cabo
+		if (hayColision)
 		{
-			for (int i = 0; i < asteroides.size (); i++)
-			{
-				if (nave->checkColision (asteroides.at (i)))
-				{
-					// Se destruye el asteroide
-					asteroides.at (i)->explotar ();
+			// Se destruye el asteroide que ha colisionado
+			asteroideChoque->explotar ();
 
-					// Se destruye la nave
-					nave->explotar ();
-
-					// Ya no será necesario comprobar la colisión con ningún asteroide más
-					break;
-				}
-			}
+			// Y se destruye la nave
+			nave->explotar ();
 		}
 
 		// Se comprueba si los disparos han colisionado con algún asteroide
