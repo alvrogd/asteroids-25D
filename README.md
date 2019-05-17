@@ -53,9 +53,8 @@ Efectivamente, por falta de tiempo, el juego no ha podido ser realizado completa
 
 * Sería necesario añadir un sistema de puntuación, que se muestre idealmente dentro de la propia ventana del juego, en lugar de por la
 consola.
-* Una vez añadido dicho sistema de puntuación, sería intersante añadir la posibilidad de que la nave tenga una serie de vidas antes de
-ser completamente destruida, y perder consecuentemente la partida. Sin dicho sistema de puntuación, el que el jugador no pierda al
-instante no aporta nada de valor al juego, dado que no se está perdiendo realmente nada al acabarse la partida.
+* Una vez añadido dicho sistema de puntuación, sería interesante añadir la posibilidad de que la nave tenga una serie de vidas antes de
+ser completamente destruida, y perder consecuentemente la partida. Sin dicho sistema de puntuación, el que el jugador tenga una sola oportunidad no aporta nada de valor al juego, dado que no se está perdiendo ningún avance real al acabarse la partida.
 * Finalmente, quizá sería interesante añadir la posibilidad de que, de forma aleatoria, aparezcan aliens en la partida que intenten
 eliminar al jugador, tal y como sucede en el juego original.
 
