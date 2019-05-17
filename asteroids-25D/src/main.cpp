@@ -161,7 +161,7 @@ void display ()
 
 	// Se aplica una proyección en perspectiva
 	// TODO relacionar el final con el área de warp
-	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 2000.0);
+	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 4000.0);
 
 	// La matriz de visionado la calcula en control puesto que la cámara es controlada por el input del usuario
 	glm::mat4 viewMatrix;
@@ -329,7 +329,7 @@ int main (int argc, char **argv) {
 
 	// Se establece el warp de los objetos móviles, permitiendo que se muevan dentro de un cuadrado de lado 1000
 	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
-	Movil::coordenadasWarp = glm::vec3 (1000.0f, 1000.0f, 1000.0f);
+	Movil::coordenadasWarp = glm::vec3 (2000.0f, 2000.0f, 2000.0f);
 
 	// Se guarda en la clase de asteroides una referencia al conjunto que contiene los asteroides a representar en
 	// pantalla
@@ -364,8 +364,8 @@ int main (int argc, char **argv) {
 	/*asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
 		0.5f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3 (0.0f, 0.0f, 0.0f));*/
-	// Se crean 60 asteroides
-	for (int i = 0; i < 60; i++)
+	// Se crean 100 asteroides
+	for (int i = 0; i < 100; i++)
 	{
 		asteroides.push_back (new Asteroide ());
 	}

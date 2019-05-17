@@ -33,21 +33,43 @@ int Controlador::numDisparosPulsacion = 0;
 bool Controlador::botonResetSoltado = true;
 
 
+/* Modo de la cámara */
+
+int Controlador::modoCamara = 1;
+
+
 // Control de la cámara
 void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara)
 {
 	// Se sitúa la cámara por detrás de la nave y sobre ella
-	viewMatrix = glm::lookAt (
-		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 240.f,
-			120.0f,
-			posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 240.0f),
-		glm::vec3 (posicionNave->x, posicionNave->y, posicionNave->z),
-		glm::vec3 (0.0f, 1.0f, 0.0f));
+	switch (Controlador::modoCamara)
+	{
+		// Cercana
+		case 0:
+			viewMatrix = glm::lookAt (
+				glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 60.0f,
+					20.0f,
+					posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 60.0f),
+				glm::vec3 (posicionNave->x, posicionNave->y, posicionNave->z),
+				glm::vec3 (0.0f, 1.0f, 0.0f));
+			break;
+
+		// Alejada
+		case 1:
+		default:
+			viewMatrix = glm::lookAt (
+				glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 300.f,
+					160.0f,
+					posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 300.0f),
+				glm::vec3 (posicionNave->x, posicionNave->y, posicionNave->z),
+				glm::vec3 (0.0f, 1.0f, 0.0f));
+			break;
+	}
 }
 
 void Controlador::inputTeclado (GLFWwindow *ventana)
 {
-	// ESC
+	// ESC = salir del juego
 	if (glfwGetKey (ventana, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		// Se indica a la ventana que se cierre
@@ -57,7 +79,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	// Si la nave no ha sido destruida
 	if (!(nave->getIsDestruida ()))
 	{
-		// W
+		// W = acelerar la nave
 		if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
 		{
 			// Se añade velocidad a la nave en función de la dirección a la que apunta
@@ -74,21 +96,21 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 			nave->setIsAcelerando (false);
 		}
 
-		// A
+		// A = maniobrar hacia la izquierda
 		if (glfwGetKey (ventana, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			// Se incrementa el ángulo de rotación de la nave en el eje Y
 			rotacionNave->y += 2.0f;
 		}
 
-		// D
-		if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
+		// D = maniobrar hacia la derecha
+		else if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
 		{
 			// Se reduce el ángulo de rotación de la nave en el eje Y
 			rotacionNave->y -= 2.0f;
 		}
 
-		// Espacio presionado
+		// Espacio presionado = disparar
 		if (glfwGetKey (ventana, GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
 			// Si la barra espaciadora se encontraba suelta previamente o aún no se ha alcanzado el máximo de disparos en
@@ -117,7 +139,7 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		}
 	}
 
-	// R(eset)
+	// R(eset) = reiniciar el juego
 	if (glfwGetKey (ventana, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		// Si el correspondiente botón se encontraba suelto previamente
@@ -144,8 +166,8 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 				delete Controlador::asteroides->at (0);
 			}
 
-			// Se crean 60 asteroides
-			for (int i = 0; i < 60; i++)
+			// Se crean 100 asteroides
+			for (int i = 0; i < 100; i++)
 			{
 				Controlador::asteroides->push_back (new Asteroide ());
 			}
@@ -166,6 +188,20 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 	{
 		// Se indica que se ha soltado el botón de reseteo de la partida
 		Controlador::botonResetSoltado = true;
+	}
+
+	// F1 = cámara cercana
+	if (glfwGetKey (ventana, GLFW_KEY_F1) == GLFW_PRESS)
+	{
+		// Se cambia el modo de la cámara
+		Controlador::modoCamara = 0;
+	}
+
+	// F2 = cámara lejana
+	else if(glfwGetKey (ventana, GLFW_KEY_F2) == GLFW_PRESS)
+	{
+		// Se cambia el modo de la cámara
+		Controlador::modoCamara = 1;
 	}
 }
 

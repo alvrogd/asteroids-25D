@@ -84,6 +84,10 @@ private:
 
 	/* Atributos */
 
+	// Modo de la cámara
+
+	static int modoCamara;
+
 	// Nave
 	static Nave *nave;
 
