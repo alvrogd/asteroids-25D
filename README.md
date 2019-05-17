@@ -86,9 +86,9 @@ sino que fueron tomados de las siguientes fuentes:
   * __Asteroides__: https://www.cgtrader.com/free-3d-models/exterior/landmark/2600-lowpoly-rock
   
 * __Efectos de sonido__: 
-  *__Disparos de la nave__: https://www.zapsplat.com/music/laser-rapid-fire-3/
-  *__Desintegración de los objetos__: https://www.youtube.com/watch?v=anBOuaxwDZI
+  * __Disparos de la nave__: https://www.zapsplat.com/music/laser-rapid-fire-3/
+  * __Desintegración de los objetos__: https://www.youtube.com/watch?v=anBOuaxwDZI
   
 * __Música__:
-  *__De fondo__: https://nicoleproducer.itch.io/free-chiptune-song-galactik-funk
+  * __De fondo__: https://nicoleproducer.itch.io/free-chiptune-song-galactik-funk
 
