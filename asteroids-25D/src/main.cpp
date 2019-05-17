@@ -209,7 +209,7 @@ void display ()
 	int numLuces = 1;
 
 	// Es necesario considerar el límite de luces del shader
-	int max = std::min (disparos.size (), (size_t) 50);
+	int max = std::min (disparos.size (), (size_t) 49);
 	for (int i = 0; i < max; i++)
 	{
 		// Se carga la luz del disparo iterado
