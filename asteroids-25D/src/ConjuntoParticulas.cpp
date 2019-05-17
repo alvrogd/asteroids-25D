@@ -95,26 +95,15 @@ void ConjuntoParticulas::generarExplosion (float vida)
 		//	x = r * sin(theta) * cos(phi)
 		//	y = r * sin(theta) * sin(phi)
 		//	z = r * cos(theta)
+		
+		// Se calcula una phi aleatoria, en el rango[0, 2pi) con precisión de centésimas
+		float phi = fmod ((double)std::rand (), 2.0f * PI);
 
-		// TODO simplificar
-
-		// Se calcula una phi aleatoria, en el rango [0, 2pi) con precisión de centésimas
-		int aleatorio = std::rand () % (int)(2 * PI * 100);
-		float phi = (float)aleatorio / 100.0f;
-
-		// Se calcula un cos(theta) aleatorio, en el rango [-1, 1) con precisión de centésimas
-		aleatorio = (std::rand () % 200) - 100;
+		// Se calcula un cos(theta) aleatorio, en el rango [-1, 1) con precisión de centésimas (no se genera un
+		// flotante directamente porque, al trabajar con ellos, la pérdida de precisión podría causar que "acos" no
+		// funcione correctamente
+		int aleatorio = (std::rand () % 200) - 100;
 		float cosTheta = (float)aleatorio / 100.f;
-
-
-		/* NO VA
-		// Se calcula una phi aleatoria, en el rango [0, 2pi) con precisión de centésimas
-		float phi = fmod (std::rand (), 2 * PI);
-
-		// Se calcula un cos(theta) aleatorio, en el rango [-1, 1) con precisión de centésimas
-		float cosTheta = fmod (std::rand (), 2.0f) - 1.0f;
-		*/
-
 
 		// Se obtiene la theta correspondiente al cos(theta) generado
 		float theta = acos (cosTheta);

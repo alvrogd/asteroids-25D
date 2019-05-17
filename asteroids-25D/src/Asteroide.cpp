@@ -66,13 +66,10 @@ Asteroide::Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas)
 		// Velocidad aleatoria de hasta 1 unidad por frame (no se puede calcular mod 10 porque siempre resultaría una
 		// velocidad nula; se aplica un multiplicador inversamente proporcional al número de vidas dado, regido por el
 		// máximo de vidas de un asteroide, y limitado a x2
-		// TODO optimizar
-		glm::vec3 (fmod (std::rand (), 10.0f) * 0.1f * (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) /
-				(float)Asteroide::MAXIMO_VIDAS),
-			fmod (std::rand (), 10.0f) * 0.1f * (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) /
-				(float)Asteroide::MAXIMO_VIDAS),
-			fmod (std::rand (), 10.0f) * 0.1f * (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) /
-				(float)Asteroide::MAXIMO_VIDAS)),
+		glm::vec3 (fmod (std::rand (), 10.0f) * 0.1f,
+			fmod (std::rand (), 10.0f) * 0.1f,
+			fmod (std::rand (), 10.0f) * 0.1f)
+			* (1.0f + (float)(Asteroide::MAXIMO_VIDAS - vidas) / (float)Asteroide::MAXIMO_VIDAS),
 		// Aceleración y deceleración nulas
 		glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3 (0.0f, 0.0f, 0.0f),

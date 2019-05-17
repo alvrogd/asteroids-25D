@@ -18,7 +18,7 @@ public:
 
 	/* Métodos */
 
-	static unsigned int ficheroATextura (const char * path, const std::string & directory);
+	static unsigned int ficheroATextura (const char *ruta);
 
 	static unsigned int cargarCubemap (std::vector<std::string> caras);
 };

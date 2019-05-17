@@ -90,6 +90,10 @@ float relacionAspecto = wWidth / wHeight;
 // FOV de la cámara
 const double FOV = 80.0;
 
+// Distancia máxima a la que renderizar los objetos de la escena
+double distanciaMaximaRenderizado = 100.0;
+
+
 // Nombres de los ficheros que contienen los shaders
 const char *fragmentShaderModelos = "shader.frag";
 const char *vertexShaderModelos = "shader.vert";
@@ -164,8 +168,8 @@ void display ()
 	// Se calculan las matrices de proyección y de visionado
 
 	// Se aplica una proyección en perspectiva
-	// TODO relacionar el final con el área de warp
-	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1, 4000.0);
+	glm::mat4 projectionMatrix = glm::perspective (glm::radians (FOV), (double)wWidth / (double)wHeight, 0.1,
+		distanciaMaximaRenderizado);
 
 	// La matriz de visionado la calcula en control puesto que la cámara es controlada por el input del usuario
 	glm::mat4 viewMatrix;
@@ -347,6 +351,13 @@ int main (int argc, char **argv) {
 	// IMPORTANTE ESTABLECERLO ANTES DE GENERAR UN ASTEROIDE
 	Movil::coordenadasWarp = glm::vec3 (2000.0f, 2000.0f, 2000.0f);
 
+	// La distancia máxima de renderizado debe ser el mayor que el warp máximo establecido para los móviles respecto
+	// al origen de coordenadas (0, 0, 0), para poder ver así todos los objetos de la escena aunque el jugador se
+	// encuentre en una punta de la escena. Además debe considerarse que, al ser el área cuadrada, el jugador podría
+	// encontrarse en una esquina y, de no hacerse, los objetos de la esquina contraria no se podrían ver si tan solo
+	// se establece la distancia máxima al doble del warp máximo.
+	distanciaMaximaRenderizado = std::sqrt(2.0 * 4000.0 * 4000.0);
+
 	// Se guarda en la clase de asteroides una referencia al conjunto que contiene los asteroides a representar en
 	// pantalla
 	Asteroide::conjuntoAsteroides = &asteroides;
@@ -373,7 +384,6 @@ int main (int argc, char **argv) {
 	// La nave mira inicialmente hacia el eje -X, por lo que se establece la rotación inicial correspondiente para
 	// corregirlo de cara al cálculo de su movimiento
 	nave = new Nave (glm::vec3 (1.0f, 1.0f, 1.0f), modeloNave, 8.0f, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f,
-		// TODO antes el último era 1,5 0,0 0,0 no se por qué
 		0.0f), glm::vec3 (0.5f, 0.5f, 0.5f), glm::vec3 (0.02f, 0.02f, 0.02f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, -90.0f, 0.0f));
 
@@ -386,9 +396,11 @@ int main (int argc, char **argv) {
 		asteroides.push_back (new Asteroide ());
 	}
 
+	// Se crea una pequeña luz que ilumine la escena de color blanco principalmente
 	luz = new PuntoLuz (glm::vec3 (0.0f, 30.0f, 30.0f), 1.0f, 0.000028f, 0.00000014f, glm::vec3 (0.5f, 0.5f, 0.5f),
 		glm::vec3 (1.0f, 1.0f, 1.0f), glm::vec3 (1.0f, 1.0f, 1.0f));
 
+	// Se crea un skybox para dar la sensación de encontrarse en medio del espacio
 	skybox = new Cubemap (caras);
 
 

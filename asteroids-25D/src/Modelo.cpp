@@ -136,7 +136,7 @@ Mesh Modelo::procesarMesh (aiMesh * mesh, const aiScene * escena)
 	return Mesh (vertices, indices, texturas);
 }
 
-std::vector<STextura> Modelo::cargarTexturasMateriales (aiMaterial * material, aiTextureType tipo, std::string nombreTipo)
+std::vector<STextura> Modelo::cargarTexturasMateriales (aiMaterial *material, aiTextureType tipo, std::string nombreTipo)
 {
 	// Resultado
 	std::vector<STextura> texturas;
@@ -152,7 +152,7 @@ std::vector<STextura> Modelo::cargarTexturasMateriales (aiMaterial * material, a
 		material->GetTexture (tipo, i, &localizacion);
 
 		// Se carga la información de la textura
-		textura.id = LectorImagen::ficheroATextura (localizacion.C_Str (), directorio);
+		textura.id = LectorImagen::ficheroATextura (localizacion.C_Str ());
 
 		// Se almacena el tipo dado
 		textura.tipo = nombreTipo;

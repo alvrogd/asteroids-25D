@@ -79,8 +79,6 @@ void Inicializador::configurarDimensionadoVentana (GLFWwindow *ventana, int *wWi
 
 void Inicializador::configurarInputVentana (GLFWwindow * ventana)
 {
-	// TODO useless
-
 	// Se establece el input del teclado al modo "sticky"
 	glfwSetInputMode (ventana, GLFW_STICKY_KEYS, GLFW_TRUE);
 }

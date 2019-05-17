@@ -25,6 +25,7 @@ void Mesh::dibujar (Shader * shader)
 		// Se activa la unidad de textura necesaria
 		glActiveTexture (GL_TEXTURE0 + i);
 
+		// Y se carga la textura correspondiente empleando el ID que fue generado cuando se cargó
 		glBindTexture (GL_TEXTURE_2D, this->texturas.at(i).id);
 
 		// Se compone el nombre de la variable uniform que corresponderá a la textura iterada
@@ -43,17 +44,12 @@ void Mesh::dibujar (Shader * shader)
 
 		else
 		{
-			std::cout << "oh oh" << std::endl;
+			std::cout << "ERROR::MESH::DIBUJAR::TIPO_TEXTURA_DESCONOCIDO::" << nombre << std::endl;
 		}
 
 		// Se carga el número de unidad de textura en el uniform que representa el material iterado
-		// TODO posible fallo
-		//shader->setInt (("material." + nombre + numero).c_str (), this->texturas.at (i).id);
 		shader->setInt (("material." + nombre + numero).c_str (), i);
 	}
-
-	// TODO no es necesario si no me equivoco
-	// glActiveTexture(GL_TEXTURE0);
 
 	// Ahora sí se representa el mesh
 	glBindVertexArray (this->VAO);
@@ -82,7 +78,7 @@ void Mesh::configurarMesh ()
 
 	// Se cargan todos los índices dados
 	glBufferData (GL_ELEMENT_ARRAY_BUFFER, this->indices.size () * sizeof (unsigned int), this->indices.data (),
-	GL_STATIC_DRAW);
+		GL_STATIC_DRAW);
 
 	// Se configuran los inputs de la información cargada para los shaders
 
@@ -101,5 +97,7 @@ void Mesh::configurarMesh ()
 	// Se desvincula el VAO
 	glBindVertexArray (0);
 
-	// TODO si no me equivoco ahora podrían eliminarse los buffers
+	// Se eliminan los buffers creados al haber vinculado ya la información correspondiente al VAO
+	glDeleteBuffers (1, &(this->VBO));
+	glDeleteBuffers (1, &(this->EBO));
 }
