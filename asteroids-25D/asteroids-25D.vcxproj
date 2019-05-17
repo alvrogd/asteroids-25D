@@ -130,6 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLM;$(SolutionDir)Dependencies\STB\include;$(SolutionDir)Dependencies\ASSIMP\include;$(SolutionDir)Dependencies\IRRKLANG\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2015;$(SolutionDir)Dependencies\ASSIMP\lib\x64\;$(SolutionDir)Dependencies\IRRKLANG\lib\Win32-visualStudio\</AdditionalLibraryDirectories>
@@ -154,6 +155,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLM;$(SolutionDir)Dependencies\STB\include;$(SolutionDir)Dependencies\ASSIMP\include;$(SolutionDir)Dependencies\IRRKLANG\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

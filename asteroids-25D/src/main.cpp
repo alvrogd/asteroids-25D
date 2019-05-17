@@ -16,6 +16,13 @@
 // Sonido
 #include <irrKlang.h>
 
+// Ejecución multihilo
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <future>
+#include <chrono>
+
 // Para cargar modelos
 #include "Modelo.h"
 
@@ -56,6 +63,21 @@
 // Para la generación de números aleatorios
 #include <ctime>
 
+
+// Mútexes y variables de condición mediante las cuales emular barreras (estas últimas no se encuentran disponibles
+// en C++)
+std::mutex mutexRegion1;
+std::mutex mutexRegion2;
+std::condition_variable condicionRegion1;
+std::condition_variable condicionRegion2;
+
+
+// Tiempo transcurrido entre frames; se actualizan en cada iteración del bucle principal
+float tiempoAnterior = 0;
+float tiempoActual = 0;
+float delta = 0;
+bool nuevoDelta = false;
+bool hiloAuxiliarFinalizado = false;
 
 // Propiedades de la ventana a crear
 int wWidth = 800;
@@ -222,6 +244,70 @@ void display ()
 }
 
 
+/*
+ * Se actualiza la posición de las partículas representadas en la escena que pertenecen a conjuntos y, si se les agota
+ * el tiempo de vida, son eliminadas
+ */
+void actualizarParticulasConjuntos (std::future<void> condicionFinalizacion)
+{
+	while (true)
+	{
+		{
+			// Se bloquea el mutex de la región 1
+			std::unique_lock<std::mutex> lock (mutexRegion1);
+
+			// Mientras no se haya calculado un nuevo delta
+			while (!nuevoDelta)
+			{
+				condicionRegion1.wait (lock);
+			}
+
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 1
+
+		// Se comprueba si ha recibido una señal de finalización
+		if (condicionFinalizacion.wait_for (std::chrono::microseconds (100)) != std::future_status::timeout)
+		{
+			std::cout << "SALIEEEEEEEEEENDO" << std::endl;
+			break;
+		}
+
+		// Se actualiza la posición de los conjuntos de partículas visibles en pantalla
+		for (int i = 0; i < conjuntosParticulas.size (); i++)
+		{
+			ConjuntoParticulas *conjuntoParticulas = conjuntosParticulas.at (i);
+
+			conjuntoParticulas->actualizarEstado (delta);
+
+			// Si se han agotado la vida de la partícula, se elimina de la escena
+			if (conjuntoParticulas->isMuerto ())
+			{
+				delete conjuntoParticulas;
+
+				// Corrección del iterador para no saltarse ninguna partícula
+				i--;
+			}
+		}
+
+		{
+			// Se bloquea el mutex de la región 2
+			std::unique_lock<std::mutex> lock (mutexRegion2);
+
+			// Se indica que el hilo auxiliar ha completado su iteración
+			hiloAuxiliarFinalizado = true;
+
+			// Además, él mismo establece a falsa la condición de que se haya generado un nuevo delta para bloquearse
+			// hasta que el hilo principal comience una nueva actualización de los objetos en la escena
+			nuevoDelta = false;
+
+			// Se despierta al hilo principal por si se ha dormido previamente esperando a que el hilo auxiliar
+			// completase una iteración de su función de trabajo
+			condicionRegion2.notify_one ();
+
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 2
+	}
+}
+
+
 int main (int argc, char **argv) {
 
 	// Se obtiene una semilla en función del tiempo para la generación de números aleatorios
@@ -307,11 +393,6 @@ int main (int argc, char **argv) {
 
 	/* Bucle de renderizado (main loop) */
 
-	// Para saber el tiempo transcurrido entre frames
-	float tiempoAnterior = 0;
-	float tiempoActual = 0;
-	float delta = 0;
-
 	// Se almacena en el controlador la referencias a los valores a modificar
 	Controlador::asteroides = &asteroides;
 
@@ -327,9 +408,18 @@ int main (int argc, char **argv) {
 	// Se comienza a reproducir la música de fondo en un bucle infinito
 	Sonido::getSonido()->getSonido2D ()->play2D("Galactic Funk.mp3", GL_TRUE);
 
-	// Mientras no se haya indicado la finalización
-	while (!glfwWindowShouldClose (ventana)) {
+	// Se crea un hilo que ayude concurrentemente con la actualización de las partículas que se encuentran en
+	// conjuntos; para ello, se le indicará una variable que debe comprobar en cada iteración para saber si dene
+	// finalizar su ejecución
+	std::promise<void> senalSalida;
+	std::future<void> objetoFuturo = senalSalida.get_future ();
 
+	std::thread hiloParticulas (actualizarParticulasConjuntos, std::move(objetoFuturo));
+
+	std::cout << "COMENZANDO" << std::endl;
+	// Mientras no se haya indicado la finalización
+	while (!glfwWindowShouldClose (ventana))
+	{
 		/* Input */
 
 		// Se procesa el input del usuario
@@ -342,17 +432,37 @@ int main (int argc, char **argv) {
 		tiempoActual = (float)glfwGetTime ();
 
 		// Se actualizarán los objetos en pantalla en función del tiempo transcurrido
-		delta = tiempoActual - tiempoAnterior;
-		
-		// Se actualizan las posiciones de los objetos
+		{
+			// Se bloquea el mutex de la región 1
+			std::unique_lock<std::mutex> lock (mutexRegion1);
+
+			// Se almacena el nuevo delta y se indica que es necesario efectuar una actualización de los objetos en
+			// pantalla
+			delta = tiempoActual - tiempoAnterior;
+			nuevoDelta = true;
+
+			// Se establece a falsa la condición de que el hilo auxiliar haya completado la iteración del bucle que
+			// deberá realizar; esta condición será establecida a verdadera por él mismo, de modo que el hilo
+			// principal pueda avanzar sin temor a causar carreras críticas
+			hiloAuxiliarFinalizado = false;
+
+			// Se despierta al hilo auxiliar por si se ha dormido previamente esperando por una nueva actualización de
+			// los objetos en pantalla
+			condicionRegion1.notify_one ();
+
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 1
+
+		// Se actualiza las posición de la nave
 		nave->actualizarEstado (delta);
 
+		// Se actualizan las posiciones de los asteroides
 		for (Asteroide *asteroide : asteroides)
 		{
 			asteroide->actualizarEstado (delta);
 		}
 
 		// NO CAMBIAR A FOR EACH PORQUE, SI SE ELIMINA UN DISPARO, PUEDE PETAR
+		// Se actualizan las posiciones de los disparos
 		for (int i = 0; i < disparos.size(); i++)
 		{
 			Disparo *disparo = disparos.at (i);
@@ -368,6 +478,57 @@ int main (int argc, char **argv) {
 				i--;
 			}
 		}
+
+		// Se actualiza la posición de las partículas visibles en pantalla y que no se encuentran en conjuntos
+		for (int i = 0; i < particulas.size (); i++)
+		{
+			Particula *particula = particulas.at (i);
+
+			particula->actualizarEstado (delta);
+
+			// Si se han agotado la vida de la partícula, se elimina de la escena
+			if (particula->isMuerta ())
+			{
+				delete particula;
+
+				// Corrección del iterador para no saltarse ninguna partícula
+				i--;
+			}
+		}
+
+
+		// Se establece la nueva posición de la nave como la posición del oyente de los sonidos 3D activos; también es
+		// necesaria la dirección en la que mira el oyente
+		glm::vec3 posicionNave = nave->getPosicion ();
+
+		glm::vec3 direccionNave = glm::vec3 (
+			-sinf (glm::radians (nave->getRotacion ().y)),
+			0.0f,
+			-cos (glm::radians (nave->getRotacion ().y))
+		);
+		// cos^2(x) + sen^2(x) = 1 -> para que sea un vector unitario
+		direccionNave *= direccionNave;
+
+		Sonido::getSonido ()->actualizar (posicionNave, direccionNave);
+
+
+		// Se espera a que el hilo auxiliar finalice; hasta este momento, el hilo auxiliar probablemente habrá tenido
+		// suficiente entero como para ejecutar la mayor parte de su tarea mientras que el hilo principal se encargaba
+		// de efectuar otras actualizaciones. La espera se realiza aquí para evitar carreras críticas entre los hilos,
+		// dado que el hilo principal deberá comprobar ahora colisiones y, en caso de ser necesario, generar las
+		// correspondientes partículas de una explosión
+		{
+			// Se bloquea el mutex de la región 2
+			std::unique_lock<std::mutex> lock (mutexRegion2);
+
+			// Mientras el hilo auxiliar no haya acabado
+			while (!hiloAuxiliarFinalizado)
+			{
+				condicionRegion2.wait (lock);
+			}
+
+		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 2
+
 
 		// Se comprueba si la nave ha colisionado con algún asteroide
 		// TODO sería más eficiente fusionar los bucles
@@ -425,57 +586,12 @@ int main (int argc, char **argv) {
 			}
 		}
 
-		// Se actualiza la posición de las partículas visibles en pantalla
-		for (int i = 0; i < particulas.size (); i++)
-		{
-			Particula *particula = particulas.at (i);
-
-			particula->actualizarEstado (delta);
-
-			// Si se han agotado la vida de la partícula, se elimina de la escena
-			if (particula->isMuerta ())
-			{
-				delete particula;
-
-				// Corrección del iterador para no saltarse ninguna partícula
-				i--;
-			}
-		}
-
-		// Se actualiza la posición de los conjuntos de partículas visibles en pantalla
-		for (int i = 0; i < conjuntosParticulas.size (); i++)
-		{
-			ConjuntoParticulas *conjuntoParticulas = conjuntosParticulas.at (i);
-
-			conjuntoParticulas->actualizarEstado (delta);
-
-			// Si se han agotado la vida de la partícula, se elimina de la escena
-			if (conjuntoParticulas->isMuerto ())
-			{
-				delete conjuntoParticulas;
-
-				// Corrección del iterador para no saltarse ninguna partícula
-				i--;
-			}
-		}
 
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
 
-
-		// Se establece la nueva posición de la nave como la posición del oyente de los sonidos 3D activos; también es
-		// necesaria la dirección en la que mira el oyente
-		glm::vec3 posicionNave = nave->getPosicion ();
-
-		glm::vec3 direccionNave = glm::vec3 (
-			-sinf (glm::radians (nave->getRotacion ().y)),
-			0.0f,
-			-cos (glm::radians (nave->getRotacion ().y))
-		);
-		// cos^2(x) + sen^2(x) = 1 -> para que sea un vector unitario
-		direccionNave *= direccionNave;
-
-		Sonido::getSonido ()->actualizar (posicionNave, direccionNave);
+		// Se indica que el delta actualmente guardado ya no es válido
+		nuevoDelta = false;
 
 
 		/* Render */
@@ -492,6 +608,13 @@ int main (int argc, char **argv) {
 		// Se procesan eventos pendientes (entrada por teclado, redimensionado...)
 		glfwPollEvents ();
 	}
+
+	// Se indica al hilo auxiliar que finalice; para ello, se activa en primer lugar la señal de salida, y tras ello se
+	// despierta envía una señal asociada a su condición de bloqueo por si se encuentra esperando a tener que realizar
+	// una nueva actualización de los objetos en pantalla
+	senalSalida.set_value ();
+	nuevoDelta = true;
+	condicionRegion1.notify_one ();
 
 	// Se destruyen los objetos creados y sus modelos
 	Forma::destruirFormas ();
@@ -521,6 +644,9 @@ int main (int argc, char **argv) {
 	// Se destruyen los reproductores de sonido
 	Sonido::getSonido ()->~Sonido ();
 
+	// Se espera a que finalice el hilo auxiliar
+	hiloParticulas.join ();
 
-	return (0);
+	// Se finaliza la ejecución
+	return(0);
 }
