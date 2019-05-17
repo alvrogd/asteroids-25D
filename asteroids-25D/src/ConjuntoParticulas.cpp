@@ -58,8 +58,8 @@ void ConjuntoParticulas::dibujar (glm::mat4 transformacionPadre, Shader * shader
 
 void ConjuntoParticulas::generarExplosion (float vida)
 {
-	// Se generan 100 partículas aleatorias centradas en el punto de la explosión
-	for (int i = 0; i < 100; i++)
+	// Se generan 75 partículas aleatorias centradas en el punto de la explosión
+	for (int i = 0; i < 75; i++)
 	{
 		// La partícula saldrá disparada en una dirección aleatoria
 		glm::vec3 velocidad;

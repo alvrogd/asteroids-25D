@@ -144,8 +144,8 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 				delete Controlador::asteroides->at (0);
 			}
 
-			// Se crean 100 asteroides
-			for (int i = 0; i < 100; i++)
+			// Se crean 60 asteroides
+			for (int i = 0; i < 60; i++)
 			{
 				Controlador::asteroides->push_back (new Asteroide ());
 			}

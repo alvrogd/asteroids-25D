@@ -364,8 +364,8 @@ int main (int argc, char **argv) {
 	/*asteroide = new Movil (glm::vec3 (0.1f, 0.1f, 0.1f), modeloAsteroide, glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (
 		0.5f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f), glm::vec3 (0.0f, 0.0f, 0.0f),
 		glm::vec3 (0.0f, 0.0f, 0.0f));*/
-	// Se crean 100 asteroides
-	for (int i = 0; i < 100; i++)
+	// Se crean 60 asteroides
+	for (int i = 0; i < 60; i++)
 	{
 		asteroides.push_back (new Asteroide ());
 	}

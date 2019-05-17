@@ -10,9 +10,9 @@ Modelo *Asteroide::modelo = NULL;
 std::vector<Asteroide*> * Asteroide::conjuntoAsteroides = NULL;
 
 Asteroide::Asteroide ()
-	// Escalado aleatorio entre x0.3 y x0.6
-	: Movil (glm::vec3 (fmod (std::rand (), 3.0f) * 0.1f + 0.3f, fmod (std::rand (), 3.0f) * 0.3f + 0.1f, fmod (
-		std::rand (), 3.0f) * 0.1f + 0.3f),
+	// Escalado aleatorio entre x0.5 y x0.8
+	: Movil (glm::vec3 (fmod (std::rand (), 3.0f) * 0.1f + 0.5f, fmod (std::rand (), 3.0f) * 0.3f + 0.5f, fmod (
+		std::rand (), 3.0f) * 0.1f + 0.5f),
 		// Modelo dado para los asteroides
 		Asteroide::modelo,
 		// Radio de la hitbox
