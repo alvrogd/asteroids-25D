@@ -7,13 +7,15 @@
 
 // Para crear partículas
 #include "Particula.h"
+#include "ConjuntoParticulas.h"
 
 
 Nave::Nave (glm::vec3 escalado, Modelo * modelo, float radioHitbox, glm::vec3 posicion, glm::vec3 velocidad, glm::vec3 coefAceleracion, glm::vec3 coefDeceleracion, glm::vec3 rotacion, glm::vec3 correcionRotacion)
 	: Movil (escalado, modelo, radioHitbox, posicion, velocidad, coefAceleracion, coefDeceleracion, rotacion, correcionRotacion)
 {
-	// Inicialmente, se supone que la nave no está siendo acelerada
+	// Inicialmente, se supone que la nave no está siendo acelerada y que aún no ha sido destruida
 	this->isAcelerando = false;
+	this->isDestruida = false;
 }
 
 void Nave::actualizarEstado (float tiempoTranscurrido)
@@ -98,4 +100,22 @@ void Nave::disparar ()
 	this->sonidoDisparo = Sonido::getSonido ()->getSonido2D ()->play2D ("laser_rapid.ogg", GL_FALSE, GL_FALSE, GL_TRUE);
 	// Se reduce su volumen
 	this->sonidoDisparo->setVolume (0.5f);
+}
+
+void Nave::explotar ()
+{
+	// Se actualiza el estado de la nave
+	this->isDestruida = true;
+
+	// Se elimina la velocidad de la nave
+	this->setVelocidad (glm::vec3 (0.0f, 0.0f, 0.0f));
+
+	// Se genera una explosión en la posición del asteroide; en lugar de generar muchas partículas individuales, se
+	// crea un conjunto de partículas para obtener un mejor rendimiento (color violeta puro)
+	ConjuntoParticulas *conjuntoParticulas = new ConjuntoParticulas (this->getPosicion (),
+		glm::vec4 (1.0f, 0.0f, 1.0f, 1.0f));
+	ConjuntoParticulas::conjuntoConjuntoParticulas->push_back (conjuntoParticulas);
+	conjuntoParticulas->generarExplosion (3.0f);
+
+	// Como ya se reproducirá el sonido de la explosión del asteroide, no se reproducirá ningún efecto adicional
 }

@@ -44,12 +44,24 @@ public:
 		this->isAcelerando = isAcelerando;
 	}
 
+	bool getIsDestruida () const
+	{
+		return this->isDestruida;
+	}
+
+	void setIsDestruida (bool isDestruida)
+	{
+		this->isDestruida = isDestruida;
+	}
+
 
 	/* Métodos */
 
 	void actualizarEstado (float tiempoTranscurrido) override;
 
 	void disparar ();
+
+	void explotar ();
 
 
 private:
@@ -60,6 +72,9 @@ private:
 
 	// Si el usuario se encuentra presionando la tecla que provoca que la nave acelere
 	bool isAcelerando;
+
+	// Si ha sido destruida
+	bool isDestruida;
 };
 
 #endif

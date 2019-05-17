@@ -76,6 +76,7 @@ std::condition_variable condicionRegion2;
 float tiempoAnterior = 0;
 float tiempoActual = 0;
 float delta = 0;
+// Variables auxiliares empleadas para la sincronización entre los dos hilos usados
 bool nuevoDelta = false;
 bool hiloAuxiliarFinalizado = false;
 
@@ -116,6 +117,9 @@ Modelo *modeloAsteroide = NULL;
 
 std::vector<Disparo *> disparos;
 
+std::vector<Particula *> particulas;
+std::vector<ConjuntoParticulas *> conjuntosParticulas;
+
 // Ficheros que componen la skybox
 std::vector<std::string> caras
 {
@@ -129,10 +133,6 @@ std::vector<std::string> caras
 
 // Skybox
 Cubemap *skybox = NULL;
-
-// Partículas presentes en pantalla
-std::vector<Particula *> particulas;
-std::vector<ConjuntoParticulas *> conjuntosParticulas;
 
 
 /**
@@ -196,8 +196,11 @@ void display ()
 	// Y la posición de la cámara para el cálculo de la iluminación
 	shader->setVec3 ("posicionCamara", posicionCamara);
 
-	// Se representa la nave
-	nave->dibujar (glm::mat4(1.0f), shader);
+	// Se representa la nave si aún no ha sido destruida
+	if (!(nave->getIsDestruida ()))
+	{
+		nave->dibujar (glm::mat4 (1.0f), shader);
+	}
 
 	// Se representan todos los asteroides
 	for (Asteroide *asteroide : asteroides)
@@ -267,7 +270,6 @@ void actualizarParticulasConjuntos (std::future<void> condicionFinalizacion)
 		// Se comprueba si ha recibido una señal de finalización
 		if (condicionFinalizacion.wait_for (std::chrono::microseconds (100)) != std::future_status::timeout)
 		{
-			std::cout << "SALIEEEEEEEEEENDO" << std::endl;
 			break;
 		}
 
@@ -452,8 +454,11 @@ int main (int argc, char **argv) {
 
 		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 1
 
-		// Se actualiza las posición de la nave
-		nave->actualizarEstado (delta);
+		// Se actualiza las posición de la nave si no ha sido destruida
+		if (!(nave->getIsDestruida ()))
+		{
+			nave->actualizarEstado (delta);
+		}
 
 		// Se actualizan las posiciones de los asteroides
 		for (Asteroide *asteroide : asteroides)
@@ -530,17 +535,23 @@ int main (int argc, char **argv) {
 		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 2
 
 
-		// Se comprueba si la nave ha colisionado con algún asteroide
+		// Se comprueba si la nave ha colisionado con algún asteroide, en caso de que aún no haya sido destruida
 		// TODO sería más eficiente fusionar los bucles
-		for (int i = 0; i < asteroides.size(); i++)
+		if (!(nave->getIsDestruida ()))
 		{
-			if (nave->checkColision (asteroides.at(i)))
+			for (int i = 0; i < asteroides.size (); i++)
 			{
-				// Se destruye el asteroide
-				asteroides.at (i)->explotar ();
+				if (nave->checkColision (asteroides.at (i)))
+				{
+					// Se destruye el asteroide
+					asteroides.at (i)->explotar ();
 
-				// Corrección del iterador para no saltarse ningún asteroide
-				i--;
+					// Se destruye la nave
+					nave->explotar ();
+
+					// Ya no será necesario comprobar la colisión con ningún asteroide más
+					break;
+				}
 			}
 		}
 

@@ -127,9 +127,9 @@ void Asteroide::explotar ()
 			}
 
 			// Se genera una explosión en la posición del asteroide; en lugar de generar muchas partículas
-			// individuales, se crea un conjunto de partículas para obtener un mejor rendimiento
+			// individuales, se crea un conjunto de partículas para obtener un mejor rendimiento (color violeta claro)
 			ConjuntoParticulas *conjuntoParticulas = new ConjuntoParticulas (this->getPosicion (),
-				glm::vec4 (1.0f, 0.0f, 1.0f, 1.0f));
+				glm::vec4 (0.933f, 0.51f, 1.0f, 0.933f));
 			ConjuntoParticulas::conjuntoConjuntoParticulas->push_back (conjuntoParticulas);
 			conjuntoParticulas->generarExplosion (3.0f);
 
