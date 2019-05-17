@@ -400,14 +400,7 @@ int main (int argc, char **argv) {
 	Controlador::particulas = &particulas;
 	Controlador::conjuntosParticulas = &conjuntosParticulas;
 
-	// TODO eliminar estas referencias y usar la de la nave directamente
-	Controlador::posicionNave = nave->getPosicionReferencia ();
-	Controlador::velocidadNave = nave->getVelocidadReferencia ();
-	Controlador::rotacionNave = nave->getRotacionReferencia ();
-	Controlador::correcionRotNave = nave->getCorreccionRotacionReferencia ();
-	Controlador::coefAceleracionNave = nave->getCoefAceleracionReferencia ();
-
-	Controlador::nave = nave;
+	Controlador::setNave (nave);
 
 	// Se comienza a reproducir la música de fondo en un bucle infinito
 	Sonido::getSonido()->getSonido2D ()->play2D("Galactic Funk.mp3", GL_TRUE);

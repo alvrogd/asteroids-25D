@@ -3,25 +3,31 @@
 #include <iostream>
 
 
+/* Propiedades de la ventana */
+
 int *Controlador::wWidth = NULL;
 int *Controlador::wHeight = NULL;
 
 float *Controlador::relacionAspecto = NULL;
 
+
+/* Objetos presentes en la escena */
+
 std::vector<Asteroide *> *Controlador::asteroides = NULL;
 std::vector<Particula *> *Controlador::particulas = NULL;
 std::vector<ConjuntoParticulas *> *Controlador::conjuntosParticulas = NULL;
 
+Nave *Controlador::nave = NULL;
 glm::vec3 *Controlador::posicionNave = NULL;
 glm::vec3 *Controlador::velocidadNave = NULL;
 glm::vec3 *Controlador::rotacionNave = NULL;
 glm::vec3 *Controlador::correcionRotNave = NULL;
 glm::vec3 *Controlador::coefAceleracionNave = NULL;
 
-Nave *Controlador::nave = NULL;
+
+/* Control del input del usuario */
 
 bool Controlador::botonDisparoSoltado = true;
-
 int Controlador::numDisparosPulsacion = 0;
 
 bool Controlador::botonResetSoltado = true;
@@ -30,21 +36,13 @@ bool Controlador::botonResetSoltado = true;
 // Control de la cámara
 void Controlador::calcularViewMatrix (glm::mat4 &viewMatrix, glm::vec3 &posicionCamara)
 {
-	/*viewMatrix = glm::lookAt (glm::vec3 (5.5f, 0.0f, 0.5f), glm::vec3 (0.0f, 0.0f, 0.0f),
-		glm::vec3 (0.0f, 1.0f, 0.0f));
-
-	posicionCamara = glm::vec3 (5.5f, 0.0f, 0.5f);*/
-
+	// Se sitúa la cámara por detrás de la nave y sobre ella
 	viewMatrix = glm::lookAt (
-		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 160.f,
-			80.0f,
-			posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 160.0f),
+		glm::vec3 (posicionNave->x + sinf (glm::radians (rotacionNave->y)) * 240.f,
+			120.0f,
+			posicionNave->z + cosf (glm::radians (rotacionNave->y)) * 240.0f),
 		glm::vec3 (posicionNave->x, posicionNave->y, posicionNave->z),
 		glm::vec3 (0.0f, 1.0f, 0.0f));
-	/*
-	gluLookAt (posicionX + sinf (direccion) * 0.7, posicionY + 0.5, posicionZ + cosf (direccion) * 0.7, posicionX
-		- sinf (direccion) * 0.7, posicionY, posicionZ - cosf (direccion) * 0.7, 0.0, 1.0, 0.0);*/
-
 }
 
 void Controlador::inputTeclado (GLFWwindow *ventana)
@@ -68,7 +66,6 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 
 			// Y se le indica que se encuentra acelerando
 			nave->setIsAcelerando (true);
-			//std::cout << velocidadNave->x << velocidadNave->z << std::endl;
 		}
 
 		else
@@ -82,7 +79,6 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		{
 			// Se incrementa el ángulo de rotación de la nave en el eje Y
 			rotacionNave->y += 2.0f;
-			//std::cout << rotacionNave->y << std::endl;
 		}
 
 		// D
@@ -90,7 +86,6 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		{
 			// Se reduce el ángulo de rotación de la nave en el eje Y
 			rotacionNave->y -= 2.0f;
-			//std::cout << rotacionNave->y << std::endl;
 		}
 
 		// Espacio presionado
@@ -210,4 +205,3 @@ void Controlador::redimensionarVentana (GLFWwindow *ventana, int ancho, int alto
 	*(Controlador::wWidth) = ancho;
 	*(Controlador::wHeight) = alto;
 }
-
