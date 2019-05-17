@@ -134,6 +134,10 @@ std::vector<std::string> caras
 // Skybox
 Cubemap *skybox = NULL;
 
+// Si existe temblor y cuándo se activó por última vez
+bool hayTemblor = false;
+float ultimoTemblor = 0.0f;
+
 
 /**
  * Se renderiza un frame
@@ -168,6 +172,18 @@ void display ()
 	glm::vec3 posicionCamara;
 	Controlador::calcularViewMatrix (viewMatrix, posicionCamara);
 
+	// Se aplica un temblor a la matriz base del modelo si es necesario
+	glm::mat4 modelMatrixBase = glm::mat4 (1.0f);
+
+	if (hayTemblor)
+	{
+		modelMatrixBase = glm::translate (modelMatrixBase, glm::vec3 (
+			cosf (tiempoActual * 10.0f) * 2.0f,
+			-sinf (tiempoActual * 10.0f) * 4.0f,
+			-cosf (tiempoActual * 10.0f) * 3.0f
+		));
+	}
+
 	// Se aplican las matrices al shader de los modelos
 	shader->usar ();
 	shader->setMat4 ("projectionMatrix", projectionMatrix);
@@ -199,13 +215,13 @@ void display ()
 	// Se representa la nave si aún no ha sido destruida
 	if (!(nave->getIsDestruida ()))
 	{
-		nave->dibujar (glm::mat4 (1.0f), shader);
+		nave->dibujar (modelMatrixBase, shader);
 	}
 
 	// Se representan todos los asteroides
 	for (Asteroide *asteroide : asteroides)
 	{
-		asteroide->dibujar (glm::mat4 (1.0f), shader);
+		asteroide->dibujar (modelMatrixBase, shader);
 	}
 
 	// Se carga el shader de color y se le aplican las matrices
@@ -216,7 +232,7 @@ void display ()
 	// Se representan todos los disparos
 	for (Disparo *disparo : disparos)
 	{
-		disparo->dibujar (glm::mat4 (1.0f), shaderColor);
+		disparo->dibujar (modelMatrixBase, shaderColor);
 	}
 
 	// Se carga el shader de partículas y se aplican las matrices
@@ -227,12 +243,12 @@ void display ()
 	// Se representan todas las partículas, tanto las individuales como las contenidas en conjuntos de partículas
 	for (Particula *particula : particulas)
 	{
-		particula->dibujar (glm::mat4 (1.0f), shaderParticulas);
+		particula->dibujar (modelMatrixBase, shaderParticulas);
 	}
 
 	for (ConjuntoParticulas *conjuntoParticulas : conjuntosParticulas)
 	{
-		conjuntoParticulas->dibujar (glm::mat4 (1.0f), shaderParticulas);
+		conjuntoParticulas->dibujar (modelMatrixBase, shaderParticulas);
 	}
 	
 	// Ahora se carga el shader de la skybox y se aplican también las matrices necesarias
@@ -558,6 +574,9 @@ int main (int argc, char **argv) {
 
 		} // Al salir del bloque, se libera el bloqueo sobre el mutex de la región 2
 
+		// Inicialmente, se presupone que en la actualización no se ha generado un nuevo temblor
+		bool generarTemblor = false;
+
 		// Si ha habido una colisión de la nave con los asteroides, se lleva a cabo
 		if (hayColision)
 		{
@@ -566,6 +585,9 @@ int main (int argc, char **argv) {
 
 			// Y se destruye la nave
 			nave->explotar ();
+
+			// Se aplica un efecto de temblor a la escena
+			generarTemblor = true;
 		}
 
 		// Se comprueba si los disparos han colisionado con algún asteroide
@@ -601,6 +623,9 @@ int main (int argc, char **argv) {
 						disparosEliminar.erase (disparosEliminar.begin());
 					}
 
+					// Se aplica un efecto de temblor a la escena
+					generarTemblor = true;
+
 					// Corrección del iterador para no saltarse ningún asteroide
 					i--;
 
@@ -614,6 +639,20 @@ int main (int argc, char **argv) {
 		// Tras ejecutar las actualizaciones, se almacena el momento en que se ejecutaron
 		tiempoAnterior = tiempoActual;
 
+		// Y, si se ha producido un temblor, se registra cuándo
+		if (generarTemblor)
+		{
+			hayTemblor = true;
+			ultimoTemblor = tiempoActual;
+
+		}
+
+		// En caso contrario, se desactiva el temblor si lleva más de 100 ms activo
+		else if (tiempoActual - ultimoTemblor > 0.1f)
+		{
+			hayTemblor = false;
+		}
+		
 		// Se indica que el delta actualmente guardado ya no es válido
 		nuevoDelta = false;
 
