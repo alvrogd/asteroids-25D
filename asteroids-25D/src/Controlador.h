@@ -11,11 +11,11 @@
 // Para modificar la matriz de visionado
 #include "Shader.h"
 
-// Para almacenar referencias a los asteroides de la escena
+// Para almacenar referencias a los objetos presentes en la escena
 #include "Asteroide.h"
-
-// Para almacenar una referencia a la nave representada
 #include "Nave.h"
+#include "ConjuntoParticulas.h"
+#include "Particula.h"
 
 
 class Controlador
@@ -35,6 +35,10 @@ public:
 
 	// Asteroides en la escena
 	static std::vector<Asteroide *> *asteroides;
+
+	// Partículas en la escena
+	static std::vector<Particula *> *particulas;
+	static std::vector<ConjuntoParticulas *> *conjuntosParticulas;
 
 	// Posición de la nave
 	static glm::vec3 *posicionNave;
@@ -59,6 +63,9 @@ public:
 
 	// Número de disparos de la nave en una pulsación del botón de disparo
 	static int numDisparosPulsacion;
+
+	// Si se ha soltado el botón de resetar la partida
+	static bool botonResetSoltado;
 
 
 	/* Métodos */

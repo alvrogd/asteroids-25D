@@ -397,6 +397,8 @@ int main (int argc, char **argv) {
 
 	// Se almacena en el controlador la referencias a los valores a modificar
 	Controlador::asteroides = &asteroides;
+	Controlador::particulas = &particulas;
+	Controlador::conjuntosParticulas = &conjuntosParticulas;
 
 	// TODO eliminar estas referencias y usar la de la nave directamente
 	Controlador::posicionNave = nave->getPosicionReferencia ();
@@ -633,9 +635,23 @@ int main (int argc, char **argv) {
 	delete nave;
 	delete modeloNave;
 
-	for (Asteroide *asteroide : asteroides)
+	while (particulas.size () > 0)
 	{
-		delete asteroide;
+		// Las partículas que no pertenencen a conjuntos se eliminan automáticamente del vector
+		delete particulas.at (0);
+	}
+
+	while (conjuntosParticulas.size () > 0)
+	{
+		// Las conjuntos de partículas se eliminan automáticamente del vector
+		delete conjuntosParticulas.at (0);
+	}
+
+	// Se eliminan los asteroides en la escena
+	while (asteroides.size () > 0)
+	{
+		// Los asteroides se eliminan automáticamente del vector
+		delete asteroides.at (0);
 	}
 
 	delete modeloAsteroide;
@@ -651,9 +667,9 @@ int main (int argc, char **argv) {
 	delete shaderSkybox;
 	delete shaderParticulas;
 
-
 	// Se destruyen los reproductores de sonido
 	Sonido::getSonido ()->~Sonido ();
+
 
 	// Se espera a que finalice el hilo auxiliar
 	hiloParticulas.join ();

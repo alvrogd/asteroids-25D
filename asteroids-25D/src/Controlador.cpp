@@ -8,9 +8,9 @@ int *Controlador::wHeight = NULL;
 
 float *Controlador::relacionAspecto = NULL;
 
-int Controlador::modoCamara = 4;
-
 std::vector<Asteroide *> *Controlador::asteroides = NULL;
+std::vector<Particula *> *Controlador::particulas = NULL;
+std::vector<ConjuntoParticulas *> *Controlador::conjuntosParticulas = NULL;
 
 glm::vec3 *Controlador::posicionNave = NULL;
 glm::vec3 *Controlador::velocidadNave = NULL;
@@ -23,6 +23,8 @@ Nave *Controlador::nave = NULL;
 bool Controlador::botonDisparoSoltado = true;
 
 int Controlador::numDisparosPulsacion = 0;
+
+bool Controlador::botonResetSoltado = true;
 
 
 // Control de la cámara
@@ -54,150 +56,122 @@ void Controlador::inputTeclado (GLFWwindow *ventana)
 		glfwSetWindowShouldClose (ventana, true);
 	}
 
-	// W
-	if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
+	// Si la nave no ha sido destruida
+	if (!(nave->getIsDestruida ()))
 	{
-		// Se añade velocidad a la nave en función de la dirección a la que apunta
-		velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * coefAceleracionNave->x;
-		velocidadNave->z -= cosf (glm::radians(rotacionNave->y)) * coefAceleracionNave->z;
-
-		// Y se le indica que se encuentra acelerando
-		nave->setIsAcelerando (true);
-		//std::cout << velocidadNave->x << velocidadNave->z << std::endl;
-	}
-
-	else
-	{
-		// Se indica a la nave que no se encuentra acelerando
-		nave->setIsAcelerando (false);
-	}
-
-	// A
-	if (glfwGetKey (ventana, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		// Se incrementa el ángulo de rotación de la nave en el eje Y
-		rotacionNave->y += 2.0f;
-		//std::cout << rotacionNave->y << std::endl;
-	}
-
-	// D
-	if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		// Se reduce el ángulo de rotación de la nave en el eje Y
-		rotacionNave->y -= 2.0f;
-		//std::cout << rotacionNave->y << std::endl;
-	}
-
-	// Espacio presionado
-	if (glfwGetKey (ventana, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		// Si la barra espaciadora se encontraba suelta previamente o aún no se ha alcanzado el máximo de disparos en
-		// una pulsación
-		if (Controlador::botonDisparoSoltado || Controlador::numDisparosPulsacion < 4)
+		// W
+		if (glfwGetKey (ventana, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			// Se indica a la nave que debe disparar
-			Controlador::nave->disparar ();
+			// Se añade velocidad a la nave en función de la dirección a la que apunta
+			velocidadNave->x -= sinf (glm::radians (rotacionNave->y)) * coefAceleracionNave->x;
+			velocidadNave->z -= cosf (glm::radians (rotacionNave->y)) * coefAceleracionNave->z;
 
-			// Se indica que se ha presionado la barra espaciadora
-			Controlador::botonDisparoSoltado = false;
+			// Y se le indica que se encuentra acelerando
+			nave->setIsAcelerando (true);
+			//std::cout << velocidadNave->x << velocidadNave->z << std::endl;
+		}
 
-			// Y se incrementa el número de disparos en una pulsación de la barra espaciadora
-			Controlador::numDisparosPulsacion++;
+		else
+		{
+			// Se indica a la nave que no se encuentra acelerando
+			nave->setIsAcelerando (false);
+		}
+
+		// A
+		if (glfwGetKey (ventana, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			// Se incrementa el ángulo de rotación de la nave en el eje Y
+			rotacionNave->y += 2.0f;
+			//std::cout << rotacionNave->y << std::endl;
+		}
+
+		// D
+		if (glfwGetKey (ventana, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			// Se reduce el ángulo de rotación de la nave en el eje Y
+			rotacionNave->y -= 2.0f;
+			//std::cout << rotacionNave->y << std::endl;
+		}
+
+		// Espacio presionado
+		if (glfwGetKey (ventana, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			// Si la barra espaciadora se encontraba suelta previamente o aún no se ha alcanzado el máximo de disparos en
+			// una pulsación
+			if (Controlador::botonDisparoSoltado || Controlador::numDisparosPulsacion < 4)
+			{
+				// Se indica a la nave que debe disparar
+				Controlador::nave->disparar ();
+
+				// Se indica que se ha presionado la barra espaciadora
+				Controlador::botonDisparoSoltado = false;
+
+				// Y se incrementa el número de disparos en una pulsación de la barra espaciadora
+				Controlador::numDisparosPulsacion++;
+			}
+		}
+
+		// Espacio soltado
+		else
+		{
+			// Se indica que se ha soltado el botón de disparo
+			Controlador::botonDisparoSoltado = true;
+
+			// Y se resetea el número de disparos realizados en una pulsación
+			Controlador::numDisparosPulsacion = 0;
 		}
 	}
 
-	// Espacio soltado
-	else
-	{
-		// Se indica que se ha soltado el botón de disparo
-		Controlador::botonDisparoSoltado = true;
-
-		// Y se resetea el número de disparos realizados en una pulsación
-		Controlador::numDisparosPulsacion = 0;
-	}
-
-	// R
+	// R(eset)
 	if (glfwGetKey (ventana, GLFW_KEY_R) == GLFW_PRESS)
 	{
-		// Se crean 100 asteroides
-		for (int i = 0; i < 100; i++)
+		// Si el correspondiente botón se encontraba suelto previamente
+		if (Controlador::botonResetSoltado)
 		{
-			Controlador::asteroides->push_back (new Asteroide ());
+			// Se eliminan las partículas presentes en la escena (no es posible efectuar un "clear" del vector
+			// correspondiente porque la memoria usada por los objetos no será liberada)
+			while (Controlador::particulas->size () > 0)
+			{
+				// Las partículas que no pertenencen a conjuntos se eliminan automáticamente del vector
+				delete Controlador::particulas->at (0);
+			}
+
+			while (Controlador::conjuntosParticulas->size () > 0)
+			{
+				// Las conjuntos de partículas se eliminan automáticamente del vector
+				delete Controlador::conjuntosParticulas->at (0);
+			}
+
+			// Se eliminan los asteroides en la escena
+			while (Controlador::asteroides->size () > 0)
+			{
+				// Los asteroides se eliminan automáticamente del vector
+				delete Controlador::asteroides->at (0);
+			}
+
+			// Se crean 100 asteroides
+			for (int i = 0; i < 100; i++)
+			{
+				Controlador::asteroides->push_back (new Asteroide ());
+			}
+
+			// Se vuelve a representar la nave
+			nave->setIsDestruida (false);
+
+			// Se resetea a 0 el número de disparos consecutivos realizados
+			Controlador::numDisparosPulsacion = 0;
+
+			// Se indica que se ha presionado el botón de reset
+			Controlador::botonResetSoltado = false;
 		}
 	}
 
-	// C
-	if (glfwGetKey (ventana, GLFW_KEY_C) == GLFW_PRESS)
+	// R(eset) soltado
+	else
 	{
-		// Se eliminan los asteroides en la escena
-		Controlador::asteroides->clear ();
+		// Se indica que se ha soltado el botón de reseteo de la partida
+		Controlador::botonResetSoltado = true;
 	}
-
-	/*// F1
-	else if (glfwGetKey (ventana, GLFW_KEY_F1) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 1;
-	}
-
-	// F2
-	else if (glfwGetKey (ventana, GLFW_KEY_F2) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 2;
-	}
-
-	// F3
-	else if (glfwGetKey (ventana, GLFW_KEY_F3) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 3;
-	}
-
-	// F4
-	else if (glfwGetKey (ventana, GLFW_KEY_F4) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 4;
-	}
-
-	// F5
-	else if (glfwGetKey (ventana, GLFW_KEY_F5) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 5;
-	}
-
-	// F6
-	else if (glfwGetKey (ventana, GLFW_KEY_F6) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 6;
-	}
-
-	// F7
-	else if (glfwGetKey (ventana, GLFW_KEY_F7) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 7;
-	}
-
-	// F8
-	else if (glfwGetKey (ventana, GLFW_KEY_F8) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 8;
-	}
-
-	// F9
-	else if (glfwGetKey (ventana, GLFW_KEY_F9) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 9;
-	}
-
-	// F10
-	else if (glfwGetKey (ventana, GLFW_KEY_F10) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 10;
-	}
-
-	// F11
-	else if (glfwGetKey (ventana, GLFW_KEY_F11) == GLFW_PRESS)
-	{
-		Controlador::modoCamara = 11;
-	}*/
 }
 
 void Controlador::redimensionarVentana (GLFWwindow *ventana, int ancho, int alto)

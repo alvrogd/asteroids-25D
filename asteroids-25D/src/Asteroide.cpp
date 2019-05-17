@@ -102,9 +102,9 @@ Asteroide::Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas)
 	this->vidas = vidas;
 }
 
-void Asteroide::explotar ()
+Asteroide::~Asteroide ()
 {
-	// Se busca el asteroide en el conjunto de asteroides
+	// El asteroide se busca a sí mismo en el conjunto de asteroides en escena
 	for (int i = 0; i < Asteroide::conjuntoAsteroides->size (); i++)
 	{
 		// Si se ha encontrado
@@ -112,32 +112,35 @@ void Asteroide::explotar ()
 		{
 			std::cout << "encontrado" << std::endl;
 
-			// Se elimina el asteroide del conjunto de asteroides
+			// Se elimina la partícula del conjunto de partículas
 			Asteroide::conjuntoAsteroides->erase (Asteroide::conjuntoAsteroides->begin () + i);
-
-			// Si aún no se le han agotado las vidas
-			if (this->vidas > 0)
-			{
-				// Se añaden dos asteroides "hijo" más pequeños que aparecerán en la posición del asteroide "padre",
-				// reduciendo en 1 el número de vidas en comparación al padre
-				Asteroide::conjuntoAsteroides->push_back (new Asteroide (getEscalado () * 0.6f, getPosicion (),
-					this->vidas - 1));
-				Asteroide::conjuntoAsteroides->push_back (new Asteroide (getEscalado () * 0.6f, getPosicion (),
-					this->vidas - 1));
-			}
-
-			// Se genera una explosión en la posición del asteroide; en lugar de generar muchas partículas
-			// individuales, se crea un conjunto de partículas para obtener un mejor rendimiento (color violeta claro)
-			ConjuntoParticulas *conjuntoParticulas = new ConjuntoParticulas (this->getPosicion (),
-				glm::vec4 (0.933f, 0.51f, 1.0f, 0.933f));
-			ConjuntoParticulas::conjuntoConjuntoParticulas->push_back (conjuntoParticulas);
-			conjuntoParticulas->generarExplosion (3.0f);
-
-			// Se reproduce un efecto de explosión en la posición del asteroide
-			Sonido::getSonido ()->reproducirExplosion (this->getPosicion ());
-
-			// Se elimina el asteroide
-			delete this;
 		}
 	}
+}
+
+void Asteroide::explotar ()
+{
+	// Si aún no se le han agotado las vidas
+	if (this->vidas > 0)
+	{
+		// Se añaden dos asteroides "hijo" más pequeños que aparecerán en la posición del asteroide "padre",
+		// reduciendo en 1 el número de vidas en comparación al padre
+		Asteroide::conjuntoAsteroides->push_back (new Asteroide (getEscalado () * 0.6f, getPosicion (),
+			this->vidas - 1));
+		Asteroide::conjuntoAsteroides->push_back (new Asteroide (getEscalado () * 0.6f, getPosicion (),
+			this->vidas - 1));
+	}
+
+	// Se genera una explosión en la posición del asteroide; en lugar de generar muchas partículas
+	// individuales, se crea un conjunto de partículas para obtener un mejor rendimiento (color violeta claro)
+	ConjuntoParticulas *conjuntoParticulas = new ConjuntoParticulas (this->getPosicion (),
+		glm::vec4 (0.933f, 0.51f, 1.0f, 0.933f));
+	ConjuntoParticulas::conjuntoConjuntoParticulas->push_back (conjuntoParticulas);
+	conjuntoParticulas->generarExplosion (3.0f);
+
+	// Se reproduce un efecto de explosión en la posición del asteroide
+	Sonido::getSonido ()->reproducirExplosion (this->getPosicion ());
+
+	// Se elimina el asteroide
+	delete this;
 }

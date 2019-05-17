@@ -23,11 +23,16 @@ public:
 	static const int MAXIMO_VIDAS = 2;
 
 
-	/* Constructor */
+	/* Constructores */
 
 	Asteroide ();
 
 	Asteroide (glm::vec3 escalado, glm::vec3 posicion, int vidas);
+
+
+	/* Destructor */
+
+	~Asteroide ();
 
 
 	/* Getters y setters */
