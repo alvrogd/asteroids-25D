@@ -234,25 +234,33 @@ void Shader::checkError (unsigned int shader, int type) const
 	int success;
 	char log[512];
 
-	// Retrieving the shader's compilation status
-	glGetShaderiv (shader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
+	// Single shader
+	if (type == 0)
 	{
-		glGetShaderInfoLog (shader, 512, NULL, log);
+		// Retrieving the shader's compilation status
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
-		// Single shader
-		if (type == 0)
+		if (!success)
 		{
+			glGetShaderInfoLog(shader, 512, NULL, log);
 			std::cout << "ERROR::SHADER::SINGLE::COMPILATION_FAILED" << std::endl << log << std::endl;
-		}
 
-		// Shader program (double shader)
-		else
+			exit(3);
+		}
+	}
+
+	// Shader program (linking two shaders)
+	else
+	{
+		// Retrieving the shader program's linking status
+		glGetProgramiv(shader, GL_LINK_STATUS, &success);
+
+		if (!success)
 		{
+			glGetProgramInfoLog(shader, 512, NULL, log);
 			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED" << std::endl << log << std::endl;
-		}
 
-		exit (3);
+			exit(3);
+		}
 	}
 }
