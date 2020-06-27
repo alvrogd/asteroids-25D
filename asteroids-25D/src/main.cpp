@@ -95,8 +95,8 @@ Shader *shaderParticles = NULL;
 
 // Window & camera properties
 GLFWwindow *window = NULL;
-int wWidth = 800;
-int wHeight = 800;
+int wWidth = 1280;
+int wHeight = 720;
 float aspectRatio = (float)wWidth / (float)wHeight;
 const double cameraFOV = 80.0;
 double maxRenderDistance = 100.0; // Objects that are farther that this are not rendered
@@ -602,18 +602,18 @@ void display()
 	glm::vec3 cameraPosition;
 	Controller::computeViewMatrix(viewMatrix, cameraPosition);
 
-	// The model matrix is initialized to the identity matrix
-	glm::mat4 modelMatrixBase = glm::mat4(1.0f);
-
 	// A tremor is applied if the camera is currently being shaked
 	if (isShaking)
 	{
-		modelMatrixBase = glm::translate(modelMatrixBase, glm::vec3(
+		viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(
 			cosf(currentTime * 10.0f) * 2.0f,
 			-sinf(currentTime * 10.0f) * 3.5f,
 			-cosf(currentTime * 10.0f) * 2.7f
-		));
+		)) * viewMatrix;
 	}
+
+	// The model matrix is initialized to the identity matrix
+	glm::mat4 modelMatrixBase = glm::mat4(1.0f);
 
 
 	/* Rendering using the main shader program (spaceship and asteroids) */
