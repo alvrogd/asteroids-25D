@@ -198,7 +198,7 @@ void updateParticleSets(std::future<void> exitCondition);
 int main (int argc, char *argv[])
 {
 	// Time is used as a seed for the pseudo-random number generator
-	std::srand (std::time (NULL));
+	std::srand ((unsigned int) std::time (NULL));
 
 
 	/* OpenGL initialization */

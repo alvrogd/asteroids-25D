@@ -4,7 +4,7 @@
 std::vector<ParticleSet *> *ParticleSet::particleSetContainer = NULL;
 
 
-const double PI = 3.1415926535897;
+const float PI = 3.1415926f;
 
 
 ParticleSet::ParticleSet (glm::vec3 position, glm::vec4 color)
@@ -22,7 +22,7 @@ ParticleSet::~ParticleSet ()
 	}
 
 	// The particle set searches for itself in the scene's set of currently shown sets of particles
-	for (int i = 0; i < ParticleSet::particleSetContainer->size (); i++)
+	for (size_t i = 0; i < ParticleSet::particleSetContainer->size (); i++)
 	{
 		if (ParticleSet::particleSetContainer->at (i) == this)
 		{
@@ -92,7 +92,7 @@ void ParticleSet::generateExplosion (float lifetime)
 		//	z = r * cos(theta)
 		
 		// Each particle gets is own random phi, in the interval [0, 2pi), with precision of hundredths
-		float phi = fmod ((double)std::rand (), 2.0f * PI);
+		float phi = fmod ((float)std::rand (), 2.0f * PI);
 
 		// And its own random cos(theta), in the interval [-1, 1), also with precision of hundredths
 		int random = (std::rand () % 200) - 100;

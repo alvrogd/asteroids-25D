@@ -100,7 +100,7 @@ Asteroid::Asteroid (glm::vec3 scaling, glm::vec3 position, int lives)
 Asteroid::~Asteroid ()
 {
 	// The asteroids searches for itself in the set of currently existing asteroids in the scene
-	for (int i = 0; i < Asteroid::asteroidSet->size (); i++)
+	for (size_t i = 0; i < Asteroid::asteroidSet->size (); i++)
 	{
 		if (Asteroid::asteroidSet->at (i) == this)
 		{

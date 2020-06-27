@@ -186,14 +186,14 @@ void Controller::resizeWindow (GLFWwindow *window, int width, int height)
 	if ((float)width / (float)height > *(Controller::aspectRatio))
 	{
 		renderHeight = height;
-		renderWidth = *(Controller::aspectRatio) * renderHeight;
+		renderWidth = (int) (*(Controller::aspectRatio) * renderHeight);
 	}
 
 	// If there is more available height than the requested width, the latter is the constraint
 	else if ((float)width / (float)height < *(Controller::aspectRatio))
 	{
 		renderWidth = width;
-		renderHeight = renderWidth / *(Controller::aspectRatio);
+		renderHeight = (int) (renderWidth / *(Controller::aspectRatio));
 	}
 
 	// Otherwise, the aspect ratio is preserved
@@ -204,7 +204,7 @@ void Controller::resizeWindow (GLFWwindow *window, int width, int height)
 	}
 
 	// The viewport is updated bearing in mind any possible free space that could remain in height and width
-	glViewport ((float)(width - renderWidth) / 2, (float)(height - renderHeight) / 2, renderWidth, renderHeight);
+	glViewport ((int) ((float)(width - renderWidth) / 2), (int) ((float)(height - renderHeight) / 2), renderWidth, renderHeight);
 
 	// The new window size is stored
 	*(Controller::wWidth) = width;

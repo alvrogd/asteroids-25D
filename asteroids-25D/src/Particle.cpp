@@ -6,7 +6,7 @@
 #include <cmath>
 
 
-const double PI = 3.1415926535897;
+const float PI = 3.1415926f;
 
 
 std::vector<Particle *> *Particle::particleSet = NULL;
@@ -42,7 +42,7 @@ Particle::~Particle ()
 	// It will only be present if it does not belong to a particle set
 	if (!this->belongsToParticleSet)
 	{
-		for (int i = 0; i < Particle::particleSet->size (); i++)
+		for (size_t i = 0; i < Particle::particleSet->size (); i++)
 		{
 			if (Particle::particleSet->at (i) == this)
 			{
@@ -147,7 +147,7 @@ void Particle::generateExplosion (glm::vec3 position)
 		//	z = r * cos(theta)
 
 		// Each particle gets is own random phi, in the interval [0, 2pi), with precision of hundredths
-		float phi = fmod ((double)std::rand (), 2.0f * PI);
+		float phi = fmod ((float)std::rand (), 2.0f * PI);
 
 		// And its own random cos(theta), in the interval [-1, 1), also with precision of hundredths
 		int random = (std::rand () % 200) - 100;

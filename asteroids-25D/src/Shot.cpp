@@ -27,14 +27,14 @@ Shot::Shot (glm::vec3 position, glm::vec3 speed, glm::vec3 rotation)
 	Shot::shotsSet->push_back (this);
 
 	// The shot will emit a pink light
-	this->light = new LightSource (getPosition (), 1.0f, 0.027, 0.0028, glm::vec3 (1.0f, 0.0f, 1.0f),
+	this->light = new LightSource (getPosition (), 1.0f, 0.027f, 0.0028f, glm::vec3 (1.0f, 0.0f, 1.0f),
 		glm::vec3 (1.0f, 0.0f, 1.0f), glm::vec3 (1.0f, 0.0f, 1.0f));
 }
 
 Shot::~Shot ()
 {
 	// The shot searches for itself in the scene's set of currently shown shots
-	for (int i = 0; i < Shot::shotsSet->size (); i++)
+	for (size_t i = 0; i < Shot::shotsSet->size (); i++)
 	{
 		if (Shot::shotsSet->at (i) == this)
 		{

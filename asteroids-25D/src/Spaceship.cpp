@@ -44,12 +44,12 @@ void Spaceship::updateState (float elapsedTime)
 			// - Lifetime: 0.25 seconds
 
 			// [-3.0, 3.0)
-			glm::vec3 alteracion;
-			alteracion.x = fmod (std::rand (), 6.0f) - 3.0f;
-			alteracion.y = fmod (std::rand (), 6.0f) - 3.0f;
-			alteracion.z = fmod (std::rand (), 6.0f) - 3.0f;
+			glm::vec3 displacement;
+			displacement.x = fmod ((std::rand() / 100.0f), 6.0f) - 3.0f;
+			displacement.y = fmod ((std::rand() / 100.0f), 6.0f) - 3.0f;
+			displacement.z = fmod ((std::rand() / 100.0f), 6.0f) - 3.0f;
 
-			Particle::particleSet->push_back (new Particle (effectPosition + alteracion, 0.1f *
+			Particle::particleSet->push_back (new Particle (effectPosition + displacement, 0.1f *
 				this->getSpeed (), glm::vec4 (1.0f, 0.38f, 0.28f, 1.0f), 0.25f));
 		}
 	}
