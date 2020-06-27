@@ -27,25 +27,24 @@
 #include <iostream>
 
 // Custom utilities
-#include "Initializer.h" // OpenGL initializer
-#include "Controller.h"// Input handler
+#include "utilities/Initializer.h" // OpenGL initializer
+#include "utilities/Controller.h"// Input handler
+#include "utilities/Sound.h" // To play sounds
+#include "utilities/Shader.h" // Rendering through shader programs
 
 // To create any custom object present in the game
-#include "Model.h"
-#include "Shader.h"
-#include "LightSource.h"
-#include "Shape.h"
-#include "Object.h"
-#include "Mobile.h"
-#include "Spaceship.h"
-#include "Asteroid.h"
-#include "Shot.h"
-#include "Particle.h"
-#include "ParticleSet.h"
-#include "Cubemap.h"
+#include "game-objects/Object.h"
+#include "game-objects/Mobile.h"
+#include "game-objects/models/Model.h"
+#include "game-objects/asteroids/Asteroid.h"
+#include "game-objects/spaceship/Shot.h"
+#include "game-objects/spaceship/Spaceship.h"
+#include "game-objects/visual-effects/Cubemap.h"
+#include "game-objects/visual-effects/LightSource.h"
+#include "game-objects/visual-effects/Particle.h"
+#include "game-objects/visual-effects/ParticleSet.h"
+#include "game-objects/visual-effects/Shape.h"
 
-// Custom utility to play sounds
-#include "Sound.h"
 
 #include <vector>
 #include <ctime>
@@ -54,14 +53,14 @@
 /* ===== Definitions about required external files ===== */
 
 // Files that contain all shader programs
-#define SH_VERTEX_MODELS "Shaders/shaderMain.vert"
-#define SH_FRAGMENT_MODELS "Shaders/shaderMain.frag"
-#define SH_VERTEX_COLOR "Shaders/shaderColor.vert"
-#define SH_FRAGMENT_COLOR "Shaders/shaderColor.frag"
-#define SH_VERTEX_SKYBOX "Shaders/shaderSkybox.vert"
-#define SH_FRAGMENT_SKYBOX "Shaders/shaderSkybox.frag"
-#define SH_VERTEX_PARTICLES "Shaders/shaderParticle.vert"
-#define SH_FRAGMENT_PARTICLES "Shaders/shaderParticle.frag"
+#define SH_VERTEX_MODELS "shaders/shaderMain.vert"
+#define SH_FRAGMENT_MODELS "shaders/shaderMain.frag"
+#define SH_VERTEX_COLOR "shaders/shaderColor.vert"
+#define SH_FRAGMENT_COLOR "shaders/shaderColor.frag"
+#define SH_VERTEX_SKYBOX "shaders/shaderSkybox.vert"
+#define SH_FRAGMENT_SKYBOX "shaders/shaderSkybox.frag"
+#define SH_VERTEX_PARTICLES "shaders/shaderParticle.vert"
+#define SH_FRAGMENT_PARTICLES "shaders/shaderParticle.frag"
 
 // How many light sources the main shader program supports at most
 #define MAX_LIGHT_SOURCES 50
@@ -69,20 +68,20 @@
 // Files that make up the skybox
 std::vector<std::string> skyboxFaces
 {
-	"Resources/Graphics/Skybox/PositiveX.png",
-	"Resources/Graphics/Skybox/NegativeX.png",
-	"Resources/Graphics/Skybox/PositiveY.png",
-	"Resources/Graphics/Skybox/NegativeY.png",
-	"Resources/Graphics/Skybox/PositiveZ.png",
-	"Resources/Graphics/Skybox/NegativeZ.png"
+	"resources/graphics/skybox/PositiveX.png",
+	"resources/graphics/skybox/NegativeX.png",
+	"resources/graphics/skybox/PositiveY.png",
+	"resources/graphics/skybox/NegativeY.png",
+	"resources/graphics/skybox/PositiveZ.png",
+	"resources/graphics/skybox/NegativeZ.png"
 };
 
 // Paths for game object models
-#define MODEL_SPACESHIP "Resources/Graphics/Models/Spaceship/Viper-mk-IV-fighter.obj"
-#define MODEL_ASTEROIDS "Resources/Graphics/Models/Asteroids/rock_by_dommk.obj"
+#define MODEL_SPACESHIP "resources/graphics/models/spaceship/Viper-mk-IV-fighter.obj"
+#define MODEL_ASTEROIDS "resources/graphics/models/asteroids/rock_by_dommk.obj"
 
 // Music & sound effects
-#define SOUND_BG_MUSIC "Resources/Sounds/Music/Galactic Funk.ogg"
+#define SOUND_BG_MUSIC "resources/sounds/music/Galactic Funk.ogg"
 
 
 /* ===== Global variables ===== */
