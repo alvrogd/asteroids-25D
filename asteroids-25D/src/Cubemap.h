@@ -2,20 +2,18 @@
 #define CUBEMAP_H
 
 
-// Librerías de OpenGL
+// OpenGL libraries
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Para representarse
+// To render itsef
 #include "Shader.h"
 
-// Para cargar imágenes
-#include "LectorImagen.h"
+#include "ImageReader.h"
 
-// Para conjuntos de datos
 #include <vector>
 
 
@@ -25,10 +23,10 @@ public:
 
 	/* Constructor */
 
-	Cubemap (std::vector<std::string> caras);
+	Cubemap (std::vector<std::string> faces);
 
 
-	/* Getters y setters */
+	/* Getters & setters */
 
 	unsigned int getID () const
 	{
@@ -36,18 +34,18 @@ public:
 	}
 
 
-	/* Métodos */
+	/* Methods */
 
-	void dibujar (Shader *shader) const;
+	void draw (Shader *shader) const;
 
 private:
 
-	/* Atributos */
+	/* Attributes */
 
-	// Identificador dentro de OpenGL
+	// Its ID inside OpenGL
 	unsigned int id;
 
-	// VBO, EBO y VAO para su representación
+	// VBO and VAO to draw it
 	unsigned int VBO = 0, VAO = 0;
 };
 

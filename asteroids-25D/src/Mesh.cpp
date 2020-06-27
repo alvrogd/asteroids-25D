@@ -4,103 +4,104 @@
 #include <iostream>
 
 
-Mesh::Mesh (std::vector<SVertice> vertices, std::vector<unsigned int> indices, std::vector<STextura> texturas)
+Mesh::Mesh (std::vector<SVertex> vertexes, std::vector<unsigned int> indexes, std::vector<STexture> textures)
 {
-	// Se guardan los datos dados
-	this->vertices = vertices;
-	this->indices = indices;
-	this->texturas = texturas;
+	this->vertexes = vertexes;
+	this->indexes = indexes;
+	this->textures = textures;
 
-	// Se configura el mesh a partir de los datos dados
-	configurarMesh ();
+	// The mesh is configured using the given data
+	configureMesh ();
 }
 
-void Mesh::dibujar (Shader * shader)
+void Mesh::draw (Shader * shader)
 {
-	// Se inicializa a '1' el número de texturas difusas y especulares disponibles
-	unsigned int numeroDifusa = 1;
-	unsigned int numeroEspecular = 1;
+	// This method needs to know at anytime the index of the texture that is currently being processed, among those of
+	// its type (the index starts at '1')
+	unsigned int diffuseCount = 1;
+	unsigned int specularCount = 1;
 
-	// Se recorren todas las texturas del mesh
-	for (unsigned int i = 0; i < this->texturas.size (); i++)
+	// All the textures of the mesh are processed
+	for (unsigned int i = 0; i < this->textures.size (); i++)
 	{
-		// Se activa la unidad de textura necesaria
+		// One OpenGL texture unit for each texture of the mesh
 		glActiveTexture (GL_TEXTURE0 + i);
 
-		// Y se carga la textura correspondiente empleando el ID que fue generado cuando se cargó
-		glBindTexture (GL_TEXTURE_2D, this->texturas.at(i).id);
+		// It can be loaded using the ID that was generated when it was loaded
+		glBindTexture (GL_TEXTURE_2D, this->textures.at(i).id);
 
-		// Se compone el nombre de la variable uniform que corresponderá a la textura iterada
-		std::string numero;
-		std::string nombre = this->texturas.at (i).tipo;
+		// The name of the 'uniform' type variable that corresponds the texture is generated at runtime
+		std::string number;
+		std::string name = this->textures.at (i).type;
 
-		if (nombre == "texturaDifusa")
+		if (name == "diffuseTexture")
 		{
-			numero = std::to_string (numeroDifusa++);
+			number = std::to_string (diffuseCount++);
 		}
 
-		else if (nombre == "texturaEspecular")
+		else if (name == "specularTexture")
 		{
-			numero = std::to_string (numeroEspecular++);
+			number = std::to_string (specularCount++);
 		}
 
 		else
 		{
-			std::cout << "ERROR::MESH::DIBUJAR::TIPO_TEXTURA_DESCONOCIDO::" << nombre << std::endl;
+			std::cout << "ERROR::MESH::DRAW::TEXTURE_TYPE_UNKNOWN::" << name << std::endl;
 		}
 
-		// Se carga el número de unidad de textura en el uniform que representa el material iterado
-		shader->setInt (("material." + nombre + numero).c_str (), i);
+		// The texture unit number is loaded into the 'uniform' type variable
+		shader->setInt (("material." + name + number).c_str (), i);
 	}
 
-	// Ahora sí se representa el mesh
+	// And the mesh can now be rendered
 	glBindVertexArray (this->VAO);
-	glDrawElements (GL_TRIANGLES, this->indices.size (), GL_UNSIGNED_INT, 0);
+	glDrawElements (GL_TRIANGLES, this->indexes.size (), GL_UNSIGNED_INT, 0);
 }
 
-void Mesh::configurarMesh ()
+void Mesh::configureMesh ()
 {
-	// Se crean los identificadores de los buffers necesarios para representarse en OpenGL
+	// IDs of the buffers that the mesh needs in order to render itself in OpenGL
 	glGenVertexArrays (1, &(this->VAO));
 	glGenBuffers (1, &(this->VBO));
 	glGenBuffers (1, &(this->EBO));
 
-	// Se vincula el VAO para trabajar sobre él
+	// The VAO is linked to configure it
 	glBindVertexArray (this->VAO);
 
-	// Se configura el VBO en primer lugar
+	// Firstly, the VBO is configured along the VAO
 	glBindBuffer (GL_ARRAY_BUFFER, this->VBO);
 
-	// Se cargan todos los datos de los vértices dados
-	glBufferData (GL_ARRAY_BUFFER, this->vertices.size () * sizeof (SVertice), this->vertices.data (),
+	// It holds the data of all the given vertexes
+	glBufferData (GL_ARRAY_BUFFER, this->vertexes.size () * sizeof (SVertex), this->vertexes.data (),
 		GL_STATIC_DRAW);
 
-	// Ahora se configura el EBO
+	// Secondly, the EBO is configured
 	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 
-	// Se cargan todos los índices dados
-	glBufferData (GL_ELEMENT_ARRAY_BUFFER, this->indices.size () * sizeof (unsigned int), this->indices.data (),
+	// It holds the data of all the given indexes
+	glBufferData (GL_ELEMENT_ARRAY_BUFFER, this->indexes.size () * sizeof (unsigned int), this->indexes.data (),
 		GL_STATIC_DRAW);
 
-	// Se configuran los inputs de la información cargada para los shaders
 
-	// Posiciones de los vértices
+	// The loaded info needs to be configured so that shaders are able to read it
+
+	// Vertexes' positions
 	glEnableVertexAttribArray (0);
-	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)0);
+	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, sizeof (SVertex), (void *)0);
 
-	// Normales de los vértices
+	// Vertexes' normals
 	glEnableVertexAttribArray (1);
-	glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)offsetof (SVertice, normal));
+	glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, sizeof (SVertex), (void *)offsetof (SVertex, normal));
 
-	// Coordenadas de texturas de los vértices
+	// Vertexes' texture coordinates
 	glEnableVertexAttribArray (2);
-	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, sizeof (SVertice), (void *)offsetof (SVertice,
-		coordenadasTexturas));
+	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, sizeof (SVertex), (void *)offsetof (SVertex,
+		textureCoordinates));
 
-	// Se desvincula el VAO
+	// VAO does not longer need to be linked
 	glBindVertexArray (0);
 
-	// Se eliminan los buffers creados al haber vinculado ya la información correspondiente al VAO
+	// However, the buffers can be erased as their data has already been linked to the VAO
 	glDeleteBuffers (1, &(this->VBO));
 	glDeleteBuffers (1, &(this->EBO));
 }

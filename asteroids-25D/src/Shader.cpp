@@ -1,294 +1,256 @@
 #include "Shader.h"
 
-Shader::Shader (const char *vertexShaderFichero, const char *fragmentShaderFichero)
+Shader::Shader (const char *vertexShaderFile, const char *fragmentShaderFile)
 {
-	// Identificadores de los dos shaders a cargar
+	// To store the IDs of the two shaders that will compose the shader program
 	unsigned int vertexShader;
 	unsigned int fragmentShader;
 
-	// Se carga el vertex shader
-	cargarShader (vertexShader, vertexShaderFichero, GL_VERTEX_SHADER);
+	loadShader (vertexShader, vertexShaderFile, GL_VERTEX_SHADER);
+	loadShader (fragmentShader, fragmentShaderFile, GL_FRAGMENT_SHADER);
 
-	// Se carga el fragment shader
-	cargarShader (fragmentShader, fragmentShaderFichero, GL_FRAGMENT_SHADER);
-
-	// Se crea el shader program
+	// After loading both shaders, the shader program can now be created by attaching and compiling them
 	this->ID = glCreateProgram ();
 
-	// Se le vinculan los dos shaders creados
 	glAttachShader (this->ID, vertexShader);
 	glAttachShader (this->ID, fragmentShader);
 
-	// Se compila el shader program
 	glLinkProgram (this->ID);
-	comprobarError (this->ID, 1);
+	checkError (this->ID, 1);
 
-	// Se eliminan los shaders puesto que ya han sido vinculados
+	// They can be deleted as they have already been linked
 	glDeleteShader (vertexShader);
 	glDeleteShader (fragmentShader);
 }
 
-void Shader::usar () const
+void Shader::use () const
 {
-	// Se indica a OpenGL que emplee este shader
+	// OpenGL will now use this shader program
 	glUseProgram (this->ID);
 }
 
-void Shader::setBool (const std::string &nombre, bool valor) const
+void Shader::setBool (const std::string &name, bool value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform1i (localizador, (int)valor);
+	glUniform1i (location, (int)value);
 }
 
-void Shader::setInt (const std::string &nombre, int valor) const
+void Shader::setInt (const std::string &name, int value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform1i (localizador, valor);
+	glUniform1i (location, value);
 }
 
-void Shader::setFloat (const std::string &nombre, float valor) const
+void Shader::setFloat (const std::string &name, float value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform1f (localizador, valor);
+	glUniform1f (location, value);
 }
 
-void Shader::setVec2 (const std::string &nombre, const glm::vec2 &valor) const
+void Shader::setVec2 (const std::string &name, const glm::vec2 &value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform2fv (localizador, 1, &valor[0]);
+	glUniform2fv (location, 1, &value[0]);
 }
-void Shader::setVec2 (const std::string &nombre, float x, float y) const
-{
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
 
-	if (localizador < 0)
+void Shader::setVec2 (const std::string &name, float x, float y) const
+{
+	int location = glGetUniformLocation (this->ID, name.c_str ());
+
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform2f (localizador, x, y);
+	glUniform2f (location, x, y);
 }
 
-void Shader::setVec3 (const std::string &nombre, const glm::vec3 &valor) const
+void Shader::setVec3 (const std::string &name, const glm::vec3 &value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform3fv (localizador, 1, &valor[0]);
+	glUniform3fv (location, 1, &value[0]);
 }
-void Shader::setVec3 (const std::string &nombre, float x, float y, float z) const
-{
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
 
-	if (localizador < 0)
+void Shader::setVec3 (const std::string &name, float x, float y, float z) const
+{
+	int location = glGetUniformLocation (this->ID, name.c_str ());
+
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform3f (localizador, x, y, z);
+	glUniform3f (location, x, y, z);
 }
 
-void Shader::setVec4 (const std::string &nombre, const glm::vec4 &valor) const
+void Shader::setVec4 (const std::string &name, const glm::vec4 &value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform4fv (localizador, 1, &valor[0]);
+	glUniform4fv (location, 1, &value[0]);
 }
-void Shader::setVec4 (const std::string &nombre, float x, float y, float z, float w)
-{
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
 
-	if (localizador < 0)
+void Shader::setVec4 (const std::string &name, float x, float y, float z, float w)
+{
+	int location = glGetUniformLocation (this->ID, name.c_str ());
+
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniform4f (localizador, x, y, z, w);
+	glUniform4f (location, x, y, z, w);
 }
 
-void Shader::setMat2 (const std::string &nombre, const glm::mat2 &matriz) const
+void Shader::setMat2 (const std::string &name, const glm::mat2 &matrix) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniformMatrix2fv (localizador, 1, GL_FALSE, glm::value_ptr(matriz));
+	glUniformMatrix2fv (location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Shader::setMat3 (const std::string &nombre, const glm::mat3 &matriz) const
+void Shader::setMat3 (const std::string &name, const glm::mat3 &value) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniformMatrix3fv (localizador, 1, GL_FALSE, glm::value_ptr (matriz));
+	glUniformMatrix3fv (location, 1, GL_FALSE, glm::value_ptr (value));
 }
 
-void Shader::setMat4 (const std::string &nombre, const glm::mat4 &matriz) const
+void Shader::setMat4 (const std::string &name, const glm::mat4 &matrix) const
 {
-	// Se busca la variable especificada por el nombre dado
-	int localizador = glGetUniformLocation (this->ID, nombre.c_str ());
+	int location = glGetUniformLocation (this->ID, name.c_str ());
 
-	if (localizador < 0)
+	if (location < 0)
 	{
-		std::cout << "ERROR::SHADER::PROGRAM::VARIABLE_UNIFORM_INCORRECTA" << std::endl;
+		std::cout << "ERROR::SHADER::PROGRAM::UNIFORM_VARIABLE_NOT_FOUND::" << name << std::endl;
 		return;
 	}
 
-	// Se almacena en ella el valor dado
-	glUniformMatrix4fv (localizador, 1, GL_FALSE, glm::value_ptr (matriz));
+	glUniformMatrix4fv (location, 1, GL_FALSE, glm::value_ptr (matrix));
 }
 
-void Shader::cargarShader (unsigned int &shader, const char *nombreFichero, GLenum tipo)
+void Shader::loadShader (unsigned int &shader, const char *filename, GLenum type)
 {
-	// Se genera el identificador del shader
-	shader = glCreateShader (tipo);
+	// Each shader needs its own ID inside OpenGL
+	shader = glCreateShader (type);
 
-	// Se vincula el código del shader al objeto creado
-	vincularCodigo (shader, nombreFichero);
+	linkCode (shader, filename);
 
-	// Se compila el shader
 	glCompileShader (shader);
-	comprobarError (shader, 0);
+	checkError (shader, 0);
 }
 
-void Shader::vincularCodigo (unsigned int & shader, const char * nombreFichero)
+void Shader::linkCode (unsigned int & shader, const char * filename)
 {
-	// Fichero a leer
-	std::ifstream fichero;
+	std::ifstream file;
+	std::string fileContents;
 
-	// Contenido leído del fichero
-	std::string contenido;
-
-	// Se activan las excepciones del fichero
-	fichero.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+	// Certain file input exceptions are enabled to check errors
+	file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
 
 	try
 	{
-		// Se abre el fichero
-		fichero.open (nombreFichero);
+		file.open (filename);
 
-		// Se crea un stream y se lee en él el contenido del fichero
-		std::stringstream streamFichero;
-		streamFichero << fichero.rdbuf ();
+		std::stringstream fileStream;
+		fileStream << file.rdbuf ();
 
-		// Se cierra el descriptor del fichero
-		fichero.close ();
+		file.close ();
 
-		// Se guarda el contenido del fichero
-		contenido = streamFichero.str ();
+		fileContents = fileStream.str ();
 	}
 
 	catch (std::ifstream::failure e)
 	{
-		std::cout << "ERROR::SHADER::LECTURA_FICHERO_FALLIDA" << std::endl;
+		std::cout << "ERROR::SHADER::FILE_READ_FAILED" << std::endl;
 		exit (1);
 	}
 
-	// Es necesario obtener el contenido como un "puntero const char *" para OpenGL
-	const char *codigo = contenido.c_str ();
+	// OpenGL requires the file's contents to be provided as a "const char *" data type
+	const char *code = fileContents.c_str ();
 
-	// Se vincula el código del shader al objeto dado
-	glShaderSource (shader, 1, &codigo, NULL);;
+	// At last, the read code can be linked to the given shader
+	glShaderSource (shader, 1, &code, NULL);;
 }
 
-void Shader::comprobarError (unsigned int shader, int tipo) const
+void Shader::checkError (unsigned int shader, int type) const
 {
-	// Variables en las que almacenar el estado de un shader
-	int exito;
+	int success;
 	char log[512];
 
-	// Se obtiene el estado del shader dado
-	glGetShaderiv (shader, GL_COMPILE_STATUS, &exito);
+	// Retrieving the shader's compilation status
+	glGetShaderiv (shader, GL_COMPILE_STATUS, &success);
 
-	// Si no se ha podido crear el shader
-	if (!exito)
+	if (!success)
 	{
-		// Se obtiene un log con la información correspondiente al error y se muestra
 		glGetShaderInfoLog (shader, 512, NULL, log);
 
-		// Si se trata de un único shader
-		if (tipo == 0)
+		// Single shader
+		if (type == 0)
 		{
-			std::cout << "ERROR::SHADER::COMPILACION_FALLIDA\n" << log << std::endl;
+			std::cout << "ERROR::SHADER::SINGLE::COMPILATION_FAILED" << std::endl << log << std::endl;
 		}
 
-		// Si se trata de un program shader
+		// Shader program (double shader)
 		else
 		{
-			std::cout << "ERROR::SHADER::PROGRAM::VINCULACION_FALLIDA\n" << log << std::endl;
+			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED" << std::endl << log << std::endl;
 		}
 
 		exit (3);

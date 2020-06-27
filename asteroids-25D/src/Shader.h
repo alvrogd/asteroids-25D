@@ -1,13 +1,12 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-// E/S y procesamiento de ficheros y strings
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 
-// Librerías de OpenGL
+// OpenGL libraries
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -21,57 +20,50 @@ public:
 
 	/* Constructor */
 
-	Shader (const char *vertexShaderFichero, const char *fragmentShaderFichero);
+	Shader (const char *vertexShaderFile, const char *fragmentShaderFile);
 
 
-	/* Getters y setters */
+	/* Getters & setters */
 
 	unsigned int getID () const { return this->ID; }
 
 
-	/* Métodos */
+	/* Methods */
 
-	// Para que OpenGL emplee este program shader
-	void usar () const;
+	// So that OpenGL uses this shader during the rendering process
+	void use () const;
 
-	// Métodos para cargar valores en el shader program
+	// To load values from the CPU into the shader
+	void setBool (const std::string &name, bool value) const;
+	void setInt (const std::string &name, int value) const;
+	void setFloat (const std::string &name, float value) const;
 
-	void setBool (const std::string &nombre, bool valor) const;
-	
-	void setInt (const std::string &nombre, int valor) const;
+	void setVec2 (const std::string &name, const glm::vec2 &value) const;
+	void setVec2 (const std::string &name, float x, float y) const;
+	void setVec3 (const std::string &name, const glm::vec3 &value) const;
+	void setVec3 (const std::string &name, float x, float y, float z) const;
+	void setVec4 (const std::string &name, const glm::vec4 &value) const;
+	void setVec4 (const std::string &name, float x, float y, float z, float w);
 
-	void setFloat (const std::string &nombre, float valor) const;
-
-	void setVec2 (const std::string &nombre, const glm::vec2 &valor) const;
-	void setVec2 (const std::string &nombre, float x, float y) const;
-
-	void setVec3 (const std::string &nombre, const glm::vec3 &valor) const;
-	void setVec3 (const std::string &nombre, float x, float y, float z) const;
-
-	void setVec4 (const std::string &nombre, const glm::vec4 &valor) const;
-	void setVec4 (const std::string &nombre, float x, float y, float z, float w);
-
-	void setMat2 (const std::string &nombre, const glm::mat2 &matriz) const;
-
-	void setMat3 (const std::string &nombre, const glm::mat3 &matriz) const;
-
-	void setMat4 (const std::string &nombre, const glm::mat4 &matriz) const;
+	void setMat2 (const std::string &name, const glm::mat2 &matrix) const;
+	void setMat3 (const std::string &name, const glm::mat3 &matrix) const;
+	void setMat4 (const std::string &name, const glm::mat4 &matrix) const;
 
 
 private:
 
-	/* Atributos */
+	/* Attributes */
 
-	// Identificador del shader en OpenGL
+	// Shader program's ID inside OpenGL
 	unsigned int ID;
 
 	
-	/* Métodos */
+	/* Methods */
 
-	// Todos son métodos auxiliares del constructor
-	void cargarShader (unsigned int &shader, const char *nombreFichero, GLenum tipo);
-	void vincularCodigo (unsigned int &shader, const char *nombreFichero);
-	void comprobarError (unsigned int shader, int tipo) const;
+	// They are all auxiliar methods used by the constructor
+	void loadShader (unsigned int &shader, const char *filename, GLenum type);
+	void linkCode (unsigned int &shader, const char *filename);
+	void checkError (unsigned int shader, int type) const;
 };
 
 #endif

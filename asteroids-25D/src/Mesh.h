@@ -1,74 +1,74 @@
 #ifndef MESH_H
 #define MESH_H
 
-// Librerías de OpenGL
+// OpenGL libraries
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Para representarse
+// To render itself
 #include "Shader.h"
 
-// Para conjuntos de datos
 #include <vector>
 
 
-// Representación de un vértice (no se modela como una clase para aprovechar mejor el principio de localidad)
-struct SVertice
+// Vertex representation (struct as it benefits the principle of locality)
+struct SVertex
 {
-	glm::vec3 posicion;
+	glm::vec3 position;
 	glm::vec3 normal;
-	glm::vec2 coordenadasTexturas;
+	glm::vec2 textureCoordinates;
 };
 
-// Información de una textura (no se modela como una clase para aprovechar mejor el principio de localidad)
-struct STextura
+// Texture representation (struct as it benefits the principle of locality)
+struct STexture
 {
 	unsigned int id;
-	std::string tipo;
-	std::string ruta;
+	std::string type;
+	std::string path;
 };
 
 class Mesh
 {
 public:
+
 	/* Constructor */
 
-	Mesh (std::vector<SVertice> vertices, std::vector<unsigned int> indices, std::vector<STextura> texturas);
+	Mesh (std::vector<SVertex> vertexes, std::vector<unsigned int> indexes, std::vector<STexture> textures);
 
 
-	/* Getters y setters */
+	/* Getters & setters */
 
-	std::vector<SVertice> & getVertices ()
+	std::vector<SVertex> & getVertexes ()
 	{
-		return this->vertices;
+		return this->vertexes;
 	}
 
-	void setVertices (std::vector<SVertice> vertices)
+	void setVertexes (std::vector<SVertex> vertexes)
 	{
-		this->vertices = vertices;
+		this->vertexes = vertexes;
 	}
 
-	std::vector<unsigned int> & getIndices ()
+	std::vector<unsigned int> & getIndexes ()
 	{
-		return this->indices;
+		return this->indexes;
 	}
 
-	void setIndices (std::vector<unsigned int> indices)
+	void setIndexes (std::vector<unsigned int> indexes)
 	{
-		this->indices = indices;
+		this->indexes = indexes;
 	}
 
-	std::vector<STextura> & getTexturas ()
+	std::vector<STexture> & getTextures ()
 	{
-		return this->texturas;
+		return this->textures;
 	}
 
-	void setTexturas (std::vector<STextura> texturas)
+	void setTextures (std::vector<STexture> textures)
 	{
-		this->texturas = texturas;
+		this->textures = textures;
 	}
 
 	unsigned int getVAO () const
@@ -102,27 +102,27 @@ public:
 	}
 
 
-	/* Métodos */
+	/* Methods */
 
-	void dibujar (Shader *shader);
+	void draw (Shader *shader);
 
 
 private:
 
-	/* Atributos */
+	/* Attributes */
 
-	// Datos del mesh
-	std::vector<SVertice> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<STextura> texturas;
+	// Mesh data
+	std::vector<SVertex> vertexes;
+	std::vector<unsigned int> indexes;
+	std::vector<STexture> textures;
 
-	// Información de renderizado
+	// Render data
 	unsigned int VAO, VBO, EBO;
 
 
-	/* Métodos */
+	/* Methods */
 
-	void configurarMesh ();
+	void configureMesh ();
 };
 
 #endif

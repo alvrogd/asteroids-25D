@@ -1,7 +1,7 @@
 #include "Cubemap.h"
 
-float verticesCubemap[] = {
-	// Posiciones          
+float cubemapVertexes[] = {
+	// Positions          
 	-1.0f,  1.0f, -1.0f,
 	-1.0f, -1.0f, -1.0f,
 	 1.0f, -1.0f, -1.0f,
@@ -45,61 +45,56 @@ float verticesCubemap[] = {
 	 1.0f, -1.0f,  1.0f
 };
 
-Cubemap::Cubemap (std::vector<std::string> caras)
+Cubemap::Cubemap (std::vector<std::string> faces)
 {
-	// Se generan el VAO y VBO del cubemap
+	// Needs its own VAO and VBO
 	glGenVertexArrays (1, &(this->VAO));
 	glGenBuffers (1, &(this->VBO));
 
-	// Se vincula el VAO para configurarlo
+	// The VAO is linked to configure it
 	glBindVertexArray (this->VAO);
 
-	// Se vincula el VBO
+	// The VBO is linked
 	glBindBuffer (GL_ARRAY_BUFFER, this->VBO);
 
-	// Se copian los vértices del cubemap al VBO
-	glBufferData (GL_ARRAY_BUFFER, sizeof(verticesCubemap), verticesCubemap, GL_STATIC_DRAW);
+	// All cubemap's vertex are copied to the VBO
+	glBufferData (GL_ARRAY_BUFFER, sizeof(cubemapVertexes), cubemapVertexes, GL_STATIC_DRAW);
 
-	// Se vinculan estas propiedades con la entrada 0 de los shaders y se especifica de dónde obtener la información
-	// para dicha entrada
+	// These properties are linked to the "input 0" in the shaders
 	glEnableVertexAttribArray (0);
 	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof (float), (void *)0);
 
-	// Se desvinculan el VAO y el VBO
+	// Both the VAO and VBO are unlinked
 	glBindVertexArray (0);
 	glBindBuffer (GL_ARRAY_BUFFER, 0);
 
-	// Se borran el VBO
+	// The latter is no longer needed
 	glDeleteBuffers (1, &(this->VBO));
 
-	// Se cargan en OpenGL las texturas especificadas
-	this->id = LectorImagen::cargarCubemap (caras);
+	// The cubemap's textures must be loaded in OpenGL
+	this->id = ImageReader::loadCubemap (faces);
 }
 
-void Cubemap::dibujar (Shader *shader) const
+void Cubemap::draw (Shader *shader) const
 {
-	// Se modifica la función de depth-testing dado que el cubemap presenta valores de profundidad de 1.0 y, si no se
-	// hiciese, no se renderizaría al ser la condición por defecto que "valorDepthBuffer < 1.0"
+	// The depth-testing function must be altered as the cubemap has depth values of 1.0, and it would not be rendered
+	// by default as the depth-testing is set to "valueDepthBuffer < 1.0"
 	glDepthFunc (GL_LEQUAL);
 
-	// Se emplea el shader dado
-	shader->usar ();
+	// The given shader is activated in order to render the cubemap
+	shader->use ();
 
-	// Se renderiza el cubemap
-
-	// Se vincula el VAO creado
 	glBindVertexArray (this->VAO);
 
-	// Se activa la primera unidad de textura y se vincula la textura cargada para el cubemap
+	// The first texture unit is activated and the cubemap's textures are linked to it
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture (GL_TEXTURE_CUBE_MAP, this->id);
 
-	// Se renderizar los triángulos de los que se compone el cubemap
+	// All the cubemap's triangles are rendered
 	glDrawArrays (GL_TRIANGLES, 0, 36);
 
-	// Se desvincula el VAO dado que ya no va a hacer falta de nuevo
 	glBindVertexArray (0);
 
-	// Se restaura la función de depth-testing por defecto
+	// The default depth-testing function is restored
 	glDepthFunc (GL_LESS);
 }

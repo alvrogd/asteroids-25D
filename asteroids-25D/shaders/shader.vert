@@ -5,35 +5,30 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 
-// Output para el fragment shader
+// Output data read by the fragment shader
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoord;
 
-// Matrices de transformaciones
+// Transformation matrixes
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
-// Se calcula en la CPU para evitar calcularla para cada vértice
-uniform mat3 normalMatrix;
+uniform mat3 normalMatrix; // Already computed in the CPU in order to avoid computing it for each vertex
 
 
 void main()
 {
-	/* Información para el fragment shader */
-
-	// La coordenada del fragmento a renderizar se devuelve en coordenadas del mundo
+	// The coordiantes of the fragment that is being rendered are transformed into world coordinates
 	FragPos = vec3(modelMatrix * vec4(aPos, 1.0));
 
-	// Se devuelve la normal aplicándole la matriz normal para evitar transformaciones no unitarias
+	// The normal matrix is applied in orden to avoid non-unitary transformations
 	Normal = normalMatrix * aNormal;
 
-	// Se devuelve directamente la coordenada de textura
+	// The texture coordinate is returned as it is
 	TexCoord = aTexCoord;
 
 
-	/* Renderizado */
-
-	// Se calcula la posición del vértice aplicando todas las matrices de transformación
+	// The position depends on the given transformation matrixes
 	gl_Position = projectionMatrix * viewMatrix * vec4(FragPos, 1.0);
 }

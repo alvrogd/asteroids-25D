@@ -4,9 +4,9 @@
 out vec4 FragColor;
 
 // Color established directly from the CPU
-uniform vec3 Color;
+uniform vec4 Color;
 
 void main()
 {
-	FragColor = vec4(Color, 1.0);
+	FragColor = Color;
 }
