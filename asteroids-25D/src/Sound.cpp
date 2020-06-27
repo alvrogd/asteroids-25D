@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 
-#define SOUND_DISINTEGRATION_PREFIX "infinity_war_disintegration"
+#define SOUND_DISINTEGRATION_PREFIX "Resources/Sounds/Effects/infinity_war_disintegration"
 #define SOUND_DISINTEGRATION_EXTENSION ".ogg"
 
 

@@ -54,14 +54,14 @@
 /* ===== Definitions about required external files ===== */
 
 // Files that contain all shader programs
-#define SH_VERTEX_MODELS "shader.vert"
-#define SH_FRAGMENT_MODELS "shader.frag"
-#define SH_VERTEX_COLOR "shaderColor.vert"
-#define SH_FRAGMENT_COLOR "shaderColor.frag"
-#define SH_VERTEX_SKYBOX "shaderSkybox.vert"
-#define SH_FRAGMENT_SKYBOX "shaderSkybox.frag"
-#define SH_VERTEX_PARTICLES "shaderParticle.vert"
-#define SH_FRAGMENT_PARTICLES "shaderParticle.frag"
+#define SH_VERTEX_MODELS "Shaders/shaderMain.vert"
+#define SH_FRAGMENT_MODELS "Shaders/shaderMain.frag"
+#define SH_VERTEX_COLOR "Shaders/shaderColor.vert"
+#define SH_FRAGMENT_COLOR "Shaders/shaderColor.frag"
+#define SH_VERTEX_SKYBOX "Shaders/shaderSkybox.vert"
+#define SH_FRAGMENT_SKYBOX "Shaders/shaderSkybox.frag"
+#define SH_VERTEX_PARTICLES "Shaders/shaderParticle.vert"
+#define SH_FRAGMENT_PARTICLES "Shaders/shaderParticle.frag"
 
 // How many light sources the main shader program supports at most
 #define MAX_LIGHT_SOURCES 50
@@ -69,20 +69,20 @@
 // Files that make up the skybox
 std::vector<std::string> skyboxFaces
 {
-	"PositiveX.png",
-	"NegativeX.png",
-	"PositiveY.png",
-	"NegativeY.png",
-	"PositiveZ.png",
-	"NegativeZ.png"
+	"Resources/Graphics/Skybox/PositiveX.png",
+	"Resources/Graphics/Skybox/NegativeX.png",
+	"Resources/Graphics/Skybox/PositiveY.png",
+	"Resources/Graphics/Skybox/NegativeY.png",
+	"Resources/Graphics/Skybox/PositiveZ.png",
+	"Resources/Graphics/Skybox/NegativeZ.png"
 };
 
 // Paths for game object models
-#define MODEL_SPACESHIP "Viper-mk-IV-fighter.obj"
-#define MODEL_ASTEROIDS "rock_by_dommk.obj"
+#define MODEL_SPACESHIP "Resources/Graphics/Models/Spaceship/Viper-mk-IV-fighter.obj"
+#define MODEL_ASTEROIDS "Resources/Graphics/Models/Asteroids/rock_by_dommk.obj"
 
 // Music & sound effects
-#define SOUND_BG_MUSIC "Galactic Funk.ogg"
+#define SOUND_BG_MUSIC "Resources/Sounds/Music/Galactic Funk.ogg"
 
 
 /* ===== Global variables ===== */
@@ -236,7 +236,7 @@ int main (int argc, char *argv[])
 	// The background music starts to play in an infinite loop
 	Sound::getSound()->getSound2D()->play2D(SOUND_BG_MUSIC, GL_TRUE);
 
-	std::cout << std::endl << "========== Game successfully started! ==========" << std::endl << std::endl;
+	std::cout << std::endl << "========== Game started! ==========" << std::endl << std::endl;
 
 	// As long as the program is not signaled to stop
 	while (!glfwWindowShouldClose (window))

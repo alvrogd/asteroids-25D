@@ -45,7 +45,7 @@ void Model::loadModel (std::string path)
 		return;
 	}
 
-	this->directory = path.substr(0, path.find_last_of('/'));
+	this->directory = path.substr(0, path.find_last_of('/')) + "/";
 
 	// The root node is processed in order to create the model
 	processNode (scene->mRootNode, scene);
@@ -129,8 +129,8 @@ Mesh Model::processMesh (aiMesh * mesh, const aiScene * scene)
 	return Mesh (vertexes, indexes, textures);
 }
 
-std::vector<STexture> Model::loadTexturesForMaterial (aiMaterial *material, aiTextureType type, std::string
-	typeName)
+std::vector<STexture> Model::loadTexturesForMaterial (aiMaterial *material, aiTextureType type,
+	std::string typeName)
 {
 	std::vector<STexture> textures;
 
@@ -143,8 +143,9 @@ std::vector<STexture> Model::loadTexturesForMaterial (aiMaterial *material, aiTe
 
 		// Retrieving the location of the texture, and loading it
 		material->GetTexture (type, i, &path);
+		std::string texturePath = this->directory + path.C_Str();
 
-		texture.id = ImageReader::textureFromFile (path.C_Str ());
+		texture.id = ImageReader::textureFromFile (texturePath.c_str());
 		texture.type = typeName;
 		texture.path = path.C_Str ();
 

@@ -7,6 +7,8 @@
 #include "Particle.h"
 #include "ParticleSet.h"
 
+#define SOUND_SHOT "Resources/Sounds/Effects/laser_rapid.ogg"
+
 
 Spaceship::Spaceship (glm::vec3 scaling, Model * model, float hitboxRadius, glm::vec3 position, glm::vec3 speed,
 	glm::vec3 accelerationRate, glm::vec3 decelerationRate, glm::vec3 rotation, glm::vec3 rotationFix)
@@ -75,7 +77,7 @@ void Spaceship::shoot ()
 	//  - No repetition
 	//	- Play instantly
 	//	- A reference to the "track" is needed in order to stop it (see previous "if" block)
-	this->shotSound = Sound::getSound()->getSound2D()->play2D("laser_rapid.ogg", GL_FALSE, GL_FALSE, GL_TRUE);
+	this->shotSound = Sound::getSound()->getSound2D()->play2D(SOUND_SHOT, GL_FALSE, GL_FALSE, GL_TRUE);
 	this->shotSound->setVolume (0.50f);
 }
 
